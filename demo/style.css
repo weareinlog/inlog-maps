@@ -1,0 +1,45 @@
+html {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 0.8rem;
+}
+
+fieldset {
+    border: 0.1rem #999 solid;
+    border-radius: 0.3rem;
+    margin: 0.5rem;
+}
+
+input[type="submit"] {
+    border: 0.1rem #333 solid;
+    text-decoration: none;
+    font-family: helvetica;
+    color: black;
+    border-radius: 0.3rem;
+}
+
+#map {
+    height: 80%;
+    width: 100%
+}
+
+.infowindow-default {
+    font-size: 1.1rem;
+}
+
+.infowindow-default .title {
+    text-align: center;
+    background-color: #428bca;
+    color: #FFF;
+    text-transform: uppercase;
+    margin: 0;
+    border-radius: 0.3rem;
+}
+
+.infowindow-default div.section {
+    width: 15rem;
+}
+
+.infowindow-default div.section .infowindow-table{
+    margin: 1rem;
+    line-height: 1.5rem;
+}
