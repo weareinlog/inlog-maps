@@ -1,0 +1,38 @@
+import { MapType } from '../dto/map-type';
+import CircleAlterOptions from '../features/circle/circle-alter-options';
+import CircleOptions from '../features/circle/circle-options';
+import GeoJsonOptions from '../features/geojson/geojson-options';
+import CircleMarkerOptions from '../features/marker/circle-marker-options';
+import MarkerAlterOptions from '../features/marker/marker-alter-options';
+import MarkerOptions from '../features/marker/marker-options';
+import PolygonAlterOptions from '../features/polygons/polygon-alter-options';
+import PolygonOptions from '../features/polygons/polygon-options';
+import PolylineOptions from '../features/polyline/polyline-options';
+import PopupOptions from '../features/popup/popup-options';
+export default interface IMapFunctions {
+    initialize(mapType: MapType, params: object): any;
+    loadGEOJson(data: object, options: GeoJsonOptions, eventClick: any): any;
+    drawMarker(options: MarkerOptions, eventClick: any): any;
+    fitBoundsPositions(markers: any[]): any;
+    drawCircleMarker(options: CircleMarkerOptions, eventClick: any): any;
+    toggleMarkers(markers: any[], show: boolean): any;
+    alterMarkerOptions(markers: any[], options: MarkerAlterOptions): any;
+    drawPolygon(options: PolygonOptions, eventClick: any): any;
+    fitBoundsPolygon(polygon: any): any;
+    togglePolygons(polygons: any[], show: boolean): any;
+    alterPolygonOptions(polygons: any[], options: PolygonAlterOptions): any;
+    drawPolyline(options: PolylineOptions, eventClick: any): any;
+    togglePolyline(polyline: any, show: boolean): any;
+    drawPolylineWithNavigation(options: PolylineOptions): any;
+    clearListenersPolyline(polyline: any): any;
+    addPolylinePath(polyline: any, position: number[]): any;
+    removePolylineHighlight(): any;
+    alterPolylineOptions(polyline: any, options: PolylineOptions): any;
+    drawCircle(options: CircleOptions, eventClick: any): any;
+    toggleCircles(circles: any[], show: boolean): any;
+    alterCircleOptions(circles: any[], options: CircleAlterOptions): any;
+    drawPopup(options: PopupOptions): any;
+    alterPopup(popup: any, options: PopupOptions): any;
+    addClickMap(eventClick: any): any;
+    removeClickMap(): any;
+}
