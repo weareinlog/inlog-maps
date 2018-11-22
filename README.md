@@ -1,4 +1,4 @@
-# inlog-maps *2.0.0*
+# inlog-maps *2.0.2*
 
 > A library for using generic layer maps 
 
