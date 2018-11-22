@@ -33,7 +33,7 @@ const config = {
     },
     // Activate source maps for the bundles in order to preserve the original
     // source when the user debugs the application
-    devtool: 'source-currentMap',
+    devtool: 'source-map',
     plugins: [
         // Apply minification only on the second bundle by
         // using a RegEx on the name, which must end with `.min.js`
