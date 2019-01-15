@@ -5,4 +5,3 @@ var MapType;
     MapType[MapType["Google"] = 0] = "Google";
     MapType[MapType["Leaflet"] = 1] = "Leaflet";
 })(MapType = exports.MapType || (exports.MapType = {}));
-//# sourceMappingURL=map-type.js.map

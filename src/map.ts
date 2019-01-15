@@ -1,6 +1,7 @@
 import GoogleMaps from './models/apis/googleMaps';
 import Leaflet from './models/apis/leaflet';
 import IMapFunctions from './models/apis/mapFunctions';
+import { EventType } from './models/dto/event-type';
 import { MapType } from './models/dto/map-type';
 import CircleAlterOptions from './models/features/circle/circle-alter-options';
 import CircleOptions from './models/features/circle/circle-options';
@@ -8,6 +9,7 @@ import GeoJsonOptions from './models/features/geojson/geojson-options';
 import CircleMarkerOptions from './models/features/marker/circle-marker-options';
 import MarkerAlterOptions from './models/features/marker/marker-alter-options';
 import MarkerOptions from './models/features/marker/marker-options';
+import OverlayOptions from './models/features/overlay/overlay-options';
 import PolygonAlterOptions from './models/features/polygons/polygon-alter-options';
 import PolygonOptions from './models/features/polygons/polygon-options';
 import PolylineOptions from './models/features/polyline/polyline-options';
@@ -15,11 +17,13 @@ import PopupOptions from './models/features/popup/popup-options';
 
 export default class Map {
     public mapType = MapType;
+    public eventType = EventType;
     private markersList = {};
     private polygonsList = {};
     private circlesList = {};
     private polylinesList = {};
     private infoWindowList = {};
+    private overlayList = {};
     private map: IMapFunctions;
 
     constructor() { /**/ }
@@ -97,7 +101,7 @@ export default class Map {
      * @param {any} condition toogle markers with the condition
      */
     public toggleMarkers(show: boolean, type: string, condition?: any) {
-        const markers = condition ? this.getMarkers(type, condition) : this.markersList[type];
+        const markers = this.getMarkers(type, condition);
 
         if (markers) {
             this.map.toggleMarkers(markers, show);
@@ -111,7 +115,7 @@ export default class Map {
      * @param {any} condition alter markers with the condition
      */
     public alterMarkerOptions(type: string, options: MarkerAlterOptions, condition?: any) {
-        const markers = condition ? this.getMarkers(type, condition) : this.markersList[type];
+        const markers = this.getMarkers(type, condition);
 
         if (markers && markers.length > 0) {
             this.map.alterMarkerOptions(markers, options);
@@ -141,9 +145,7 @@ export default class Map {
      * @param {any} condition remove markers with the condition
      */
     public removeMarkers(type: string, condition?: any) {
-        if (!this.markersList[type]) {
-            this.markersList[type] = [];
-        } else {
+        if (this.markersList[type] && condition) {
             const markers = this.markersList[type].filter((marker) => condition(marker.object));
 
             // Hide markers with the condition
@@ -151,6 +153,11 @@ export default class Map {
 
             // Keep markers that doesn't have the condition
             this.markersList[type] = this.markersList[type].filter((marker) => !condition(marker.object));
+        } else {
+            if (this.markersList[type]) {
+                this.map.toggleMarkers(this.markersList[type], false);
+            }
+            this.markersList[type] = [];
         }
     }
 
@@ -175,9 +182,9 @@ export default class Map {
      * @param {string} type
      * @param {any} condition fit polygon bounds with the condition
      */
-    public fitBoundsPolygon(type: string, condition?: any) {
-        const polygons = condition ? this.polygonsList[type] : this.getPolygons(type, condition);
-        polygons.array.forEach((polygon) => this.map.fitBoundsPolygon(polygon));
+    public fitBoundsPolygons(type: string, condition?: any) {
+        const polygons = this.getPolygons(type, condition);
+        this.map.fitBoundsPolygons(polygons);
     }
 
     /**
@@ -187,7 +194,7 @@ export default class Map {
      * @param {any} condition toggle polygon with the condition
      */
     public togglePolygons(show: boolean, type: string, condition?: any) {
-        const polygons = condition ? this.polygonsList[type] : this.getPolygons(type, condition);
+        const polygons = this.getPolygons(type, condition);
 
         if (polygons) {
             this.map.togglePolygons(polygons, show);
@@ -201,10 +208,32 @@ export default class Map {
      * @param {any} condition alter polygon with the condition
      */
     public alterPolygonOptions(type: string, options: PolygonAlterOptions, condition?: any) {
-        const polygons = condition ? this.polygonsList[type] : this.getPolygons(type, condition);
+        const polygons = this.getPolygons(type, condition);
 
         if (polygons) {
             this.map.alterPolygonOptions(polygons, options);
+        }
+    }
+
+    /**
+     * Remove polygons from the map and from internal list
+     * @param {string} type
+     * @param {any} condition remove polygons with the condition
+     */
+    public removePolygons(type: string, condition?: any) {
+        if (this.polygonsList[type] && condition) {
+            const polygons = this.polygonsList[type].filter((polygon) => condition(polygon.object));
+
+            // Hide markers with the condition
+            this.map.togglePolygons(polygons, false);
+
+            // Keep markers that doesn't have the condition
+            this.polygonsList[type] = this.polygonsList[type].filter((polygon) => !condition(polygon.object));
+        } else {
+            if (this.polygonsList[type]) {
+                this.map.togglePolygons(this.polygonsList[type], false);
+            }
+            this.polygonsList[type] = [];
         }
     }
 
@@ -263,7 +292,7 @@ export default class Map {
      * @param {any} condition toggle polyline with the condition
      */
     public togglePolyline(show: boolean, type: string, condition?: any) {
-        const polyline = condition ? this.polylinesList[type] : this.getPolylines(type, condition);
+        const polyline = this.getPolylines(type, condition);
 
         if (polyline) {
             this.map.togglePolyline(polyline, show);
@@ -276,7 +305,7 @@ export default class Map {
      * @param {any} condition remove polyline with the condition
      */
     public removePolyline(type: string, condition?: any) {
-        const polyline = condition ? this.polylinesList[type] : this.getPolylines(type, condition);
+        const polyline = this.getPolylines(type, condition);
 
         if (polyline) {
             this.map.togglePolyline(polyline, false);
@@ -293,7 +322,7 @@ export default class Map {
      * @param {any} condition alter polyline with the condition
      */
     public alterPolylineOptions(type: string, options: PolylineOptions, condition?: any) {
-        const polyline = condition ? this.polylinesList[type] : this.getPolylines(type, condition);
+        const polyline = this.getPolylines(type, condition);
 
         if (polyline) {
             this.map.alterPolylineOptions(polyline, options);
@@ -323,7 +352,7 @@ export default class Map {
      * @param {any} condition toggle circles with the condition
      */
     public toggleCircles(show: boolean, type: string, condition?: any) {
-        const circles = condition ? this.circlesList[type] : this.getCircles(type, condition);
+        const circles = this.getCircles(type, condition);
 
         if (circles) {
             this.map.toggleCircles(circles, show);
@@ -337,7 +366,7 @@ export default class Map {
      * @param {any} condition alter circle with the condition
      */
     public alterCircleOptions(type: string, options: CircleAlterOptions, condition?: any) {
-        const circles = condition ? this.circlesList[type] : this.getCircles(type, condition);
+        const circles = this.getCircles(type, condition);
 
         if (circles) {
             this.map.alterCircleOptions(circles, options);
@@ -351,7 +380,6 @@ export default class Map {
      * @param {inlogMaps.PopupOptions} options
      */
     public drawPopup(type: string, options: PopupOptions) {
-
         if (this.infoWindowList[type]) {
             this.map.alterPopup(this.infoWindowList[type], options);
         } else {
@@ -377,36 +405,105 @@ export default class Map {
     /* Map */
     /**
      * Use this function to add event clicks on the currentMap
-     * @param {any} eventClick
+     * @param {EventType} eventType
+     * @param eventFunction function callback
      */
-    public addClickMap(eventClick: any) {
-        this.map.addClickMap(eventClick);
+    public addEventMap(eventType: EventType, eventFunction: any) {
+        this.map.addEventMap(eventType, eventFunction);
     }
 
     /**
      * Use this function to remove event clicks from the currentMap
+     * @param {EventType} eventType
      */
-    public removeClickMap() {
-        this.map.removeClickMap();
+    public removeEventMap(eventType: EventType) {
+        this.map.removeEventMap(eventType);
     }
 
+    /**
+     * Returns the current zoom level of the map view
+     */
+    public getZoom(): number {
+        return this.map.getZoom();
+    }
+
+    /* Overlay */
+    /**
+     * Use this function to dray overlays on the current map
+     * @param {string} type
+     * @param {OverlayOptions} options
+     * @param {string} typePolygon
+     * @param condition
+     */
+    public drawOverlay(type: string, options: OverlayOptions, typePolygon?: string, condition?: any) {
+        let overlay = null;
+
+        if (typePolygon) {
+            const polygons = this.getPolygons(typePolygon, condition);
+            overlay = this.map.drawOverlay(options, polygons);
+        } else {
+            overlay = this.map.drawOverlay(options);
+        }
+
+        if (!this.overlayList[type]) {
+            this.overlayList[type] = [];
+        }
+        this.overlayList[type].push(overlay);
+    }
+
+    public toggleOverlay(show: boolean, type: string, condition?: any) {
+        const overlays = this.getOverlays(type, condition);
+
+        if (overlays) {
+            this.map.toggleOverlay(overlays, show);
+        }
+    }
+
+    /**
+     * Remove overlays from the map and from internal list
+     * @param {string} type
+     * @param {any} condition remove overlays with the condition
+     */
+    public removeOverlays(type: string, condition?: any) {
+        if (this.overlayList[type] && condition) {
+            const overlays = this.overlayList[type].filter((overlay) => condition(overlay.object));
+
+            // Hide markers with the condition
+            this.map.toggleOverlay(overlays, false);
+
+            // Keep markers that doesn't have the condition
+            this.overlayList[type] = this.overlayList[type].filter((overlay) => !condition(overlay.object));
+        } else {
+            if (this.overlayList[type]) {
+                this.map.toggleOverlay(this.overlayList[type], false);
+            }
+            this.overlayList[type] = [];
+        }
+    }
+
+    /* Private Methods */
     private getMarkers(type: string, condition: any) {
         const markers = this.markersList[type];
-        return markers.filter((marker) => condition(marker.object));
+        return condition ? markers.filter((marker) => condition(marker.object)) : markers;
     }
 
     private getPolygons(type: string, condition: any) {
         const polygons = this.polygonsList[type];
-        return polygons.filter((polygon) => condition(polygon.object));
+        return condition ? polygons.filter((polygon) => condition(polygon.object)) : polygons;
     }
 
     private getCircles(type: string, condition: any) {
         const circles = this.circlesList[type];
-        return circles.filter((circle) => condition(circle.object));
+        return condition ? circles.filter((circle) => condition(circle.object)) : circles;
     }
 
     private getPolylines(type: string, condition: any) {
         const polylines = this.polylinesList[type];
-        return polylines.filter((polyline) => condition(polyline.object));
+        return condition ? polylines.filter((polyline) => condition(polyline.object)) : polylines;
+    }
+
+    private getOverlays(type: string, condition: any) {
+        const overlays = this.overlayList[type];
+        return condition ? overlays.filter((overlay) => condition(overlay.object)) : overlays;
     }
 }

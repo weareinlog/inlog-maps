@@ -3,9 +3,9 @@ export default class CircleMarkerStyle {
     public weight?: number;
     public color?: string;
     public fillColor?: string;
-    public fillOpacity?: string;
+    public fillOpacity?: number;
 
-    constructor(radius: number, weight?: number, color?: string, fillColor?: string, fillOpacity?: string) {
+    constructor(radius: number, weight?: number, color?: string, fillColor?: string, fillOpacity?: number) {
         this.radius = radius;
         this.weight = weight;
         this.color = color;

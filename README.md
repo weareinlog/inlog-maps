@@ -1,9 +1,33 @@
-# inlog-maps *2.0.2*
+# [@inlog/inlog-maps](https://github.com/weareinlog/inlog-maps#readme) *2.1.5*
 
 > A library for using generic layer maps 
 
 
 ### src/map.js
+
+
+#### Map.initialize(mapType, options) 
+
+Use this to initialize map
+
+
+
+
+##### Parameters
+
+| Name | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| mapType |  | {inlogMaps.MapType} | &nbsp; |
+| options |  | {any} | &nbsp; |
+
+
+
+
+##### Returns
+
+
+- `Void`
+
 
 
 #### Map.loadGEOJson(data, options, eventClick) 

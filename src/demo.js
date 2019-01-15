@@ -1,6 +1,7 @@
 const googleMapsLibParams = {
     libraries: ['drawing'],
-    apiKey: '<your-api-key-here>'
+    // apiKey: '<your-api-key-here>'
+    apiKey: 'AIzaSyA1SgDQ73yfaEGPk6kWXCAKf_mQlG7yKi8'
 };
 
 const leafletLibParams = {
@@ -21,6 +22,7 @@ let polygonShow = null;
 let polylineShow = null;
 let circleShow = null;
 let drawing = false;
+let zoomChanged = false;
 
 /* GEOJson */
 function onClick(event) {
@@ -233,6 +235,20 @@ function changeCircleMarkerColor() {
     }
 }
 
+function onZoomChanged() {
+    console.log(currentMap.getZoom());
+}
+
+function toogleOnZoomChanged() {
+    if (zoomChanged) {
+        currentMap.removeEventMap(currentMap.eventType.ZoomChanged);
+        zoomChanged = false;
+    } else {
+        currentMap.addEventMap(currentMap.eventType.ZoomChanged, onZoomChanged);
+        zoomChanged = true;
+    }
+}
+
 /* Polyline tests */
 function onClickPolyline(polyline, event, object) {
     let options = new inlogMaps.PopupOptions(event.latlng, `<p>${object.item}.</p>`);
@@ -331,10 +347,10 @@ function drawPolyline() {
         alert('The polyline is not on the currentMap!');
     } else {
         if (drawing) {
-            currentMap.removeClickMap();
+            currentMap.removeEventMap(currentMap.eventType.Click);
             drawing = false;
         } else {
-            currentMap.addClickMap(updatePolyline);
+            currentMap.addEventMap(currentMap.eventType.Click, updatePolyline);
             drawing = true;
         }
     }
@@ -375,6 +391,18 @@ function addPolygon() {
         options.editable = true;
         currentMap.drawPolygon('polygon', options, onClickPolygon);
         polygonShow = true;
+
+        const div = document.createElement('div');
+        div.style.fontSize = '13px';
+        div.style.position = 'absolute';
+        div.style.minWidth = '90px';
+
+        const span = document.createElement('span');
+        span.textContent = 'Eu to aqui!';
+        div.appendChild(span);
+
+        const overlayOptions = new inlogMaps.OverlayOptions(div, true);
+        currentMap.drawOverlay('ocupacao', overlayOptions, 'polygon');
     } else {
         polygonShow = !polygonShow;
         currentMap.togglePolygons(polygonShow, 'polygon');

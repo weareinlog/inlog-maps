@@ -1,4 +1,5 @@
 import { MapsApiLoaderService } from '../../utils/maps-api-loader.service';
+import { EventType } from '../dto/event-type';
 import { MapType } from '../dto/map-type';
 import CircleAlterOptions from '../features/circle/circle-alter-options';
 import CircleOptions from '../features/circle/circle-options';
@@ -7,6 +8,7 @@ import GeoJsonOptions from '../features/geojson/geojson-options';
 import CircleMarkerOptions from '../features/marker/circle-marker-options';
 import MarkerAlterOptions from '../features/marker/marker-alter-options';
 import MarkerOptions from '../features/marker/marker-options';
+import OverlayOptions from '../features/overlay/overlay-options';
 import PolygonAlterOptions from '../features/polygons/polygon-alter-options';
 import PolygonOptions from '../features/polygons/polygon-options';
 import NavigationOptions from '../features/polyline/navigations-options';
@@ -24,6 +26,7 @@ export default class GoogleMaps implements IMapFunctions {
     private directionForward = false;
     private multiSelectionForward = false;
     private multiSelection = false;
+    private OverlayGoogle = null;
 
     constructor() { /* */ }
 
@@ -43,6 +46,36 @@ export default class GoogleMaps implements IMapFunctions {
                     zoom: 4,
                     zoomControl: true
                 });
+
+                OverlayGoogle.prototype = new this.google.maps.OverlayView();
+
+                // tslint:disable-next-line:no-shadowed-variable
+                function OverlayGoogle(bounds, div, map) {
+                    this.bounds_ = bounds;
+                    this.div_ = div;
+                    this.setMap(map);
+                }
+
+                OverlayGoogle.prototype.onAdd = function () {
+                    const panes = this.getPanes();
+                    panes.overlayLayer.appendChild(this.div_);
+                };
+
+                OverlayGoogle.prototype.draw = function () {
+                    const overlayProjection = this.getProjection();
+                    const center = overlayProjection.fromLatLngToDivPixel(this.bounds_.getCenter());
+                    const div = this.div_;
+
+                    div.style.left = center.x + 'px';
+                    div.style.top = center.y + 'px';
+                };
+
+                OverlayGoogle.prototype.onRemove = function () {
+                    this.div_.parentNode.removeChild(this.div_);
+                    // this.div_ = null;
+                };
+
+                this.OverlayGoogle = OverlayGoogle;
                 return this;
             })
             .catch((err) => err);
@@ -56,7 +89,7 @@ export default class GoogleMaps implements IMapFunctions {
         objects.forEach((elem) => {
             if (eventClick) {
                 elem.addListener('click', (event) => {
-                    const param: EventReturn = { latlng: [event.latLng.lat(), event.latLng.lng()] };
+                    const param = new EventReturn([event.latLng.lat(), event.latLng.lng()]);
                     eventClick(param);
                 });
             }
@@ -89,7 +122,7 @@ export default class GoogleMaps implements IMapFunctions {
 
         if (eventClick) {
             this.google.maps.event.addListener(marker, 'click', (event) => {
-                const param: EventReturn = { latlng: [event.latLng.lat(), event.latLng.lng()] };
+                const param = new EventReturn([event.latLng.lat(), event.latLng.lng()]);
 
                 eventClick(marker, param, options.object);
             });
@@ -126,6 +159,7 @@ export default class GoogleMaps implements IMapFunctions {
                 strokeColor: options.style.color,
                 strokeWeight: options.style.weight
             },
+            object: options.object,
             position: {
                 lat: options.latlng[0],
                 lng: options.latlng[1]
@@ -136,7 +170,7 @@ export default class GoogleMaps implements IMapFunctions {
 
         if (eventClick) {
             this.google.maps.event.addListener(marker, 'click', (event) => {
-                const param: EventReturn = { latlng: [event.latLng.lat(), event.latLng.lng()] };
+                const param = new EventReturn([event.latLng.lat(), event.latLng.lng()]);
                 eventClick(marker, param, options.object);
             });
         }
@@ -221,6 +255,7 @@ export default class GoogleMaps implements IMapFunctions {
             editable: options.editable,
             fillColor: options.fillColor,
             fillOpacity: options.fillOpacity,
+            object: options.object,
             paths,
             strokeColor: options.color,
             strokeOpacity: options.opacity,
@@ -231,7 +266,7 @@ export default class GoogleMaps implements IMapFunctions {
 
         if (eventClick) {
             this.google.maps.event.addListener(polygon, 'click', (event) => {
-                const param: EventReturn = { latlng: [event.latLng.lat(), event.latLng.lng()] };
+                const param = new EventReturn([event.latLng.lat(), event.latLng.lng()]);
                 eventClick(polygon, param, options.object);
             });
         }
@@ -247,9 +282,9 @@ export default class GoogleMaps implements IMapFunctions {
         return polygon;
     }
 
-    public fitBoundsPolygon(polygon) {
+    public fitBoundsPolygons(polygons) {
         const self = this;
-        self.map.fitBounds(self.getPolygonBounds(polygon));
+        self.map.fitBounds(self.getPolygonsBounds(polygons));
     }
 
     public togglePolygons(polygons: any[], show: boolean) {
@@ -301,7 +336,7 @@ export default class GoogleMaps implements IMapFunctions {
 
         if (eventClick) {
             this.google.maps.event.addListener(circle, 'click', (event) => {
-                const param: EventReturn = { latlng: [event.latLng.lat(), event.latLng.lng()] };
+                const param = new EventReturn([event.latLng.lat(), event.latLng.lng()]);
                 eventClick(circle, param, options.object);
             });
         }
@@ -366,7 +401,7 @@ export default class GoogleMaps implements IMapFunctions {
 
         if (eventClick) {
             this.google.maps.event.addListener(polyline, 'click', (event) => {
-                const param: EventReturn = { latlng: [event.latLng.lat(), event.latLng.lng()] };
+                const param = new EventReturn([event.latLng.lat(), event.latLng.lng()]);
                 eventClick(polyline, param, polyline.object);
             });
         }
@@ -471,18 +506,66 @@ export default class GoogleMaps implements IMapFunctions {
     }
 
     /* Map */
-    public addClickMap(eventClick) {
+    public addEventMap(eventType: EventType, eventFunction) {
         const self = this;
 
-        this.google.maps.event.addListener(self.map, 'click', (event) => {
-            const param: EventReturn = { latlng: [event.latLng.lat(), event.latLng.lng()] };
-            eventClick(param);
-        });
+        switch (eventType) {
+            case EventType.Click:
+                this.google.maps.event.addListener(self.map, 'click', (event) => {
+                    const param = new EventReturn([event.latLng.lat(), event.latLng.lng()]);
+                    eventFunction(param);
+                });
+                break;
+            case EventType.ZoomChanged:
+                self.map.addListener('zoom_changed', () => {
+                    const param = new EventReturn([self.map.getCenter().lat(), self.map.getCenter().lng()]);
+                    eventFunction(param);
+                });
+            default:
+                break;
+        }
     }
 
-    public removeClickMap() {
+    public removeEventMap(eventType: EventType) {
         const self = this;
-        this.google.maps.event.clearListeners(self.map, 'click');
+        switch (eventType) {
+            case EventType.Click:
+                this.google.maps.event.clearListeners(self.map, 'click');
+                break;
+            case EventType.ZoomChanged:
+                this.google.maps.event.clearListeners(self.map, 'zoom_changed');
+            default:
+                break;
+        }
+    }
+
+    public getZoom(): number {
+        return this.map.getZoom();
+    }
+
+    /* Overlay */
+    public drawOverlay(options: OverlayOptions, polygons: any) {
+        let bounds = null;
+
+        if (polygons && polygons.length > 0) {
+            bounds = this.getPolygonsBounds(polygons);
+        } else {
+            bounds = new this.google.maps.LatLngBounds();
+            bounds.extend(new this.google.maps.LatLng(options.position[0], options.position[1]));
+        }
+
+        const overlay = new this.OverlayGoogle(bounds, options.divElement);
+        if (options.addToMap) {
+            overlay.setMap(this.map);
+        }
+
+        overlay.object = options.object;
+        return overlay;
+    }
+
+    public toggleOverlay(overlays: any[], show: boolean) {
+        const self = this;
+        overlays.forEach((overlay) => overlay.setMap(show ? self.map : null));
     }
 
     /* Private Methods */
