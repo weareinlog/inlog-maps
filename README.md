@@ -1,4 +1,4 @@
-# [@inlog/inlog-maps](https://github.com/weareinlog/inlog-maps#readme) *2.1.6*
+# [@inlog/inlog-maps](https://github.com/weareinlog/inlog-maps#readme) *2.1.7*
 
 > A library for using generic layer maps 
 
