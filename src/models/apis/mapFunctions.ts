@@ -24,6 +24,7 @@ export default interface IMapFunctions {
     drawCircleMarker(options: CircleMarkerOptions, eventClick);
     toggleMarkers(markers: any[], show: boolean);
     alterMarkerOptions(markers: any[], options: MarkerAlterOptions);
+    alterMarkerPosition(markers: any[], position: number[], addTransotion: boolean);
 
     /* Polygons */
     drawPolygon(options: PolygonOptions, eventClick);

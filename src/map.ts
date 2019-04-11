@@ -123,21 +123,18 @@ export default class Map {
     }
 
     /**
-     * Use this function to draw or modify markers in the map
-     * @param {string} type
-     * @param {inlogMaps.MarkerOptions} options
-     * @param {any} eventClick is a function callback on click
-     * @param {any} condition draw or alter markers with the condition
+     * Use this functions to alterar marker position
+     * @param {string } type
+     * @param {number[]} position
+     * @param {any} condition
      */
-    // public drawOrAlterMarkers(type: string, options: MarkerOptions, eventClick: any, condition?: any) {
-    //     const markers = (this.markersList[type] || []).filter((marker) => condition(marker.object));
+    public alterMarkerPosition(type: string, position: number[], addTransition: boolean, condition?: any) {
+        const markers = this.getMarkers(type, condition);
 
-    //     if (markers) {
-    //         this.map.alterMarkerOptions(markers, options);
-    //     } else {
-    //         this.drawMarker(type, options, eventClick);
-    //     }
-    // }
+        if (markers && markers.length > 0) {
+            this.map.alterMarkerPosition(markers, position, addTransition);
+        }
+    }
 
     /**
      * Remove markers from the map and from internal list

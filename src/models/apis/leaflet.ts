@@ -179,6 +179,16 @@ export default class Leaflet implements IMapFunctions {
         });
     }
 
+    public alterMarkerPosition(markers: any[], position: number[], addTransition: boolean) {
+        markers.forEach((marker) => {
+            if (addTransition) {
+                this.moveTransitionMarker(position, marker);
+            } else {
+                marker.setLatLng(position);
+            }
+        });
+    }
+
     /* Polygons */
     public drawPolygon(options: PolygonOptions, eventClick) {
         const self = this;
@@ -701,5 +711,27 @@ export default class Leaflet implements IMapFunctions {
 
     private clearPolylinePath(polyline) {
         polyline.setLatLngs([]);
+    }
+
+    private moveTransitionMarker(position: any, marker: any) {
+        const numDeltas = 5;
+        const referencia = {
+            position: [marker.getLatLng().lat, marker.getLatLng().lng],
+            i: 0,
+            deltaLat: (position[0] - marker.getLatLng().lat) / numDeltas,
+            deltaLng: (position[1] - marker.getLatLng().lng) / numDeltas
+        }
+
+        this.moveMarker(marker, referencia, numDeltas);
+    }
+
+    private moveMarker(marker: any, referencia: any, numDeltas: number) {
+        referencia.position[0] += referencia.deltaLat;
+        referencia.position[1] += referencia.deltaLng;
+        marker.setLatLng(referencia.position);
+        if (referencia.i <= numDeltas) {
+            referencia.i++;
+            setTimeout(() => this.moveMarker(marker, referencia, numDeltas), 20);
+        }
     }
 }

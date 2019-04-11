@@ -1,7 +1,6 @@
 const googleMapsLibParams = {
     libraries: ['drawing'],
-    // apiKey: '<your-api-key-here>'
-    apiKey: 'AIzaSyA1SgDQ73yfaEGPk6kWXCAKf_mQlG7yKi8'
+    apiKey: '<your-api-key-here>'
 };
 
 const leafletLibParams = {
@@ -9,11 +8,10 @@ const leafletLibParams = {
     crossorigin: '',
 };
 
-const API_PARAMS = leafletLibParams;
 const inlogMaps = window.InlogMaps;
 const currentMap = new inlogMaps.Map;
 
-currentMap.initialize(currentMap.mapType.Leaflet, API_PARAMS).then(() => this.isMapInitialized = true);
+currentMap.initialize(currentMap.mapType.Leaflet, leafletLibParams).then(() => this.isMapInitialized = true);
 
 let simpleMarkerShow = null;
 let customMarkerShow = null;
@@ -149,8 +147,7 @@ function changeMarkerPosition() {
     if (simpleMarkerShow === null) {
         alert('The marker was not created yet');
     } else {
-        let options = new inlogMaps.MarkerAlterOptions([-20, -40]);
-        currentMap.alterMarkerOptions('simple', options);
+        currentMap.alterMarkerPosition('simple', [-25.4328, -49.28059], true);
     }
 }
 

@@ -1,9 +1,9 @@
-# [@inlog/inlog-maps](https://github.com/weareinlog/inlog-maps#readme) *2.1.7*
+# [@inlog/inlog-maps](https://github.com/weareinlog/inlog-maps#readme) *2.1.10*
 
 > A library for using generic layer maps 
 
 
-### src/map.js
+### lib/map.js
 
 
 #### Map.initialize(mapType, options) 
@@ -178,6 +178,31 @@ Use this function to alter marker style
 
 
 
+#### Map.alterMarkerPosition(type, position, condition) 
+
+Use this functions to alterar marker position
+
+
+
+
+##### Parameters
+
+| Name | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| type | `string`  |  | &nbsp; |
+| position | `Array.<number>`  |  | &nbsp; |
+| condition | `any`  |  | &nbsp; |
+
+
+
+
+##### Returns
+
+
+- `Void`
+
+
+
 #### Map.removeMarkers(type, condition) 
 
 Remove markers from the map and from internal list
@@ -227,7 +252,7 @@ Use this function to draw polygons
 
 
 
-#### Map.fitBoundsPolygon(type, condition) 
+#### Map.fitBoundsPolygons(type, condition) 
 
 Use this function to fit bounds of a polygon
 
@@ -290,6 +315,30 @@ Use this function to alter polygons options/style
 | type | `string`  |  | &nbsp; |
 | options | `inlogMaps.PolygonAlterOptions`  |  | &nbsp; |
 | condition | `any`  | alter polygon with the condition | &nbsp; |
+
+
+
+
+##### Returns
+
+
+- `Void`
+
+
+
+#### Map.removePolygons(type, condition) 
+
+Remove polygons from the map and from internal list
+
+
+
+
+##### Parameters
+
+| Name | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| type | `string`  |  | &nbsp; |
+| condition | `any`  | remove polygons with the condition | &nbsp; |
 
 
 
@@ -587,7 +636,7 @@ Use this function to alter popups
 
 
 
-#### Map.addClickMap(eventClick) 
+#### Map.addEventMap(eventType, eventFunction) 
 
 Use this function to add event clicks on the currentMap
 
@@ -598,7 +647,8 @@ Use this function to add event clicks on the currentMap
 
 | Name | Type | Description |  |
 | ---- | ---- | ----------- | -------- |
-| eventClick | `any`  |  | &nbsp; |
+| eventType | `EventType`  |  | &nbsp; |
+| eventFunction |  | function callback | &nbsp; |
 
 
 
@@ -610,11 +660,84 @@ Use this function to add event clicks on the currentMap
 
 
 
-#### Map.removeClickMap() 
+#### Map.removeEventMap(eventType) 
 
 Use this function to remove event clicks from the currentMap
 
 
+
+
+##### Parameters
+
+| Name | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| eventType | `EventType`  |  | &nbsp; |
+
+
+
+
+##### Returns
+
+
+- `Void`
+
+
+
+#### Map.getZoom() 
+
+Returns the current zoom level of the map view
+
+
+
+
+
+
+##### Returns
+
+
+- `Void`
+
+
+
+#### Map.drawOverlay(type, options, typePolygon, condition) 
+
+Use this function to dray overlays on the current map
+
+
+
+
+##### Parameters
+
+| Name | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| type | `string`  |  | &nbsp; |
+| options | `OverlayOptions`  |  | &nbsp; |
+| typePolygon | `string`  |  | &nbsp; |
+| condition |  |  | &nbsp; |
+
+
+
+
+##### Returns
+
+
+- `Void`
+
+
+
+#### Map.removeOverlays(type, condition) 
+
+Remove overlays from the map and from internal list
+
+
+
+
+##### Parameters
+
+| Name | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| type | `string`  |  | &nbsp; |
+| condition | `any`  | remove overlays with the condition | &nbsp; |
 
 
 

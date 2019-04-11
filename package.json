@@ -1,56 +1,56 @@
 {
-    "name": "@inlog/inlog-maps",
-    "version": "2.1.7",
-    "description": "A library for using generic layer maps ",
-    "main": "index.js",
-    "types": "dist/index.d.ts",
-    "scripts": {
-        "clean": "shx rm -rf _bundles lib lib-esm",
-        "build": "npm run clean && tsc && tsc -m es6 --outDir lib-esm && webpack",
-        "docs": "doxdox src/map.js --layout markdown --output README.md",
+  "name": "@inlog/inlog-maps",
+  "version": "2.1.10",
+  "description": "A library for using generic layer maps ",
+  "main": "index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "clean": "shx rm -rf _bundles lib lib-esm",
+    "build": "npm run clean && tsc && tsc -m es6 --outDir lib-esm && webpack",
+    "docs": "doxdox lib/map.js --layout markdown --output README.md",
         "publish": "npm run build && npm run docs && npm publish",
-        "start": "webpack-dev-server --mode development",
-        "test": "mocha --reporter spec"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/weareinlog/inlog-maps.git"
-    },
-    "keywords": [
-        "maps",
-        "map api"
-    ],
-    "author": "Carol Hoegen <carolhoegen@gmail.com>",
-    "contributors": [
-        "Lidia Freitas <lidiafreitas.me@gmail.com>",
-        "Gustavo Santos <gustavo.dev@outlook.com.br>"
-    ],
-    "license": "MIT",
-    "devDependencies": {
-        "chai": "^4.2.0",
-        "doxdox": "^2.0.3",
-        "mocha": "^5.2.0",
-        "ts-loader": "^5.3.0",
-        "typescript": "^3.1.6"
-    },
-    "dependencies": {
-        "@types/google-maps": "^3.2.0",
-        "@types/googlemaps": "^3.30.16",
-        "awesome-typescript-loader": "^3.0.4-rc.2",
-        "jsdoc-to-markdown": "^4.0.1",
-        "leaflet": "^1.3.1",
-        "leaflet-editable": "^1.1.0",
-        "leaflet.path.drag": "0.0.6",
-        "shx": "^0.2.2",
-        "typescript": "^2.1.6",
-        "webpack": "^2.2.1"
-    },
-    "bugs": {
-        "url": "https://github.com/weareinlog/inlog-maps/issues"
-    },
-    "homepage": "https://github.com/weareinlog/inlog-maps#readme",
-    "directories": {
-        "lib": "lib",
-        "test": "test"
-    }
+    "start": "webpack-dev-server --mode development",
+    "test": "mocha --reporter spec"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/weareinlog/inlog-maps.git"
+  },
+  "keywords": [
+    "maps",
+    "map api"
+  ],
+  "author": "Carol Hoegen <carolhoegen@gmail.com>",
+  "contributors": [
+    "Lidia Freitas <lidiafreitas.me@gmail.com>",
+    "Gustavo Santos <gustavo.dev@outlook.com.br>"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "doxdox": "^2.0.3",
+    "mocha": "^5.2.0",
+    "ts-loader": "^5.3.0",
+    "typescript": "^3.1.6"
+  },
+  "dependencies": {
+    "@types/google-maps": "^3.2.0",
+    "@types/googlemaps": "^3.30.16",
+    "awesome-typescript-loader": "^3.0.4-rc.2",
+    "jsdoc-to-markdown": "^4.0.1",
+    "leaflet": "^1.3.1",
+    "leaflet-editable": "^1.1.0",
+    "leaflet.path.drag": "0.0.6",
+    "shx": "^0.2.2",
+    "typescript": "^2.1.6",
+    "webpack": "^2.2.1"
+  },
+  "bugs": {
+    "url": "https://github.com/weareinlog/inlog-maps/issues"
+  },
+  "homepage": "https://github.com/weareinlog/inlog-maps#readme",
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  }
 }

@@ -238,6 +238,21 @@ export default class GoogleMaps implements IMapFunctions {
         });
     }
 
+    public alterMarkerPosition(markers: any[], position: number[], addTransition: boolean) {
+        const newPosition = {
+            lat: position[0],
+            lng: position[1]
+        };
+
+        markers.forEach((marker) => {
+            if (addTransition) {
+                this.moveTransitionMarker(newPosition, marker);
+            } else {
+                marker.setPosition(newPosition);
+            }
+        });
+    }
+
     /* Polygons */
     public drawPolygon(options: PolygonOptions, eventClick) {
         const self = this;
@@ -806,6 +821,28 @@ export default class GoogleMaps implements IMapFunctions {
                 return new this.google.maps.Polyline(objectOptions);
             default:
                 throw new Error('Forma de objeto desconhecida.');
+        }
+    }
+
+    private moveTransitionMarker(position: any, marker: any) {
+        const numDeltas = 5;
+        const referencia = {
+            position: [marker.getPosition().lat(), marker.getPosition().lng()],
+            i: 0,
+            deltaLat: (position.lat - marker.getPosition().lat()) / numDeltas,
+            deltaLng: (position.lng - marker.getPosition().lng()) / numDeltas
+        }
+
+        this.moveMarker(marker, referencia, numDeltas);
+    }
+
+    private moveMarker(marker: any, referencia: any, numDeltas: number) {
+        referencia.position[0] += referencia.deltaLat;
+        referencia.position[1] += referencia.deltaLng;
+        marker.setPosition(new google.maps.LatLng(referencia.position[0], referencia.position[1]));
+        if (referencia.i <= numDeltas) {
+            referencia.i++;
+            setTimeout(() => this.moveMarker(marker, referencia, numDeltas), 20);
         }
     }
 
