@@ -20,15 +20,22 @@ export class MapsApiLoaderService {
     }
 
     public static loadLeafletAPI(params) {
-        const script = document.createElement('script');
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = 'https://unpkg.com/leaflet@1.4.0/dist/leaflet.css';
+        // link.integrity = params.cssIntegrity;
+        // link.setAttribute('crossorigin', params.crossorigin);
 
+        document.querySelector('head').appendChild(link);
+
+        const script = document.createElement('script');
         script.type = 'text/javascript';
 
         script.src = urlBuilder({
-            base: 'https://unpkg.com/leaflet@1.3.3/dist/leaflet.js',
+            base: 'https://unpkg.com/leaflet@1.4.0/dist/leaflet.js',
             callback: 'mapsAPILoadCallback',
-            crossorigin: params.crossorigin,
-            integrity: params.integrity
+            // crossorigin: params.crossorigin,
+            // integrity: params.integrity
         });
 
         document.querySelector('head').appendChild(script);

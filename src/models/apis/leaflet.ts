@@ -19,7 +19,6 @@ import IMapFunctions from './mapFunctions';
 export default class Leaflet implements IMapFunctions {
     private map = null;
     private leaflet = null;
-    private position = null;
     private mapsApiLoader: MapsApiLoaderService = new MapsApiLoaderService();
     private selectedPolyline = null;
     private selectedPath = null;
@@ -34,21 +33,35 @@ export default class Leaflet implements IMapFunctions {
         return this.mapsApiLoader.loadApi(mapType, params)
             .then((api) => {
                 this.leaflet = api;
+                this.loadDependencies(params.scriptsDependencies);
 
-                const mapOptions = {
-                    center: new this.leaflet.LatLng(-14, -54),
-                    editable: true,
-                    maxZoom: 20,
-                    minZoom: 4,
-                    zoom: 4
-                };
-                this.map = new this.leaflet.Map('inlog-map', mapOptions);
-                new this.leaflet.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', mapOptions)
-                    .addTo(this.map);
+                setTimeout(() => {
+                    const mapOptions = {
+                        center: new this.leaflet.LatLng(-14, -54),
+                        editable: true,
+                        maxZoom: 20,
+                        minZoom: 4,
+                        zoom: 4
+                    };
+                    this.map = new this.leaflet.Map('inlog-map', mapOptions);
+                    new this.leaflet.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', mapOptions)
+                        .addTo(this.map);
 
-                return this;
+                    return this;
+                }, 500);
             })
             .catch((err) => err);
+    }
+
+    private loadDependencies(paths: string[]) {
+        if (paths && paths.length > 0) {
+            paths.forEach((path) => {
+                const script = document.createElement('script');
+                script.type = 'text/javascript';
+                script.src = path;
+                document.querySelector('head').appendChild(script);
+            });
+        }
     }
 
     /* GEOJson */

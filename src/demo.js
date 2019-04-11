@@ -5,7 +5,12 @@ const googleMapsLibParams = {
 
 const leafletLibParams = {
     integrity: 'sha512-tAGcCfR4Sc5ZP5ZoVz0quoZDYX5aCtEm/eu1KhSLj2c9eFrylXZknQYmxUssFaVJKvvc0dJQixhGjG2yXWiV9Q==',
+    cssIntegrity: 'sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ==',
     crossorigin: '',
+    scriptsDependencies: [
+        '../node_modules/leaflet-editable/src/Leaflet.Editable.js',
+        '../node_modules/leaflet.path.drag/src/Path.Drag.js'
+    ]
 };
 
 const inlogMaps = window.InlogMaps;
@@ -46,39 +51,39 @@ function geojsonPolyline() {
     let polylines = {
         'type': 'FeatureCollection',
         'features': [{
-                'type': 'Feature',
-                'properties': {
-                    'id': 1
-                },
-                'geometry': {
-                    'type': 'LineString',
-                    'coordinates': [
-                        [-43.48283, -23.02487],
-                        [-43.48391, -23.02475],
-                        [-43.48233, -23.02486],
-                        [-43.48212, -23.02443],
-                        [-43.48243, -23.02429],
-                        [-43.48245, -23.02477]
-                    ]
-                }
+            'type': 'Feature',
+            'properties': {
+                'id': 1
             },
-            {
-                'type': 'Feature',
-                'properties': {
-                    'id': 2
-                },
-                'geometry': {
-                    'type': 'LineString',
-                    'coordinates': [
-                        [-46.65953, -23.55865],
-                        [-46.65953, -23.5579],
-                        [-46.65972, -23.55809],
-                        [-46.65941, -23.55878],
-                        [-46.65953, -23.55896],
-                        [-46.65903, -23.55888]
-                    ]
-                }
+            'geometry': {
+                'type': 'LineString',
+                'coordinates': [
+                    [-43.48283, -23.02487],
+                    [-43.48391, -23.02475],
+                    [-43.48233, -23.02486],
+                    [-43.48212, -23.02443],
+                    [-43.48243, -23.02429],
+                    [-43.48245, -23.02477]
+                ]
             }
+        },
+        {
+            'type': 'Feature',
+            'properties': {
+                'id': 2
+            },
+            'geometry': {
+                'type': 'LineString',
+                'coordinates': [
+                    [-46.65953, -23.55865],
+                    [-46.65953, -23.5579],
+                    [-46.65972, -23.55809],
+                    [-46.65941, -23.55878],
+                    [-46.65953, -23.55896],
+                    [-46.65903, -23.55888]
+                ]
+            }
+        }
         ]
     };
 
@@ -268,6 +273,7 @@ function addPolyline() {
         options.addToMap = true;
         options.fitBounds = true;
         options.draggable = true;
+        options.editable = true;
         options.object = {
             item: 'New'
         };
