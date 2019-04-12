@@ -1,4 +1,4 @@
-# [@inlog/inlog-maps](https://github.com/weareinlog/inlog-maps#readme) *2.1.14*
+# [@inlog/inlog-maps](https://github.com/weareinlog/inlog-maps#readme) *2.1.15*
 
 > A library for using generic layer maps 
 
@@ -216,6 +216,30 @@ Remove markers from the map and from internal list
 | ---- | ---- | ----------- | -------- |
 | type | `string`  |  | &nbsp; |
 | condition | `any`  | remove markers with the condition | &nbsp; |
+
+
+
+
+##### Returns
+
+
+- `Void`
+
+
+
+#### Map.setCenterMarker(type, condition) 
+
+Use this functions to set the center of the map on marker
+
+
+
+
+##### Parameters
+
+| Name | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| type | `string`  |  | &nbsp; |
+| condition | `any`  | center on marker with the condition | &nbsp; |
 
 
 

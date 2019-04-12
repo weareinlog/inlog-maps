@@ -25,6 +25,7 @@ export default interface IMapFunctions {
     toggleMarkers(markers: any[], show: boolean);
     alterMarkerOptions(markers: any[], options: MarkerAlterOptions);
     alterMarkerPosition(markers: any[], position: number[], addTransotion: boolean);
+    setCenterMarker(marker: any);
 
     /* Polygons */
     drawPolygon(options: PolygonOptions, eventClick);
