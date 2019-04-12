@@ -202,6 +202,10 @@ export default class Leaflet implements IMapFunctions {
         });
     }
 
+    public setCenterMarker(marker: any) {
+        this.map.panTo(marker.getLatLng());
+    }
+
     /* Polygons */
     public drawPolygon(options: PolygonOptions, eventClick) {
         const self = this;

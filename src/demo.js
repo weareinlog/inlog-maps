@@ -148,6 +148,12 @@ function addMarker() {
     }
 }
 
+function setCenterOnMarker() {
+    if (simpleMarkerShow) {
+        currentMap.setCenterMarker('simple');
+    } else alert('wait');
+}
+
 function changeMarkerPosition() {
     if (simpleMarkerShow === null) {
         alert('The marker was not created yet');

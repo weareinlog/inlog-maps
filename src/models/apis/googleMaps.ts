@@ -253,6 +253,10 @@ export default class GoogleMaps implements IMapFunctions {
         });
     }
 
+    public setCenterMarker(marker: any) {
+        this.map.setCenter(marker.getPosition());
+    }
+
     /* Polygons */
     public drawPolygon(options: PolygonOptions, eventClick) {
         const self = this;

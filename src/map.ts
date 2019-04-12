@@ -158,6 +158,24 @@ export default class Map {
         }
     }
 
+    /**
+     * Use this functions to set the center of the map on marker
+     * @param {string} type
+     * @param {any} condition center on marker with the condition
+     */
+    public setCenterMarker(type: string, condition?: any) {
+        if (this.markersList[type] && condition) {
+            const marker = this.markersList[type].find((marker) => condition(marker.object));
+
+            // Center on the marker with the condition
+            this.map.setCenterMarker(marker);
+        } else {
+            if (this.markersList[type] && this.markersList[type].length > 0) {
+                this.map.setCenterMarker(this.markersList[type][0]);
+            }
+        }
+    }
+
     /* Polygons */
     /**
      * Use this function to draw polygons
