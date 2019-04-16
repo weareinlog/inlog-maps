@@ -16,43 +16,46 @@ export default interface IMapFunctions {
     initialize(mapType: MapType, params: object);
 
     /* GEOJson */
-    loadGEOJson(data: object, options: GeoJsonOptions, eventClick);
+    loadGEOJson(data: object, options: GeoJsonOptions, eventClick: any);
 
     /* Markers */
-    drawMarker(options: MarkerOptions, eventClick);
+    drawMarker(options: MarkerOptions, eventClick: any);
     fitBoundsPositions(markers: any[]);
-    drawCircleMarker(options: CircleMarkerOptions, eventClick);
+    drawCircleMarker(options: CircleMarkerOptions, eventClick: any);
     toggleMarkers(markers: any[], show: boolean);
     alterMarkerOptions(markers: any[], options: MarkerAlterOptions);
     alterMarkerPosition(markers: any[], position: number[], addTransotion: boolean);
     setCenterMarker(marker: any);
+    isMarkerOnMap(marker: any): boolean;
 
     /* Polygons */
-    drawPolygon(options: PolygonOptions, eventClick);
-    fitBoundsPolygons(polygons);
+    drawPolygon(options: PolygonOptions, eventClick: any);
+    fitBoundsPolygons(polygons: any);
     togglePolygons(polygons: any[], show: boolean);
     alterPolygonOptions(polygons: any[], options: PolygonAlterOptions);
+    isPolygonOnMap(polygon: any): boolean;
 
     /* Polylines */
-    drawPolyline(options: PolylineOptions, eventClick);
+    drawPolyline(options: PolylineOptions, eventClick: any);
     togglePolyline(polyline: any, show: boolean);
     drawPolylineWithNavigation(options: PolylineOptions);
-    clearListenersPolyline(polyline);
-    addPolylinePath(polyline, position: number[]);
+    clearListenersPolyline(polyline: any);
+    addPolylinePath(polyline: any, position: number[]);
     removePolylineHighlight();
-    alterPolylineOptions(polyline, options: PolylineOptions);
+    alterPolylineOptions(polyline: any, options: PolylineOptions);
 
     /* Circles */
-    drawCircle(options: CircleOptions, eventClick);
+    drawCircle(options: CircleOptions, eventClick: any);
     toggleCircles(circles: any[], show: boolean);
     alterCircleOptions(circles: any[], options: CircleAlterOptions);
 
     /* Info Windows */
     drawPopup(options: PopupOptions);
-    alterPopup(popup, options: PopupOptions);
+    alterPopup(popup: any, options: PopupOptions);
+    closePopup(popup: any);
 
     /* Map */
-    addEventMap(eventType: EventType, eventFunction);
+    addEventMap(eventType: EventType, eventFunction: any);
     removeEventMap(eventType: EventType);
     getZoom(): number;
 

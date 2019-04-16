@@ -1,4 +1,4 @@
-# [@inlog/inlog-maps](https://github.com/weareinlog/inlog-maps#readme) *2.1.15*
+# [@inlog/inlog-maps](https://github.com/weareinlog/inlog-maps#readme) *2.2.0*
 
 > A library for using generic layer maps 
 
@@ -374,6 +374,22 @@ Remove polygons from the map and from internal list
 
 
 
+#### Map.polygonExists() 
+
+This functions returns if polygon exists
+
+
+
+
+
+
+##### Returns
+
+
+- `Void`
+
+
+
 #### Map.drawPolyline(type, options, eventClick) 
 
 Use this function to draw polylines on the currentMap
@@ -660,6 +676,52 @@ Use this function to alter popups
 
 
 
+#### Map.closePopup(type) 
+
+Use this function to close popup by type
+
+
+
+
+##### Parameters
+
+| Name | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| type | `string`  |  | &nbsp; |
+
+
+
+
+##### Returns
+
+
+- `Void`
+
+
+
+#### Map.closeAllPopups(type) 
+
+Use this function to close all popups
+
+
+
+
+##### Parameters
+
+| Name | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| type | `string`  |  | &nbsp; |
+
+
+
+
+##### Returns
+
+
+- `Void`
+
+
+
 #### Map.addEventMap(eventType, eventFunction) 
 
 Use this function to add event clicks on the currentMap
@@ -723,7 +785,7 @@ Returns the current zoom level of the map view
 
 
 
-#### Map.drawOverlay(type, options, typePolygon, condition) 
+#### Map.drawOverlay(type, options, typePolygon, polygonCondition) 
 
 Use this function to dray overlays on the current map
 
@@ -737,6 +799,31 @@ Use this function to dray overlays on the current map
 | type | `string`  |  | &nbsp; |
 | options | `OverlayOptions`  |  | &nbsp; |
 | typePolygon | `string`  |  | &nbsp; |
+| polygonCondition |  |  | &nbsp; |
+
+
+
+
+##### Returns
+
+
+- `Void`
+
+
+
+#### Map.toggleOverlay(show, type, condition) 
+
+Use this function to show or hide overlay
+
+
+
+
+##### Parameters
+
+| Name | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| show |  |  | &nbsp; |
+| type |  |  | &nbsp; |
 | condition |  |  | &nbsp; |
 
 

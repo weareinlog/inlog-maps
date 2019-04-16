@@ -70,12 +70,13 @@ export default class Map {
      * Use this function to fit bounds in the markers with the especified type
      * @param {string} type
      */
-    public fitBoundsMarkers(type: string) {
-        if (!this.markersList[type]) {
-            this.markersList[type] = [];
-        }
+    public fitBoundsMarkers(type: string, condition?: any) {
+        const markers = this.getMarkers(type, condition)
+            .filter((x: any) => this.map.isMarkerOnMap(x));
 
-        this.map.fitBoundsPositions(this.markersList[type].filter((x) => x.map !== null));
+        if (markers && markers.length > 0) {
+            this.map.fitBoundsPositions(markers);
+        }
     }
 
     /**
@@ -103,7 +104,7 @@ export default class Map {
     public toggleMarkers(show: boolean, type: string, condition?: any) {
         const markers = this.getMarkers(type, condition);
 
-        if (markers) {
+        if (markers && markers.length > 0) {
             this.map.toggleMarkers(markers, show);
         }
     }
@@ -143,18 +144,22 @@ export default class Map {
      */
     public removeMarkers(type: string, condition?: any) {
         if (this.markersList[type] && condition) {
-            const markers = this.markersList[type].filter((marker) => condition(marker.object));
+            const markers = this.getMarkers(type, condition);
 
             // Hide markers with the condition
             this.map.toggleMarkers(markers, false);
 
             // Keep markers that doesn't have the condition
-            this.markersList[type] = this.markersList[type].filter((marker) => !condition(marker.object));
+            this.markersList[type] = this.markersList[type].filter((marker: any) => !condition(marker.object));
         } else {
             if (this.markersList[type]) {
                 this.map.toggleMarkers(this.markersList[type], false);
             }
             this.markersList[type] = [];
+        }
+
+        if (this.markersList[type].length === 0) {
+            delete this.markersList[type];
         }
     }
 
@@ -165,7 +170,7 @@ export default class Map {
      */
     public setCenterMarker(type: string, condition?: any) {
         if (this.markersList[type] && condition) {
-            const marker = this.markersList[type].find((marker) => condition(marker.object));
+            const marker = this.markersList[type].find((marker: any) => condition(marker.object));
 
             // Center on the marker with the condition
             this.map.setCenterMarker(marker);
@@ -198,8 +203,12 @@ export default class Map {
      * @param {any} condition fit polygon bounds with the condition
      */
     public fitBoundsPolygons(type: string, condition?: any) {
-        const polygons = this.getPolygons(type, condition);
-        this.map.fitBoundsPolygons(polygons);
+        const polygons = this.getPolygons(type, condition)
+            .filter((polygon: any) => this.map.isPolygonOnMap(polygon));
+
+        if (polygons && polygons.length > 0) {
+            this.map.fitBoundsPolygons(polygons);
+        }
     }
 
     /**
@@ -211,7 +220,7 @@ export default class Map {
     public togglePolygons(show: boolean, type: string, condition?: any) {
         const polygons = this.getPolygons(type, condition);
 
-        if (polygons) {
+        if (polygons && polygons.length > 0) {
             this.map.togglePolygons(polygons, show);
         }
     }
@@ -225,7 +234,7 @@ export default class Map {
     public alterPolygonOptions(type: string, options: PolygonAlterOptions, condition?: any) {
         const polygons = this.getPolygons(type, condition);
 
-        if (polygons) {
+        if (polygons && polygons.length > 0) {
             this.map.alterPolygonOptions(polygons, options);
         }
     }
@@ -250,6 +259,18 @@ export default class Map {
             }
             this.polygonsList[type] = [];
         }
+
+        if (this.polygonsList[type].length === 0) {
+            delete this.polygonsList[type];
+        }
+    }
+
+    /**
+     * This functions returns if polygon exists
+     */
+    public polygonExists(type: string, condition?: any): boolean {
+        var polygons = this.getPolygons(type, condition);
+        return polygons && polygons.length > 0;
     }
 
     /* Polylines */
@@ -309,7 +330,7 @@ export default class Map {
     public togglePolyline(show: boolean, type: string, condition?: any) {
         const polyline = this.getPolylines(type, condition);
 
-        if (polyline) {
+        if (polyline && polyline.length > 0) {
             this.map.togglePolyline(polyline, show);
         }
     }
@@ -322,12 +343,13 @@ export default class Map {
     public removePolyline(type: string, condition?: any) {
         const polyline = this.getPolylines(type, condition);
 
-        if (polyline) {
+        if (polyline && polyline.length > 0) {
             this.map.togglePolyline(polyline, false);
             this.map.clearListenersPolyline(polyline);
         }
 
-        this.polygonsList[type] = null;
+        this.polylinesList[type] = [];
+        delete this.polylinesList[type];
     }
 
     /**
@@ -339,7 +361,7 @@ export default class Map {
     public alterPolylineOptions(type: string, options: PolylineOptions, condition?: any) {
         const polyline = this.getPolylines(type, condition);
 
-        if (polyline) {
+        if (polyline && polyline.length > 0) {
             this.map.alterPolylineOptions(polyline, options);
         }
     }
@@ -369,7 +391,7 @@ export default class Map {
     public toggleCircles(show: boolean, type: string, condition?: any) {
         const circles = this.getCircles(type, condition);
 
-        if (circles) {
+        if (circles && circles.length > 0) {
             this.map.toggleCircles(circles, show);
         }
     }
@@ -383,7 +405,7 @@ export default class Map {
     public alterCircleOptions(type: string, options: CircleAlterOptions, condition?: any) {
         const circles = this.getCircles(type, condition);
 
-        if (circles) {
+        if (circles && circles.length > 0) {
             this.map.alterCircleOptions(circles, options);
         }
     }
@@ -414,6 +436,26 @@ export default class Map {
 
         if (popups) {
             this.map.alterPopup(popups, options);
+        }
+    }
+
+    /**
+     * Use this function to close popup by type
+     * @param {string} type 
+     */
+    public closePopup(type: string) {
+        if (this.infoWindowList[type]) {
+            this.map.closePopup(this.infoWindowList[type])
+        }
+    }
+
+    /**
+     * Use this function to close all popups
+     * @param {string} type 
+     */
+    public closeAllPopups() {
+        for (let type in this.infoWindowList) {
+            this.closePopup(type);
         }
     }
 
@@ -448,28 +490,39 @@ export default class Map {
      * @param {string} type
      * @param {OverlayOptions} options
      * @param {string} typePolygon
-     * @param condition
+     * @param polygonCondition
      */
-    public drawOverlay(type: string, options: OverlayOptions, typePolygon?: string, condition?: any) {
+    public drawOverlay(type: string, options: OverlayOptions, typePolygon?: string, polygonCondition?: any) {
         let overlay = null;
 
         if (typePolygon) {
-            const polygons = this.getPolygons(typePolygon, condition);
-            overlay = this.map.drawOverlay(options, polygons);
+            const polygons = this.getPolygons(typePolygon, polygonCondition);
+
+            if (polygons && polygons.length > 0) {
+                overlay = this.map.drawOverlay(options, polygons);
+            }
         } else {
             overlay = this.map.drawOverlay(options);
         }
 
-        if (!this.overlayList[type]) {
-            this.overlayList[type] = [];
+        if (overlay != null) {
+            if (!this.overlayList[type]) {
+                this.overlayList[type] = [];
+            }
+            this.overlayList[type].push(overlay);
         }
-        this.overlayList[type].push(overlay);
     }
 
+    /**
+     * Use this function to show or hide overlay
+     * @param show 
+     * @param type 
+     * @param condition 
+     */
     public toggleOverlay(show: boolean, type: string, condition?: any) {
         const overlays = this.getOverlays(type, condition);
 
-        if (overlays) {
+        if (overlays && overlays.length > 0) {
             this.map.toggleOverlay(overlays, show);
         }
     }
@@ -481,44 +534,63 @@ export default class Map {
      */
     public removeOverlays(type: string, condition?: any) {
         if (this.overlayList[type] && condition) {
-            const overlays = this.overlayList[type].filter((overlay) => condition(overlay.object));
+            const overlays = this.getOverlays(type, condition);
 
             // Hide markers with the condition
             this.map.toggleOverlay(overlays, false);
 
             // Keep markers that doesn't have the condition
-            this.overlayList[type] = this.overlayList[type].filter((overlay) => !condition(overlay.object));
+            this.overlayList[type] = this.overlayList[type].filter((overlay: any) => !condition(overlay.object));
         } else {
             if (this.overlayList[type]) {
                 this.map.toggleOverlay(this.overlayList[type], false);
             }
             this.overlayList[type] = [];
         }
+
+        if (this.overlayList[type].length === 0) {
+            delete this.overlayList[type];
+        }
     }
 
     /* Private Methods */
     private getMarkers(type: string, condition: any) {
         const markers = this.markersList[type];
-        return condition ? markers.filter((marker) => condition(marker.object)) : markers;
+
+        if (markers && markers.length > 0) {
+            return condition ? markers.filter((marker: any) => condition(marker.object)) : markers;
+        } else return [];
     }
 
     private getPolygons(type: string, condition: any) {
         const polygons = this.polygonsList[type];
-        return condition ? polygons.filter((polygon) => condition(polygon.object)) : polygons;
+
+        if (polygons && polygons.length > 0) {
+            return condition ? polygons.filter((polygon: any) => condition(polygon.object)) : polygons;
+        } else return [];
     }
 
     private getCircles(type: string, condition: any) {
         const circles = this.circlesList[type];
-        return condition ? circles.filter((circle) => condition(circle.object)) : circles;
+
+        if (circles && circles.length > 0) {
+            return condition ? circles.filter((circle: any) => condition(circle.object)) : circles;
+        } else return [];
     }
 
     private getPolylines(type: string, condition: any) {
         const polylines = this.polylinesList[type];
-        return condition ? polylines.filter((polyline) => condition(polyline.object)) : polylines;
+
+        if (polylines && polylines.length > 0) {
+            return condition ? polylines.filter((polyline: any) => condition(polyline.object)) : polylines;
+        } else return [];
     }
 
     private getOverlays(type: string, condition: any) {
         const overlays = this.overlayList[type];
-        return condition ? overlays.filter((overlay) => condition(overlay.object)) : overlays;
+
+        if (overlays && overlays.length > 0) {
+            return condition ? overlays.filter((overlay: any) => condition(overlay.object)) : overlays;
+        } else return [];
     }
 }
