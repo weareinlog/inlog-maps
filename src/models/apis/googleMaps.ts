@@ -59,6 +59,11 @@ export default class GoogleMaps implements IMapFunctions {
                 OverlayGoogle.prototype.onAdd = function () {
                     const panes = this.getPanes();
                     panes.overlayLayer.appendChild(this.div_);
+                    panes.overlayMouseTarget.appendChild(this.div_);
+
+                    google.maps.event.addDomListener(this.div_, 'click', function () {
+                        google.maps.event.trigger(this.div_, 'click');
+                    });
                 };
 
                 OverlayGoogle.prototype.draw = function () {
@@ -72,7 +77,6 @@ export default class GoogleMaps implements IMapFunctions {
 
                 OverlayGoogle.prototype.onRemove = function () {
                     this.div_.parentNode.removeChild(this.div_);
-                    // this.div_ = null;
                 };
 
                 this.OverlayGoogle = OverlayGoogle;
@@ -82,13 +86,13 @@ export default class GoogleMaps implements IMapFunctions {
     }
 
     /* GEOJson */
-    public loadGEOJson(data: object, options: GeoJsonOptions, eventClick) {
+    public loadGEOJson(data: object, options: GeoJsonOptions, eventClick: any) {
         const self = this;
         const objects = self.parseGeoJson(data, options);
 
         objects.forEach((elem) => {
             if (eventClick) {
-                elem.addListener('click', (event) => {
+                elem.addListener('click', (event: any) => {
                     const param = new EventReturn([event.latLng.lat(), event.latLng.lng()]);
                     eventClick(param);
                 });
@@ -98,7 +102,7 @@ export default class GoogleMaps implements IMapFunctions {
     }
 
     /* Markers */
-    public drawMarker(options: MarkerOptions, eventClick) {
+    public drawMarker(options: MarkerOptions, eventClick: any) {
         const newOptions = {
             draggable: options.draggable,
             icon: null,
@@ -121,7 +125,7 @@ export default class GoogleMaps implements IMapFunctions {
         const marker = new this.google.maps.Marker(newOptions);
 
         if (eventClick) {
-            this.google.maps.event.addListener(marker, 'click', (event) => {
+            this.google.maps.event.addListener(marker, 'click', (event: any) => {
                 const param = new EventReturn([event.latLng.lat(), event.latLng.lng()]);
 
                 eventClick(marker, param, options.object);
@@ -148,7 +152,7 @@ export default class GoogleMaps implements IMapFunctions {
         this.map.fitBounds(bounds);
     }
 
-    public drawCircleMarker(options: CircleMarkerOptions, eventClick) {
+    public drawCircleMarker(options: CircleMarkerOptions, eventClick: any) {
         const self = this;
         const newOptions = {
             icon: {
@@ -169,7 +173,7 @@ export default class GoogleMaps implements IMapFunctions {
         const marker = new this.google.maps.Marker(newOptions);
 
         if (eventClick) {
-            this.google.maps.event.addListener(marker, 'click', (event) => {
+            this.google.maps.event.addListener(marker, 'click', (event: any) => {
                 const param = new EventReturn([event.latLng.lat(), event.latLng.lng()]);
                 eventClick(marker, param, options.object);
             });
@@ -257,8 +261,12 @@ export default class GoogleMaps implements IMapFunctions {
         this.map.setCenter(marker.getPosition());
     }
 
+    public isMarkerOnMap(marker: any): boolean {
+        return marker.map !== null;
+    }
+
     /* Polygons */
-    public drawPolygon(options: PolygonOptions, eventClick) {
+    public drawPolygon(options: PolygonOptions, eventClick: any) {
         const self = this;
         const paths = [];
 
@@ -284,7 +292,7 @@ export default class GoogleMaps implements IMapFunctions {
         const polygon = new this.google.maps.Polygon(newOptions);
 
         if (eventClick) {
-            this.google.maps.event.addListener(polygon, 'click', (event) => {
+            this.google.maps.event.addListener(polygon, 'click', (event: any) => {
                 const param = new EventReturn([event.latLng.lat(), event.latLng.lng()]);
                 eventClick(polygon, param, options.object);
             });
@@ -332,8 +340,12 @@ export default class GoogleMaps implements IMapFunctions {
         });
     }
 
+    public isPolygonOnMap(polygon: any): boolean {
+        return polygon.map !== null;
+    }
+
     /* Circles */
-    public drawCircle(options: CircleOptions, eventClick) {
+    public drawCircle(options: CircleOptions, eventClick: any) {
         const self = this;
         const latlng = {
             lat: options.center[0],
@@ -354,7 +366,7 @@ export default class GoogleMaps implements IMapFunctions {
         const circle = new this.google.maps.Circle(newOptions);
 
         if (eventClick) {
-            this.google.maps.event.addListener(circle, 'click', (event) => {
+            this.google.maps.event.addListener(circle, 'click', (event: any) => {
                 const param = new EventReturn([event.latLng.lat(), event.latLng.lng()]);
                 eventClick(circle, param, options.object);
             });
@@ -397,7 +409,7 @@ export default class GoogleMaps implements IMapFunctions {
     }
 
     /* Polylines */
-    public drawPolyline(options: PolylineOptions, eventClick) {
+    public drawPolyline(options: PolylineOptions, eventClick: any) {
         const self = this;
         const newOptions = {
             draggable: options.draggable,
@@ -419,7 +431,7 @@ export default class GoogleMaps implements IMapFunctions {
         const polyline = new this.google.maps.Polyline(newOptions);
 
         if (eventClick) {
-            this.google.maps.event.addListener(polyline, 'click', (event) => {
+            this.google.maps.event.addListener(polyline, 'click', (event: any) => {
                 const param = new EventReturn([event.latLng.lat(), event.latLng.lng()]);
                 eventClick(polyline, param, polyline.object);
             });
@@ -524,13 +536,17 @@ export default class GoogleMaps implements IMapFunctions {
         }
     }
 
+    public closePopup(popup: any) {
+        popup.close();
+    }
+
     /* Map */
-    public addEventMap(eventType: EventType, eventFunction) {
+    public addEventMap(eventType: EventType, eventFunction: any) {
         const self = this;
 
         switch (eventType) {
             case EventType.Click:
-                this.google.maps.event.addListener(self.map, 'click', (event) => {
+                this.google.maps.event.addListener(self.map, 'click', (event: any) => {
                     const param = new EventReturn([event.latLng.lat(), event.latLng.lng()]);
                     eventFunction(param);
                 });
@@ -609,7 +625,7 @@ export default class GoogleMaps implements IMapFunctions {
         this.google.maps.event.addDomListener(document, 'keyup', self.onKeyUp.bind(self));
     }
 
-    private onKeyUp(event) {
+    private onKeyUp(event: any) {
         const self = this;
 
         if (self.selectedPath) {
@@ -638,7 +654,7 @@ export default class GoogleMaps implements IMapFunctions {
         self.moveSelectedPath(polyline, null);
     }
 
-    private navigateForward(multiSelection: boolean, polyline) {
+    private navigateForward(multiSelection: boolean, polyline: any) {
         const self = this;
         if (!multiSelection) {
             polyline.idxFinal++;
@@ -699,7 +715,7 @@ export default class GoogleMaps implements IMapFunctions {
         this.drawPopupNavigation(polyline);
     }
 
-    private drawPopupNavigation(polyline) {
+    private drawPopupNavigation(polyline: any) {
         const self = this;
         const idx = self.directionForward ? polyline.idxFinal : polyline.idxInicial;
         const infowindow = polyline.infowindows ? polyline.infowindows[idx] : null;
@@ -721,7 +737,7 @@ export default class GoogleMaps implements IMapFunctions {
         }
     }
 
-    private checkIdx(polyline, point) {
+    private checkIdx(polyline: any, point: any) {
         const self = this;
         const path = polyline.getPath();
         let distance = 0;
@@ -739,7 +755,7 @@ export default class GoogleMaps implements IMapFunctions {
         return returnValue;
     }
 
-    private distanceToLine(pt1, pt2, pt) {
+    private distanceToLine(pt1: any, pt2: any, pt: any) {
         const self = this;
         const deltaX = pt2.lng() - pt1.lng();
         const deltaY = pt2.lat() - pt1.lat();
@@ -767,7 +783,7 @@ export default class GoogleMaps implements IMapFunctions {
         return self.kmTo(pt, intersect);
     }
 
-    private kmTo(pt1, pt2) {
+    private kmTo(pt1: any, pt2: any) {
         const e = Math;
         const ra = e.PI / 180;
         const b = pt1.lat() * ra;
@@ -779,7 +795,7 @@ export default class GoogleMaps implements IMapFunctions {
         return f * 6378.137 * 1000;
     }
 
-    private parseGeoJson(data, options: GeoJsonOptions) {
+    private parseGeoJson(data: any, options: GeoJsonOptions) {
         const self = this;
         const parsedFeatures = [];
 
@@ -794,7 +810,7 @@ export default class GoogleMaps implements IMapFunctions {
         return parsedFeatures;
     }
 
-    private parseGeoJsonToObject(data, objectOptions) {
+    private parseGeoJsonToObject(data: any, objectOptions: any) {
         const geometry = data.geometry;
 
         if (data.properties) {
@@ -851,7 +867,7 @@ export default class GoogleMaps implements IMapFunctions {
     }
 
     // --------------- HELPER FUNCTIONS
-    private getPolygonBounds(polygon) {
+    private getPolygonBounds(polygon: any) {
         const bounds = new this.google.maps.LatLngBounds();
         const paths = polygon.getPaths().getArray();
 
@@ -861,7 +877,7 @@ export default class GoogleMaps implements IMapFunctions {
         return bounds;
     }
 
-    private getPolylineBounds(polyline) {
+    private getPolylineBounds(polyline: any) {
         const bounds = new this.google.maps.LatLngBounds();
         const paths = polyline.getPath().getArray();
 
@@ -869,21 +885,20 @@ export default class GoogleMaps implements IMapFunctions {
         return bounds;
     }
 
-    private getPolygonsBounds(polygons) {
+    private getPolygonsBounds(polygons: any) {
         const bounds = new this.google.maps.LatLngBounds();
 
-        polygons.forEach((polygon) => {
+        polygons.forEach((polygon: any) => {
             const paths = polygon.getPaths().getArray();
 
-            paths.forEach((path) => {
-                path.getArray().forEach((x) => bounds.extend(x));
-            });
+            paths.forEach((path: any) => path.getArray()
+                .forEach((x: any) => bounds.extend(x)));
         });
 
         return bounds;
     }
 
-    private clearPolylinePath(polyline) {
+    private clearPolylinePath(polyline: any) {
         polyline.setPath([]);
     }
 }
