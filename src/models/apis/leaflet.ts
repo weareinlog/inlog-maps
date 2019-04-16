@@ -234,8 +234,9 @@ export default class Leaflet implements IMapFunctions {
             }
         }
 
-        if (options.object)
+        if (options.object) {
             polygon.object = options.object;
+        }
 
         if (options.fitBounds) {
             self.map.fitBounds(polygon.getBounds());
