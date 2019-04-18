@@ -1,22 +1,24 @@
 const googleMapsLibParams = {
-    libraries: ['drawing'],
+    libraries: ['drawing', 'places'],
     apiKey: '<your-api-key-here>'
 };
 
 const leafletLibParams = {
-    integrity: 'sha512-tAGcCfR4Sc5ZP5ZoVz0quoZDYX5aCtEm/eu1KhSLj2c9eFrylXZknQYmxUssFaVJKvvc0dJQixhGjG2yXWiV9Q==',
-    cssIntegrity: 'sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ==',
-    crossorigin: '',
     scriptsDependencies: [
         '../node_modules/leaflet-editable/src/Leaflet.Editable.js',
-        '../node_modules/leaflet.path.drag/src/Path.Drag.js'
-    ]
+        '../node_modules/leaflet.path.drag/src/Path.Drag.js',
+        '../node_modules/leaflet-gesture-handling/dist/leaflet-gesture-handling.js'
+    ],
+    cssDependencies: [
+        '../node_modules/leaflet-gesture-handling/dist/leaflet-gesture-handling.css'
+    ],
+    // gestureHandling: true
 };
 
 const inlogMaps = window.InlogMaps;
 const currentMap = new inlogMaps.Map;
 
-currentMap.initialize(currentMap.mapType.Leaflet, leafletLibParams).then(() => this.isMapInitialized = true);
+currentMap.initialize(inlogMaps.MapType.Leaflet, leafletLibParams).then(() => this.isMapInitialized = true);
 
 let simpleMarkerShow = null;
 let customMarkerShow = null;
@@ -249,10 +251,10 @@ function onZoomChanged() {
 
 function toogleOnZoomChanged() {
     if (zoomChanged) {
-        currentMap.removeEventMap(currentMap.eventType.ZoomChanged);
+        currentMap.removeEventMap(inlogMaps.EventType.ZoomChanged);
         zoomChanged = false;
     } else {
-        currentMap.addEventMap(currentMap.eventType.ZoomChanged, onZoomChanged);
+        currentMap.addEventMap(inlogMaps.EventType.ZoomChanged, onZoomChanged);
         zoomChanged = true;
     }
 }
@@ -287,7 +289,7 @@ function addPolyline() {
         polylineShow = true;
     } else {
         polylineShow = !polylineShow;
-        currentMap.togglePolyline(polylineShow, 'polyline');
+        currentMap.togglePolylines(polylineShow, 'polyline');
     }
 }
 
@@ -356,10 +358,10 @@ function drawPolyline() {
         alert('The polyline is not on the currentMap!');
     } else {
         if (drawing) {
-            currentMap.removeEventMap(currentMap.eventType.Click);
+            currentMap.removeEventMap(inlogMaps.EventType.Click);
             drawing = false;
         } else {
-            currentMap.addEventMap(currentMap.eventType.Click, updatePolyline);
+            currentMap.addEventMap(inlogMaps.EventType.Click, updatePolyline);
             drawing = true;
         }
     }
