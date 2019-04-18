@@ -3,8 +3,8 @@
 > A library for using generic layer maps 
 
 ## Install
-Install the library
- > ```npm install @inlog/inlog-maps```
+Install the library  
+ `npm install @inlog/inlog-maps`
 
 ### Using
 #### Google
