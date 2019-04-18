@@ -1,5 +1,5 @@
 import { MapsApiLoaderService } from '../../utils/maps-api-loader.service';
-import { EventType } from '../dto/event-type';
+import { EventType, MarkerEventType } from '../dto/event-type';
 import { MapType } from '../dto/map-type';
 import CircleAlterOptions from '../features/circle/circle-alter-options';
 import CircleOptions from '../features/circle/circle-options';
@@ -30,11 +30,12 @@ export default class GoogleMaps implements IMapFunctions {
 
     constructor() { /* */ }
 
-    public initialize(mapType: MapType, params: object) {
+    public initialize(mapType: MapType, params: any, elementId: string) {
         return this.mapsApiLoader.loadApi(mapType, params)
             .then((api) => {
                 this.google = api;
-                this.map = new this.google.maps.Map(document.getElementById('inlog-map'), {
+
+                let options: any = {
                     center: new this.google.maps.LatLng(-14, -54),
                     fullscreenControl: false,
                     keyboardShortcuts: false,
@@ -45,11 +46,16 @@ export default class GoogleMaps implements IMapFunctions {
                     streetViewControl: false,
                     zoom: 4,
                     zoomControl: true
-                });
+                };
+
+                if (params.gestureHandling) {
+                    options.gestureHandling = 'cooperative';
+                }
+
+                this.map = new this.google.maps.Map(document.getElementById(elementId || 'inlog-map'), options);
 
                 OverlayGoogle.prototype = new this.google.maps.OverlayView();
 
-                // tslint:disable-next-line:no-shadowed-variable
                 function OverlayGoogle(bounds, div, map) {
                     this.bounds_ = bounds;
                     this.div_ = div;
@@ -265,6 +271,26 @@ export default class GoogleMaps implements IMapFunctions {
         return marker.map !== null;
     }
 
+    public addMarkerEvent(markers: any, event: MarkerEventType, eventFunction: any) {
+        markers.forEach((marker: any) => {
+            switch (event) {
+                case MarkerEventType.Click:
+                    this.google.maps.event.addListener(marker, 'click', (event: any) => {
+                        const param = new EventReturn([event.latLng.lat(), event.latLng.lng()]);
+                        eventFunction(marker, param, marker.object);
+                    });
+                    break;
+                case MarkerEventType.AfterDrag:
+                    this.google.maps.event.addListener(marker, 'dragend', (event: any) => {
+                        const param = new EventReturn([event.latLng.lat(), event.latLng.lng()]);
+                        eventFunction(marker, param, marker.object);
+                    });
+                default:
+                    break;
+            }
+        });
+    }
+
     /* Polygons */
     public drawPolygon(options: PolygonOptions, eventClick: any) {
         const self = this;
@@ -448,9 +474,11 @@ export default class GoogleMaps implements IMapFunctions {
         return polyline;
     }
 
-    public togglePolyline(polyline: any, show: boolean) {
-        const self = this;
-        polyline.setMap(show ? self.map : null);
+    public togglePolylines(polylines: any, show: boolean) {
+        polylines.forEach((polyline: any) => {
+            const self = this;
+            polyline.setMap(show ? self.map : null);
+        });
     }
 
     public drawPolylineWithNavigation(options: PolylineOptions) {
@@ -461,15 +489,19 @@ export default class GoogleMaps implements IMapFunctions {
         return polyline;
     }
 
-    public clearListenersPolyline(polyline) {
-        this.google.maps.event.clearListeners(polyline, 'click');
+    public clearListenersPolyline(polylines: any) {
+        polylines.forEach((polyline: any) => {
+            this.google.maps.event.clearListeners(polyline, 'click');
+        });
     }
 
-    public addPolylinePath(polyline, position: number[]) {
-        const path = polyline.getPath();
+    public addPolylinePath(polylines: any, position: number[]) {
+        polylines.forEach((polyline: any) => {
+            const path = polyline.getPath();
 
-        path.push(new this.google.maps.LatLng(position[0], position[1]));
-        polyline.setPath(path);
+            path.push(new this.google.maps.LatLng(position[0], position[1]));
+            polyline.setPath(path);
+        });
     }
 
     public removePolylineHighlight() {
@@ -482,23 +514,45 @@ export default class GoogleMaps implements IMapFunctions {
         }
     }
 
-    public alterPolylineOptions(polyline, options: PolylineOptions) {
-        const newOptions = {
-            draggable: options.draggable !== null && options.draggable !== undefined ?
-                options.draggable : polyline.draggable,
-            editable: options.editable !== null && options.editable !== undefined ?
-                options.editable : polyline.editable,
-            infowindows: options.infowindows !== null && options.infowindows !== undefined ?
-                options.infowindows : polyline.infowindows,
-            object: options.object !== null && options.object !== undefined ?
-                options.object : polyline.object,
-            strokeColor: options.color !== null && options.color !== undefined ?
-                options.color : polyline.strokeColor,
-            strokeWeight: options.weight !== null && options.weight !== undefined ?
-                options.weight : polyline.strokeWeight
-        };
+    public alterPolylineOptions(polylines, options: PolylineOptions) {
+        polylines.forEach((polyline: any) => {
+            const newOptions = {
+                draggable: options.draggable !== null && options.draggable !== undefined ?
+                    options.draggable : polyline.draggable,
+                editable: options.editable !== null && options.editable !== undefined ?
+                    options.editable : polyline.editable,
+                infowindows: options.infowindows !== null && options.infowindows !== undefined ?
+                    options.infowindows : polyline.infowindows,
+                object: options.object !== null && options.object !== undefined ?
+                    options.object : polyline.object,
+                strokeColor: options.color !== null && options.color !== undefined ?
+                    options.color : polyline.strokeColor,
+                strokeWeight: options.weight !== null && options.weight !== undefined ?
+                    options.weight : polyline.strokeWeight
+            };
 
-        polyline.setOptions(newOptions);
+            polyline.setOptions(newOptions);
+        });
+    }
+
+    public fitBoundsPolylines(polylines: any) {
+        const self = this;
+        self.map.fitBounds(self.getPolylinesBounds(polylines));
+    }
+
+    private getPolylinesBounds(polylines: any) {
+        const bounds = new this.google.maps.LatLngBounds();
+
+        polylines.forEach((polyline: any) => {
+            const paths = polyline.getPath().getArray();
+            paths.forEach((path: any) => bounds.extend(path));
+        });
+
+        return bounds;
+    }
+
+    public isPolylineOnMap(polyline: any): boolean {
+        return polyline.map !== null;
     }
 
     /* Info Windows */
@@ -576,6 +630,15 @@ export default class GoogleMaps implements IMapFunctions {
 
     public getZoom(): number {
         return this.map.getZoom();
+    }
+
+    public getCenter(): number[] {
+        const center = this.map.getCenter();
+        return [center.lat(), center.lng()];
+    }
+
+    public setCenter(position: number[]) {
+        this.map.setCenter(new google.maps.LatLng(position[0], position[1]));
     }
 
     /* Overlay */

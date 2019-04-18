@@ -1,7 +1,7 @@
 import GoogleMaps from './models/apis/googleMaps';
 import Leaflet from './models/apis/leaflet';
 import IMapFunctions from './models/apis/mapFunctions';
-import { EventType } from './models/dto/event-type';
+import { EventType, MarkerEventType } from './models/dto/event-type';
 import { MapType } from './models/dto/map-type';
 import CircleAlterOptions from './models/features/circle/circle-alter-options';
 import CircleOptions from './models/features/circle/circle-options';
@@ -33,9 +33,9 @@ export default class Map {
      * @param mapType {inlogMaps.MapType}
      * @param options {any}
      */
-    public initialize(mapType: MapType, options: any): Promise<any> {
+    public initialize(mapType: MapType, options: any, elementId: string): Promise<any> {
         this.map = mapType === MapType.Google ? new GoogleMaps() : new Leaflet();
-        return this.map.initialize(mapType, options);
+        return this.map.initialize(mapType, options, elementId);
     }
 
     /* GEOJson */
@@ -181,6 +181,12 @@ export default class Map {
         }
     }
 
+    public addMarkerEvent(event: MarkerEventType, eventFunction: any, type: string, condition?: any) {
+        const markers = this.getMarkers(type, condition);
+
+        this.map.addMarkerEvent(markers, event, eventFunction);
+    }
+
     /* Polygons */
     /**
      * Use this function to draw polygons
@@ -246,13 +252,13 @@ export default class Map {
      */
     public removePolygons(type: string, condition?: any) {
         if (this.polygonsList[type] && condition) {
-            const polygons = this.polygonsList[type].filter((polygon) => condition(polygon.object));
+            const polygons = this.getPolygons(type, condition);
 
             // Hide markers with the condition
             this.map.togglePolygons(polygons, false);
 
             // Keep markers that doesn't have the condition
-            this.polygonsList[type] = this.polygonsList[type].filter((polygon) => !condition(polygon.object));
+            this.polygonsList[type] = this.polygonsList[type].filter((polygon: any) => !condition(polygon.object));
         } else {
             if (this.polygonsList[type]) {
                 this.map.togglePolygons(this.polygonsList[type], false);
@@ -282,7 +288,11 @@ export default class Map {
      */
     public drawPolyline(type: string, options: PolylineOptions, eventClick: any) {
         const polyline = this.map.drawPolyline(options, eventClick);
-        this.polylinesList[type] = polyline;
+
+        if (!this.polylinesList[type]) {
+            this.polylinesList[type] = [];
+        }
+        this.polylinesList[type].push(polyline);
     }
 
     /**
@@ -292,25 +302,29 @@ export default class Map {
      */
     public drawPolylineWithNavigation(type: string, options: PolylineOptions) {
         const polyline = this.map.drawPolylineWithNavigation(options);
-        this.polylinesList[type] = polyline;
+
+        if (!this.polylinesList[type]) {
+            this.polylinesList[type] = [];
+        }
+        this.polylinesList[type].push(polyline);
     }
 
     /**
      * Use this function to add more paths to a polyline
      * @param {string} type
      * @param {number[]} position
+     * @param condition
      */
-    public addPolylinePath(type: string, position: number[]) {
-        const options = new PolylineOptions();
-        options.addToMap = true;
+    public addPolylinePath(type: string, position: number[], condition?: any) {
+        const polyline = this.getPolylines(type, condition);
 
-        if (!this.polylinesList[type]) {
-            this.drawPolyline(type, options, null);
-        }
-        const polyline = this.polylinesList[type];
-
-        if (polyline) {
+        if (polyline && polyline.length > 0) {
             this.map.addPolylinePath(polyline, position);
+        } else {
+            const options = new PolylineOptions();
+            options.addToMap = true;
+
+            this.drawPolyline(type, options, null);
         }
     }
 
@@ -327,11 +341,11 @@ export default class Map {
      * @param {string} type
      * @param {any} condition toggle polyline with the condition
      */
-    public togglePolyline(show: boolean, type: string, condition?: any) {
+    public togglePolylines(show: boolean, type: string, condition?: any) {
         const polyline = this.getPolylines(type, condition);
 
         if (polyline && polyline.length > 0) {
-            this.map.togglePolyline(polyline, show);
+            this.map.togglePolylines(polyline, show);
         }
     }
 
@@ -340,16 +354,25 @@ export default class Map {
      * @param {string} type
      * @param {any} condition remove polyline with the condition
      */
-    public removePolyline(type: string, condition?: any) {
-        const polyline = this.getPolylines(type, condition);
+    public removePolylines(type: string, condition?: any) {
+        if (this.polylinesList[type] && condition) {
+            const polylines = this.getPolylines(type, condition);
 
-        if (polyline && polyline.length > 0) {
-            this.map.togglePolyline(polyline, false);
-            this.map.clearListenersPolyline(polyline);
+            // Hide markers with the condition
+            this.map.togglePolylines(polylines, false);
+
+            // Keep markers that doesn't have the condition
+            this.polylinesList[type] = this.polylinesList[type].filter((polyline: any) => !condition(polyline.object));
+        } else {
+            if (this.polylinesList[type]) {
+                this.map.togglePolylines(this.polylinesList[type], false);
+            }
+            this.polylinesList[type] = [];
         }
 
-        this.polylinesList[type] = [];
-        delete this.polylinesList[type];
+        if (this.polylinesList[type].length === 0) {
+            delete this.polylinesList[type];
+        }
     }
 
     /**
@@ -363,6 +386,20 @@ export default class Map {
 
         if (polyline && polyline.length > 0) {
             this.map.alterPolylineOptions(polyline, options);
+        }
+    }
+
+    /**
+     * Use this functions to fit polylines bounds
+     * @param type 
+     * @param condition 
+     */
+    public fitBoundsPolylines(type: string, condition?: any) {
+        const polylines = this.getPolylines(type, condition)
+            .filter((polyline: any) => this.map.isPolylineOnMap(polyline));
+
+        if (polylines && polylines.length > 0) {
+            this.map.fitBoundsPolylines(polylines);
         }
     }
 
@@ -482,6 +519,20 @@ export default class Map {
      */
     public getZoom(): number {
         return this.map.getZoom();
+    }
+
+    /**
+     * Returns the center position of the map
+     */
+    public getCenter(): number[] {
+        return this.map.getCenter();
+    }
+
+    /**
+     * Set the position center of the map
+     */
+    public setCenter(position: number[]) {
+        this.map.setCenter(position);
     }
 
     /* Overlay */

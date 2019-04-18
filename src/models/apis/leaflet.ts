@@ -1,6 +1,6 @@
 import { OverlayOptions } from '../..';
 import { MapsApiLoaderService } from '../../utils/maps-api-loader.service';
-import { EventType } from '../dto/event-type';
+import { EventType, MarkerEventType } from '../dto/event-type';
 import { MapType } from '../dto/map-type';
 import CircleAlterOptions from '../features/circle/circle-alter-options';
 import CircleOptions from '../features/circle/circle-options';
@@ -29,33 +29,53 @@ export default class Leaflet implements IMapFunctions {
 
     constructor() { /* */ }
 
-    public initialize(mapType: MapType, params) {
+    public initialize(mapType: MapType, params: any, elementId: string) {
         return this.mapsApiLoader.loadApi(mapType, params)
-            .then((api) => {
+            .then(async (api) => {
                 this.leaflet = api;
-                this.loadDependencies(params.scriptsDependencies);
+                this.loadDependencies(params);
 
-                setTimeout(() => {
-                    const mapOptions = {
-                        center: new this.leaflet.LatLng(-14, -54),
-                        editable: true,
-                        maxZoom: 20,
-                        minZoom: 4,
-                        zoom: 4
-                    };
-                    this.map = new this.leaflet.Map('inlog-map', mapOptions);
-                    new this.leaflet.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', mapOptions)
-                        .addTo(this.map);
+                await this.mapTimeout(200);
 
-                    return this;
-                }, 100);
+                const mapOptions: any = {
+                    center: new this.leaflet.LatLng(-14, -54),
+                    editable: true,
+                    maxZoom: 20,
+                    minZoom: 4,
+                    zoom: 4
+                };
+
+                if (params.gestureHandling) {
+                    mapOptions.gestureHandling = true;
+                }
+
+                this.map = new this.leaflet.Map(elementId || 'inlog-map', mapOptions);
+                new this.leaflet.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', mapOptions)
+                    .addTo(this.map);
+
+                return this;
             })
             .catch((err) => err);
     }
 
-    private loadDependencies(paths: string[]) {
-        if (paths && paths.length > 0) {
-            paths.forEach((path) => {
+    private mapTimeout(ms: number) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    private loadDependencies(params: any) {
+        const styles = params.cssDependencies;
+        if (styles && styles.length > 0) {
+            styles.forEach((path: any) => {
+                const link = document.createElement('link');
+                link.rel = 'stylesheet';
+                link.href = path;
+                document.querySelector('head').appendChild(link);
+            });
+        }
+
+        const scripts = params.scriptsDependencies;
+        if (scripts && scripts.length > 0) {
+            scripts.forEach((path: any) => {
                 const script = document.createElement('script');
                 script.type = 'text/javascript';
                 script.src = path;
@@ -91,11 +111,16 @@ export default class Leaflet implements IMapFunctions {
 
     /* Markers */
     public drawMarker(options: MarkerOptions, eventClick: any) {
-        let newOptions = {
-            draggable: options.draggable,
-            icon: options.icon ?
-                new this.leaflet.Icon({ iconSize: options.icon.size, iconUrl: options.icon.url }) : null
+        let newOptions: any = {
+            draggable: options.draggable
         };
+
+        if (options.icon) {
+            newOptions.icon = new this.leaflet.Icon({
+                iconSize: options.icon.size,
+                iconUrl: options.icon.url
+            });
+        }
 
         const marker = new this.leaflet.Marker(options.latlng, newOptions);
 
@@ -132,7 +157,7 @@ export default class Leaflet implements IMapFunctions {
         const marker = new this.leaflet.circleMarker(options.latlng, options.style);
 
         if (eventClick) {
-            marker.on('click', (event) => {
+            marker.on('click', (event: any) => {
                 const param = new EventReturn([event.latlng.lat, event.latlng.lng]);
                 eventClick(marker, param);
             }, options.object);
@@ -204,6 +229,26 @@ export default class Leaflet implements IMapFunctions {
 
     public isMarkerOnMap(marker: any): boolean {
         return this.map.hasLayer(marker);
+    }
+
+    public addMarkerEvent(markers: any, event: MarkerEventType, eventFunction: any) {
+        markers.forEach((marker: any) => {
+            switch (event) {
+                case MarkerEventType.Click:
+                    marker.on('click', (event: any) => {
+                        const param = new EventReturn([event.latlng.lat, event.latlng.lng]);
+                        eventFunction(marker, param, marker.object);
+                    });
+                    break;
+                case MarkerEventType.AfterDrag:
+                    marker.on('dragend', (event: any) => {
+                        const param = new EventReturn([event.target.getLatLng().lat, event.target.getLatLng().lng]);
+                        eventFunction(marker, param, marker.object);
+                    });
+                default:
+                    break;
+            }
+        });
     }
 
     /* Polygons */
@@ -379,14 +424,15 @@ export default class Leaflet implements IMapFunctions {
         return polyline;
     }
 
-    public togglePolyline(polyline: any, show: boolean) {
+    public togglePolylines(polylines: any, show: boolean) {
         const self = this;
-
-        if (show) {
-            self.map.addLayer(polyline);
-        } else {
-            self.map.removeLayer(polyline);
-        }
+        polylines.forEach((polyline: any) => {
+            if (show) {
+                self.map.addLayer(polyline);
+            } else {
+                self.map.removeLayer(polyline);
+            }
+        });
     }
 
     public drawPolylineWithNavigation(options: PolylineOptions) {
@@ -396,15 +442,19 @@ export default class Leaflet implements IMapFunctions {
         return polyline;
     }
 
-    public clearListenersPolyline(polyline) {
-        polyline.clearAllEventListeners();
+    public clearListenersPolyline(polylines: any) {
+        polylines.forEach((polyline: any) => {
+            polyline.clearAllEventListeners();
+        });
     }
 
-    public addPolylinePath(polyline, position: number[]) {
-        const path = polyline.getLatLngs();
+    public addPolylinePath(polylines: any, position: number[]) {
+        polylines.forEach((polyline: any) => {
+            const path = polyline.getLatLngs();
 
-        path.push(new this.leaflet.LatLng(position[0], position[1]));
-        polyline.setLatLngs(path);
+            path.push(new this.leaflet.LatLng(position[0], position[1]));
+            polyline.setLatLngs(path);
+        });
     }
 
     public removePolylineHighlight() {
@@ -419,23 +469,39 @@ export default class Leaflet implements IMapFunctions {
         document.onkeyup = null;
     }
 
-    public alterPolylineOptions(polyline, options: PolylineOptions) {
-        const style = {
-            color: options.color !== null && options.color !== undefined ?
-                options.color : polyline.options.color,
-            draggable: options.draggable !== null && options.draggable !== undefined ?
-                options.draggable : polyline.options.draggable,
-            object: options.object !== null && options.object !== undefined ?
-                options.object : polyline.options.object,
-            weight: options.weight !== null && options.weight !== undefined ?
-                options.weight : polyline.options.weight
-        };
+    public alterPolylineOptions(polylines: any, options: PolylineOptions) {
+        polylines.forEach((polyline: any) => {
+            const style = {
+                color: options.color !== null && options.color !== undefined ?
+                    options.color : polyline.options.color,
+                draggable: options.draggable !== null && options.draggable !== undefined ?
+                    options.draggable : polyline.options.draggable,
+                object: options.object !== null && options.object !== undefined ?
+                    options.object : polyline.options.object,
+                weight: options.weight !== null && options.weight !== undefined ?
+                    options.weight : polyline.options.weight
+            };
 
-        polyline.setStyle(style);
+            polyline.setStyle(style);
 
-        if (options.editable) {
-            polyline.enableEdit();
-        }
+            if (options.editable) {
+                polyline.enableEdit();
+            }
+        });
+    }
+
+    public fitBoundsPolylines(polylines: any) {
+        const self = this;
+        self.map.fitBounds(self.getBoundsPolylines(polylines));
+    }
+
+    private getBoundsPolylines(polylines: any) {
+        const group = new this.leaflet.FeatureGroup(polylines);
+        return group.getBounds();
+    }
+
+    public isPolylineOnMap(polyline: any): boolean {
+        return this.map.hasLayer(polyline);
     }
 
     /* Popups */
@@ -512,6 +578,14 @@ export default class Leaflet implements IMapFunctions {
 
     public getZoom(): number {
         return this.map.getZoom();
+    }
+
+    public getCenter(): number[] {
+        return this.map.getCenter();
+    }
+
+    public setCenter(position: number[]) {
+        this.map.panTo(position);
     }
 
     /* Overlay */
