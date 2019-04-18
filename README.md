@@ -11,7 +11,8 @@ Install the library
 ```javascript
 const params = {
     libraries: ['drawing'],
-    apiKey: '<your-api-key-here>'
+    apiKey: '<your-api-key-here>',
+    gestureHandling: false
 };
 
 const currentMap = new InlogMaps.Map;
@@ -24,8 +25,13 @@ currentMap.initialize(InlogMaps.MapType.Google, params)
 const params = {
     scriptsDependencies: [
         'path/to/Leaflet.Editable.js',
-        'path/to/Path.Drag.js'
-    ]
+        'path/to/Path.Drag.js',
+        'path/to/leaflet-gesture-handling.js'
+    ],
+    cssDependencies: [
+        'path/to/leaflet-gesture-handling.css'
+    ],
+    gestureHandling: true
 };
 
 const currentMap = new InlogMaps.Map;
