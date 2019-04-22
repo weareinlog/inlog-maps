@@ -1,14 +1,13 @@
 {
   "name": "@inlog/inlog-maps",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "A library for using generic layer maps ",
   "main": "index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "clean": "shx rm -rf _bundles lib lib-esm",
     "build": "npm run clean && tsc && tsc -m es6 --outDir lib-esm && webpack",
-    "docs": "doxdox lib/map.js --layout markdown --output README.md",
-    "publish": "npm run build && npm run docs && npm publish --access public",
+    "docs": "doxdox lib/map.js --layout markdown --output DOCUMENTATION.md",
     "start": "webpack-dev-server --mode development",
     "test": "mocha --reporter spec"
   },
@@ -41,6 +40,7 @@
     "jsdoc-to-markdown": "^4.0.1",
     "leaflet": "^1.4.0",
     "leaflet-editable": "^1.2.0",
+    "leaflet-gesture-handling": "^1.1.8",
     "leaflet.path.drag": "0.0.6",
     "shx": "^0.2.2",
     "typescript": "^2.1.6",

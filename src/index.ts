@@ -18,6 +18,8 @@ import PolygonOptions from './models/features/polygons/polygon-options';
 import NavigationOptions from './models/features/polyline/navigations-options';
 import PolylineOptions from './models/features/polyline/polyline-options';
 import PopupOptions from './models/features/popup/popup-options';
+import { EventType, MarkerEventType } from './models/dto/event-type';
+import { MapType } from './models/dto/map-type';
 
 export { Map };
 export { MarkerOptions };
@@ -36,3 +38,6 @@ export { PolylineOptions };
 export { NavigationOptions };
 export { IMapFunctions };
 export { OverlayOptions };
+export { MapType }
+export { EventType }
+export { MarkerEventType };

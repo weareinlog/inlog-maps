@@ -1,4 +1,4 @@
-import { EventType } from '../dto/event-type';
+import { EventType, MarkerEventType } from '../dto/event-type';
 import { MapType } from '../dto/map-type';
 import CircleAlterOptions from '../features/circle/circle-alter-options';
 import CircleOptions from '../features/circle/circle-options';
@@ -13,7 +13,7 @@ import PolylineOptions from '../features/polyline/polyline-options';
 import PopupOptions from '../features/popup/popup-options';
 
 export default interface IMapFunctions {
-    initialize(mapType: MapType, params: object);
+    initialize(mapType: MapType, params: object, elementId: string);
 
     /* GEOJson */
     loadGEOJson(data: object, options: GeoJsonOptions, eventClick: any);
@@ -27,6 +27,7 @@ export default interface IMapFunctions {
     alterMarkerPosition(markers: any[], position: number[], addTransotion: boolean);
     setCenterMarker(marker: any);
     isMarkerOnMap(marker: any): boolean;
+    addMarkerEvent(markers: any, event: MarkerEventType, eventFunction: any);
 
     /* Polygons */
     drawPolygon(options: PolygonOptions, eventClick: any);
@@ -37,12 +38,14 @@ export default interface IMapFunctions {
 
     /* Polylines */
     drawPolyline(options: PolylineOptions, eventClick: any);
-    togglePolyline(polyline: any, show: boolean);
+    togglePolylines(polylines: any, show: boolean);
     drawPolylineWithNavigation(options: PolylineOptions);
-    clearListenersPolyline(polyline: any);
-    addPolylinePath(polyline: any, position: number[]);
+    clearListenersPolyline(polylines: any);
+    addPolylinePath(polylines: any, position: number[]);
     removePolylineHighlight();
-    alterPolylineOptions(polyline: any, options: PolylineOptions);
+    alterPolylineOptions(polylines: any, options: PolylineOptions);
+    fitBoundsPolylines(polylines: any);
+    isPolylineOnMap(polyline: any): boolean;
 
     /* Circles */
     drawCircle(options: CircleOptions, eventClick: any);
@@ -58,6 +61,8 @@ export default interface IMapFunctions {
     addEventMap(eventType: EventType, eventFunction: any);
     removeEventMap(eventType: EventType);
     getZoom(): number;
+    getCenter(): number[];
+    setCenter(position: number[]);
 
     /* Overlay */
     drawOverlay(options: OverlayOptions, polygons?: any);
