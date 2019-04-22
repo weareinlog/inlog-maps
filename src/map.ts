@@ -295,6 +295,11 @@ export default class Map {
         this.polylinesList[type].push(polyline);
     }
 
+
+    public addPolylineListeners(event: EventType, eventFunction: any) {
+        this.map.addPolylineListeners(event, eventFunction);
+    }
+
     /**
      * Use this function to draw polylines with navigation on the currentMap
      * @param {string} type

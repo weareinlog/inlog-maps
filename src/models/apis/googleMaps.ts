@@ -271,6 +271,10 @@ export default class GoogleMaps implements IMapFunctions {
         return marker.map !== null;
     }
 
+    public addPolylineListeners(event: EventType, eventFunction: any) {
+        eventFunction('teste'); // falta finalizar
+    }
+
     public addMarkerEvent(markers: any, event: MarkerEventType, eventFunction: any) {
         markers.forEach((marker: any) => {
             switch (event) {
