@@ -5,5 +5,6 @@ export enum EventType {
 
 export enum MarkerEventType {
     Click,
-    AfterDrag
+    AfterDrag,
+    MouseOver
 }

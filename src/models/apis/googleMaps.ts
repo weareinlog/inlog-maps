@@ -285,6 +285,13 @@ export default class GoogleMaps implements IMapFunctions {
                         const param = new EventReturn([event.latLng.lat(), event.latLng.lng()]);
                         eventFunction(marker, param, marker.object);
                     });
+                    break;
+                case MarkerEventType.MouseOver:
+                    this.google.maps.event.addListener(marker, 'mouseover', (event: any) => {
+                        const param = new EventReturn([event.latLng.lat(), event.latLng.lng()]);
+                        eventFunction(marker, param, marker.object);
+                    });
+                    break;
                 default:
                     break;
             }
@@ -440,6 +447,8 @@ export default class GoogleMaps implements IMapFunctions {
         const newOptions = {
             draggable: options.draggable,
             editable: options.editable,
+            icons: options.icons,
+            strokeOpacity: options.opacity,
             infowindows: options.infowindows,
             object: options.object,
             path: null,

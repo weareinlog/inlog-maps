@@ -245,6 +245,13 @@ export default class Leaflet implements IMapFunctions {
                         const param = new EventReturn([event.target.getLatLng().lat, event.target.getLatLng().lng]);
                         eventFunction(marker, param, marker.object);
                     });
+                    break;
+                case MarkerEventType.MouseOver:
+                    marker.on('mouseover', (event: any) => {
+                        const param = new EventReturn([event.latlng.lat, event.latlng.lng]);
+                        eventFunction(marker, param, marker.object);
+                    });
+                    break;
                 default:
                     break;
             }
@@ -398,6 +405,8 @@ export default class Leaflet implements IMapFunctions {
             editable: options.editable,
             infowindows: options.infowindows,
             object: options.object,
+            opacity: options.opacity,
+            dashArray: options.dashArray,
             weight: options.weight || 3
         };
 
