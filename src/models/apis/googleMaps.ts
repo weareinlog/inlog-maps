@@ -271,8 +271,27 @@ export default class GoogleMaps implements IMapFunctions {
         return marker.map !== null;
     }
 
-    public addPolylineListeners(event: EventType, eventFunction: any) {
-        eventFunction('teste'); // falta finalizar
+    public addPolylineListeners(polyline: any, event: EventType, eventFunction: any) {
+        console.log(polyline)
+        switch (event) {
+            case EventType.Move:
+                this.google.maps.event.addListener(polyline[0].getPath(), "set_at", (event: any) => {
+                    eventFunction(polyline[0].getPath().getAt(event));
+                });
+                break;
+            case EventType.InsertAt:
+                this.google.maps.event.addListener(polyline[0].getPath(), "insert_at", (event: any) => {
+                    eventFunction(polyline[0].getPath().getAt(event));
+                });
+                break;
+            case EventType.RemoveAt:
+                this.google.maps.event.addListener(polyline[0].getPath(), "remove_at", (event: any) => {
+                    eventFunction(polyline[0].getPath().getAt(event));
+                });
+                break;
+            default:
+                break;
+        }
     }
 
     public addMarkerEvent(markers: any, event: MarkerEventType, eventFunction: any) {

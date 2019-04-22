@@ -296,8 +296,9 @@ export default class Map {
     }
 
 
-    public addPolylineListeners(event: EventType, eventFunction: any) {
-        this.map.addPolylineListeners(event, eventFunction);
+    public addPolylineListeners(type: string, event: EventType, eventFunction: any) {
+        const polyline = this.getPolylines(type, null);
+        this.map.addPolylineListeners(polyline, event, eventFunction);
     }
 
     /**

@@ -46,7 +46,7 @@ export default interface IMapFunctions {
     alterPolylineOptions(polylines: any, options: PolylineOptions);
     fitBoundsPolylines(polylines: any);
     isPolylineOnMap(polyline: any): boolean;
-    addPolylineListeners(event: EventType, eventFunction: any);
+    addPolylineListeners(polyline: any, event: EventType, eventFunction: any);
 
     /* Circles */
     drawCircle(options: CircleOptions, eventClick: any);

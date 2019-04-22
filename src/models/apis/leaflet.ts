@@ -231,7 +231,7 @@ export default class Leaflet implements IMapFunctions {
         return this.map.hasLayer(marker);
     }
 
-    public addPolylineListeners(event: EventType, eventFunction: any) {
+    public addPolylineListeners(polyline: any,  event: EventType, eventFunction: any) {
         switch (event) {
             case EventType.Move:
                 this.map.on('editable:vertex:dragstart',(event: any) => {
