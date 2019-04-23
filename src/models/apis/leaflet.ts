@@ -424,16 +424,27 @@ export default class Leaflet implements IMapFunctions {
     public drawPolyline(options: PolylineOptions, eventClick) {
         const self = this;
 
-        const newOptions = {
+        let newOptions = {
             color: options.color || '#000000',
             draggable: options.draggable,
             editable: options.editable,
             infowindows: options.infowindows,
             object: options.object,
-            opacity: options.opacity,
-            dashArray: options.dashArray,
-            weight: options.weight || 3
+            weight: options.weight || 3,
+            opacity: null,
+            dashArray: null
         };
+
+        if (options.style) {
+            switch (options.style) {
+                case 'dotted':
+                    newOptions.opacity = .7;
+                    newOptions.dashArray = '20,15';
+                    break;
+                default:
+                    break;
+            }
+        }
 
         const polyline = new this.leaflet.Polyline(options.path || [], newOptions);
 

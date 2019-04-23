@@ -469,17 +469,36 @@ export default class GoogleMaps implements IMapFunctions {
     /* Polylines */
     public drawPolyline(options: PolylineOptions, eventClick: any) {
         const self = this;
-        const newOptions = {
+        let newOptions = {
             draggable: options.draggable,
             editable: options.editable,
-            icons: options.icons,
-            strokeOpacity: options.opacity,
             infowindows: options.infowindows,
             object: options.object,
             path: null,
             strokeColor: options.color,
-            strokeWeight: options.weight
+            strokeWeight: options.weight,
+            icons: null,
+            strokeOpacity: null,
         };
+
+        if (options.style) {
+            switch (options.style) {
+                case 'dotted':
+                    newOptions.strokeOpacity = 0;
+                    newOptions.icons = [{
+                        icon: {
+                            path: 'M 0,-1 0,1',
+                            strokeOpacity: 1,
+                            scale: 2
+                        },
+                        offset: '0',
+                        repeat: '10px'
+                    }];
+                    break;
+                default:
+                    break;
+            }
+        }
 
         newOptions.path = options.path ? options.path.map((x) => {
             return {
