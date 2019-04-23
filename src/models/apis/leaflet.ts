@@ -235,17 +235,20 @@ export default class Leaflet implements IMapFunctions {
         switch (event) {
             case EventType.Move:
                 this.map.on('editable:vertex:dragstart',(event: any) => {
-                    eventFunction(event);
+                    const param = new EventReturn([event.latlng.lat, event.latlng.lng]);
+                    eventFunction(param);
                 });
                 break;
             case EventType.InsertAt:
                 this.map.on('editable:vertex:dragend',(event: any) => {
-                    eventFunction(event);
+                    const param = new EventReturn([event.latlng.lat, event.latlng.lng]);
+                    eventFunction(param);
                 });
                 break;
             case EventType.RemoveAt:
                 this.map.on('editable:vertex:deleted',(event: any) => {
-                    eventFunction(event);
+                    const param = new EventReturn([event.latlng.lat, event.latlng.lng]);
+                    eventFunction(param);
                 });
                 break;
             default:
