@@ -439,7 +439,7 @@ export default class Leaflet implements IMapFunctions {
             dashArray: null
         };
 
-        if (options.style) {
+        if (options.style !== null) {
             switch (options.style) {
                 case PolylineType.Dotted:
                     newOptions.opacity = .7;

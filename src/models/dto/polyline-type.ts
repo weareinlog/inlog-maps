@@ -1,3 +1,3 @@
 export enum PolylineType {
-    Dotted = 'dotted'
+    Dotted
 }

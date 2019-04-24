@@ -1,4 +1,5 @@
 import NavigationOptions from './navigations-options';
+import { PolylineType } from '../../dto/polyline-type';
 
 export default class PolylineOptions {
     public path: number[][];
@@ -10,12 +11,12 @@ export default class PolylineOptions {
     public weight: number;
     public object?: object;
     public infowindows?: string[];
-    public style?: string;
+    public style?: PolylineType;
     public navigateOptions?: NavigationOptions;
 
     constructor(path?: number[][], addToMap?: boolean, fitBounds?: boolean,
         editable?: boolean, draggable?: boolean, color?: string, weight?: number,
-        object?: object, infowindows?: string[], navigateOptions?: NavigationOptions, style?: string) {
+        object?: object, infowindows?: string[], navigateOptions?: NavigationOptions, style?: PolylineType) {
 
         this.path = path;
         this.addToMap = addToMap;

@@ -485,7 +485,7 @@ export default class GoogleMaps implements IMapFunctions {
             strokeOpacity: null
         };
 
-        if (options.style) {
+        if (options.style !== null) {
             switch (options.style) {
                 case PolylineType.Dotted:
                     newOptions.strokeOpacity = 0;
