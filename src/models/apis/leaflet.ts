@@ -2,6 +2,7 @@ import { OverlayOptions } from '../..';
 import { MapsApiLoaderService } from '../../utils/maps-api-loader.service';
 import { EventType, MarkerEventType } from '../dto/event-type';
 import { MapType } from '../dto/map-type';
+import { PolylineType } from '../dto/polyline-type';
 import CircleAlterOptions from '../features/circle/circle-alter-options';
 import CircleOptions from '../features/circle/circle-options';
 import EventReturn from '../features/events/event-return';
@@ -231,29 +232,32 @@ export default class Leaflet implements IMapFunctions {
         return this.map.hasLayer(marker);
     }
 
-    public addPolylineListeners(polyline: any,  event: EventType, eventFunction: any) {
-        switch (event) {
-            case EventType.Move:
-                this.map.on('editable:vertex:dragstart',(event: any) => {
-                    const param = new EventReturn([event.latlng.lat, event.latlng.lng]);
-                    eventFunction(param);
-                });
-                break;
-            case EventType.InsertAt:
-                this.map.on('editable:vertex:dragend',(event: any) => {
-                    const param = new EventReturn([event.latlng.lat, event.latlng.lng]);
-                    eventFunction(param);
-                });
-                break;
-            case EventType.RemoveAt:
-                this.map.on('editable:vertex:deleted',(event: any) => {
-                    const param = new EventReturn([event.latlng.lat, event.latlng.lng]);
-                    eventFunction(param);
-                });
-                break;
-            default:
-                break;
-        }
+    public addPolylineListeners(polylines: any,  event: EventType, eventFunction: any) {
+        polylines.forEach(polyline => {
+            switch (event) {
+                case EventType.Move:
+                    polyline.on('editable:vertex:dragstart', (event: any) => {
+                        console.log(event)
+                        const param = new EventReturn([event.vertex.latlng.lat, event.vertex.latlng.lng]);
+                        eventFunction(param);
+                    });
+                    break;
+                case EventType.InsertAt:
+                    polyline.on('editable:vertex:dragend', (event: any) => {
+                        const param = new EventReturn([event.vertex.latlng.lat, event.vertex.latlng.lng]);
+                        eventFunction(param);
+                    });
+                    break;
+                case EventType.RemoveAt:
+                    polyline.on('editable:vertex:deleted', (event: any) => {
+                        const param = new EventReturn([event.vertex.latlng.lat, event.vertex.latlng.lng]);
+                        eventFunction(param);
+                    });
+                    break;
+                default:
+                    break;
+            }
+        })
     }
 
     public addMarkerEvent(markers: any, event: MarkerEventType, eventFunction: any) {
@@ -421,7 +425,7 @@ export default class Leaflet implements IMapFunctions {
     }
 
     /* Polylines */
-    public drawPolyline(options: PolylineOptions, eventClick) {
+    public drawPolyline(options: PolylineOptions, eventClick: any) {
         const self = this;
 
         let newOptions = {
@@ -437,7 +441,7 @@ export default class Leaflet implements IMapFunctions {
 
         if (options.style) {
             switch (options.style) {
-                case 'dotted':
+                case PolylineType.Dotted:
                     newOptions.opacity = .7;
                     newOptions.dashArray = '20,15';
                     break;
@@ -445,6 +449,7 @@ export default class Leaflet implements IMapFunctions {
                     break;
             }
         }
+        // console.log(options);
 
         const polyline = new this.leaflet.Polyline(options.path || [], newOptions);
 

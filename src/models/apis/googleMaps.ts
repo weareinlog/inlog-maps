@@ -1,6 +1,7 @@
 import { MapsApiLoaderService } from '../../utils/maps-api-loader.service';
 import { EventType, MarkerEventType } from '../dto/event-type';
 import { MapType } from '../dto/map-type';
+import { PolylineType } from '../dto/polyline-type';
 import CircleAlterOptions from '../features/circle/circle-alter-options';
 import CircleOptions from '../features/circle/circle-options';
 import EventReturn from '../features/events/event-return';
@@ -478,12 +479,12 @@ export default class GoogleMaps implements IMapFunctions {
             strokeColor: options.color,
             strokeWeight: options.weight,
             icons: null,
-            strokeOpacity: null,
+            strokeOpacity: null
         };
 
         if (options.style) {
             switch (options.style) {
-                case 'dotted':
+                case PolylineType.Dotted:
                     newOptions.strokeOpacity = 0;
                     newOptions.icons = [{
                         icon: {

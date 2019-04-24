@@ -397,8 +397,8 @@ export default class Map {
 
     /**
      * Use this functions to fit polylines bounds
-     * @param type 
-     * @param condition 
+     * @param type
+     * @param condition
      */
     public fitBoundsPolylines(type: string, condition?: any) {
         const polylines = this.getPolylines(type, condition)
@@ -484,7 +484,7 @@ export default class Map {
 
     /**
      * Use this function to close popup by type
-     * @param {string} type 
+     * @param {string} type
      */
     public closePopup(type: string) {
         if (this.infoWindowList[type]) {
@@ -494,7 +494,7 @@ export default class Map {
 
     /**
      * Use this function to close all popups
-     * @param {string} type 
+     * @param {string} type
      */
     public closeAllPopups() {
         for (let type in this.infoWindowList) {
@@ -572,9 +572,9 @@ export default class Map {
 
     /**
      * Use this function to show or hide overlay
-     * @param show 
-     * @param type 
-     * @param condition 
+     * @param show
+     * @param type
+     * @param condition
      */
     public toggleOverlay(show: boolean, type: string, condition?: any) {
         const overlays = this.getOverlays(type, condition);
