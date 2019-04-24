@@ -449,7 +449,6 @@ export default class Leaflet implements IMapFunctions {
                     break;
             }
         }
-        // console.log(options);
 
         const polyline = new this.leaflet.Polyline(options.path || [], newOptions);
 

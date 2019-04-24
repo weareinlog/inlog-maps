@@ -277,17 +277,20 @@ export default class GoogleMaps implements IMapFunctions {
             switch (event) {
                 case EventType.Move:
                     this.google.maps.event.addListener(polyline.getPath(), "set_at", (event: any) => {
-                        eventFunction(polyline.getPath().getAt(event));
+                        const param = new EventReturn([polyline.getPath().getAt(event).lat(), polyline.getPath().getAt(event).lng()]);
+                        eventFunction(param);
                     });
                     break;
                 case EventType.InsertAt:
                     this.google.maps.event.addListener(polyline.getPath(), "insert_at", (event: any) => {
-                        eventFunction(polyline.getPath().getAt(event));
+                        const param = new EventReturn([polyline.getPath().getAt(event).lat(), polyline.getPath().getAt(event).lng()]);
+                        eventFunction(param);
                     });
                     break;
                 case EventType.RemoveAt:
                     this.google.maps.event.addListener(polyline.getPath(), "remove_at", (event: any) => {
-                        eventFunction(polyline.getPath().getAt(event));
+                        const param = new EventReturn([polyline.getPath().getAt(event).lat(), polyline.getPath().getAt(event).lng()]);
+                        eventFunction(param);
                     });
                     break;
                 default:
