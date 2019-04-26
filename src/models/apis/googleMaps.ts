@@ -1,6 +1,7 @@
 import { MapsApiLoaderService } from '../../utils/maps-api-loader.service';
 import { EventType, MarkerEventType } from '../dto/event-type';
 import { MapType } from '../dto/map-type';
+import { PolylineType } from '../dto/polyline-type';
 import CircleAlterOptions from '../features/circle/circle-alter-options';
 import CircleOptions from '../features/circle/circle-options';
 import EventReturn from '../features/events/event-return';
@@ -271,6 +272,34 @@ export default class GoogleMaps implements IMapFunctions {
         return marker.map !== null;
     }
 
+    public addPolylineListeners(polylines: any, event: EventType, eventFunction: any) {
+        polylines.forEach(polyline => {
+            switch (event) {
+                case EventType.Move:
+                    this.google.maps.event.addListener(polyline.getPath(), "set_at", (event: any) => {
+                        const param = new EventReturn([polyline.getPath().getAt(event).lat(), polyline.getPath().getAt(event).lng()]);
+                        eventFunction(param);
+                    });
+                    break;
+                case EventType.InsertAt:
+                    this.google.maps.event.addListener(polyline.getPath(), "insert_at", (event: any) => {
+                        const param = new EventReturn([polyline.getPath().getAt(event).lat(), polyline.getPath().getAt(event).lng()]);
+                        eventFunction(param);
+                    });
+                    break;
+                case EventType.RemoveAt:
+                    this.google.maps.event.addListener(polyline.getPath(), "remove_at", (event: any) => {
+                        const param = new EventReturn([polyline.getPath().getAt(event).lat(), polyline.getPath().getAt(event).lng()]);
+                        eventFunction(param);
+                    });
+                    break;
+                default:
+                    break;
+            }
+        })
+
+    }
+
     public addMarkerEvent(markers: any, event: MarkerEventType, eventFunction: any) {
         markers.forEach((marker: any) => {
             switch (event) {
@@ -285,6 +314,13 @@ export default class GoogleMaps implements IMapFunctions {
                         const param = new EventReturn([event.latLng.lat(), event.latLng.lng()]);
                         eventFunction(marker, param, marker.object);
                     });
+                    break;
+                case MarkerEventType.MouseOver:
+                    this.google.maps.event.addListener(marker, 'mouseover', (event: any) => {
+                        const param = new EventReturn([event.latLng.lat(), event.latLng.lng()]);
+                        eventFunction(marker, param, marker.object);
+                    });
+                    break;
                 default:
                     break;
             }
@@ -437,15 +473,36 @@ export default class GoogleMaps implements IMapFunctions {
     /* Polylines */
     public drawPolyline(options: PolylineOptions, eventClick: any) {
         const self = this;
-        const newOptions = {
+        let newOptions = {
             draggable: options.draggable,
             editable: options.editable,
             infowindows: options.infowindows,
             object: options.object,
             path: null,
             strokeColor: options.color,
-            strokeWeight: options.weight
+            strokeWeight: options.weight,
+            icons: null,
+            strokeOpacity: null
         };
+
+        if (options.style !== null) {
+            switch (options.style) {
+                case PolylineType.Dotted:
+                    newOptions.strokeOpacity = 0;
+                    newOptions.icons = [{
+                        icon: {
+                            path: 'M 0,-1 0,1',
+                            strokeOpacity: 1,
+                            scale: 2
+                        },
+                        offset: '0',
+                        repeat: '10px'
+                    }];
+                    break;
+                default:
+                    break;
+            }
+        }
 
         newOptions.path = options.path ? options.path.map((x) => {
             return {

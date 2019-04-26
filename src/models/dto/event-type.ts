@@ -1,9 +1,13 @@
 export enum EventType {
     Click,
-    ZoomChanged
+    ZoomChanged,
+    Move,
+    InsertAt,
+    RemoveAt
 }
 
 export enum MarkerEventType {
     Click,
-    AfterDrag
+    AfterDrag,
+    MouseOver
 }
