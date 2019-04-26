@@ -20,6 +20,7 @@ import PolylineOptions from './models/features/polyline/polyline-options';
 import PopupOptions from './models/features/popup/popup-options';
 import { EventType, MarkerEventType, CircleEventType } from './models/dto/event-type';
 import { MapType } from './models/dto/map-type';
+import { PolylineType } from './models/dto/polyline-type';
 
 export { Map };
 export { MarkerOptions };
@@ -39,6 +40,7 @@ export { NavigationOptions };
 export { IMapFunctions };
 export { OverlayOptions };
 export { MapType }
+export { PolylineType };
 export { EventType }
 export { MarkerEventType };
-export { CircleEventType }
+export { CircleEventType };

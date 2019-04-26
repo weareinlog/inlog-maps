@@ -1,5 +1,6 @@
 import { EventType, MarkerEventType, CircleEventType } from '../dto/event-type';
 import { MapType } from '../dto/map-type';
+import { PolylineType } from '../dto/polyline-type';
 import CircleAlterOptions from '../features/circle/circle-alter-options';
 import CircleOptions from '../features/circle/circle-options';
 import GeoJsonOptions from '../features/geojson/geojson-options';
@@ -46,6 +47,7 @@ export default interface IMapFunctions {
     alterPolylineOptions(polylines: any, options: PolylineOptions): void;
     fitBoundsPolylines(polylines: any): void;
     isPolylineOnMap(polyline: any): boolean;
+    addPolylineListeners(polyline: any, event: EventType, eventFunction: any);
 
     /* Circles */
     drawCircle(options: CircleOptions, eventClick: any): any;
