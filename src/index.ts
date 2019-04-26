@@ -18,7 +18,7 @@ import PolygonOptions from './models/features/polygons/polygon-options';
 import NavigationOptions from './models/features/polyline/navigations-options';
 import PolylineOptions from './models/features/polyline/polyline-options';
 import PopupOptions from './models/features/popup/popup-options';
-import { EventType, MarkerEventType } from './models/dto/event-type';
+import { EventType, MarkerEventType, CircleEventType } from './models/dto/event-type';
 import { MapType } from './models/dto/map-type';
 
 export { Map };
@@ -41,3 +41,4 @@ export { OverlayOptions };
 export { MapType }
 export { EventType }
 export { MarkerEventType };
+export { CircleEventType }

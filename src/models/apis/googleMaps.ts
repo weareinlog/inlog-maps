@@ -1,5 +1,5 @@
 import { MapsApiLoaderService } from '../../utils/maps-api-loader.service';
-import { EventType, MarkerEventType } from '../dto/event-type';
+import { EventType, MarkerEventType, CircleEventType } from '../dto/event-type';
 import { MapType } from '../dto/map-type';
 import CircleAlterOptions from '../features/circle/circle-alter-options';
 import CircleOptions from '../features/circle/circle-options';
@@ -30,7 +30,7 @@ export default class GoogleMaps implements IMapFunctions {
 
     constructor() { /* */ }
 
-    public initialize(mapType: MapType, params: any, elementId: string) {
+    public initialize(mapType: MapType, params: any, elementId: string): Promise<any> {
         return this.mapsApiLoader.loadApi(mapType, params)
             .then((api) => {
                 this.google = api;
@@ -134,7 +134,7 @@ export default class GoogleMaps implements IMapFunctions {
             this.google.maps.event.addListener(marker, 'click', (event: any) => {
                 const param = new EventReturn([event.latLng.lat(), event.latLng.lng()]);
 
-                eventClick(marker, param, options.object);
+                eventClick(param, options.object);
             });
         }
 
@@ -181,7 +181,7 @@ export default class GoogleMaps implements IMapFunctions {
         if (eventClick) {
             this.google.maps.event.addListener(marker, 'click', (event: any) => {
                 const param = new EventReturn([event.latLng.lat(), event.latLng.lng()]);
-                eventClick(marker, param, options.object);
+                eventClick(param, options.object);
             });
         }
 
@@ -277,13 +277,13 @@ export default class GoogleMaps implements IMapFunctions {
                 case MarkerEventType.Click:
                     this.google.maps.event.addListener(marker, 'click', (event: any) => {
                         const param = new EventReturn([event.latLng.lat(), event.latLng.lng()]);
-                        eventFunction(marker, param, marker.object);
+                        eventFunction(param, marker.object);
                     });
                     break;
                 case MarkerEventType.AfterDrag:
                     this.google.maps.event.addListener(marker, 'dragend', (event: any) => {
                         const param = new EventReturn([event.latLng.lat(), event.latLng.lng()]);
-                        eventFunction(marker, param, marker.object);
+                        eventFunction(param, marker.object);
                     });
                 default:
                     break;
@@ -312,7 +312,8 @@ export default class GoogleMaps implements IMapFunctions {
             paths,
             strokeColor: options.color,
             strokeOpacity: options.opacity,
-            strokeWeight: options.weight
+            strokeWeight: options.weight,
+            suppressUndo: true
         };
 
         const polygon = new this.google.maps.Polygon(newOptions);
@@ -320,7 +321,7 @@ export default class GoogleMaps implements IMapFunctions {
         if (eventClick) {
             this.google.maps.event.addListener(polygon, 'click', (event: any) => {
                 const param = new EventReturn([event.latLng.lat(), event.latLng.lng()]);
-                eventClick(polygon, param, options.object);
+                eventClick(param, options.object);
             });
         }
 
@@ -386,7 +387,8 @@ export default class GoogleMaps implements IMapFunctions {
             radius: options.radius,
             strokeColor: options.color,
             strokeOpacity: options.opacity,
-            strokeWeight: options.weight
+            strokeWeight: options.weight,
+            suppressUndo: true
         };
 
         const circle = new this.google.maps.Circle(newOptions);
@@ -394,7 +396,7 @@ export default class GoogleMaps implements IMapFunctions {
         if (eventClick) {
             this.google.maps.event.addListener(circle, 'click', (event: any) => {
                 const param = new EventReturn([event.latLng.lat(), event.latLng.lng()]);
-                eventClick(circle, param, options.object);
+                eventClick(param, options.object);
             });
         }
 
@@ -415,10 +417,14 @@ export default class GoogleMaps implements IMapFunctions {
     }
 
     public alterCircleOptions(circles: any[], options: CircleAlterOptions) {
-        let newOptions = {};
-
         circles.forEach((circle) => {
-            newOptions = {
+            const latlng = options.center !== null && options.center !== undefined && options.center.length > 0 ?
+                { lat: options.center[0], lng: options.center[1] } : circle.getCenter();
+
+            let newOptions = {
+                center: latlng,
+                radius: options.radius !== null && options.radius !== undefined ?
+                    options.radius : circle.radius,
                 fillColor: options.fillColor !== null && options.fillColor !== undefined ?
                     options.fillColor : circle.fillColor,
                 fillOpacity: options.fillOpacity !== null && options.fillOpacity !== undefined ?
@@ -434,6 +440,61 @@ export default class GoogleMaps implements IMapFunctions {
         });
     }
 
+    public addCircleEvent(circles: any, event: CircleEventType, eventFunction: any): void {
+        circles.forEach((circle: any) => {
+            switch (event) {
+                case CircleEventType.Click:
+                    this.google.maps.event.addListener(circle, 'click', (event: any) => {
+                        const param = new EventReturn([event.latLng.lat(), event.latLng.lng()]);
+                        eventFunction(param, circle.object);
+                    });
+                    break;
+                case CircleEventType.CenterChanged:
+                    this.google.maps.event.addListener(circle, 'center_changed', () => {
+                        const param = new EventReturn([circle.getCenter().lat(), circle.getCenter().lng()]);
+                        eventFunction(param, circle.object);
+                    });
+                case CircleEventType.RadiusChanged:
+                    this.google.maps.event.addListener(circle, 'radius_changed', (event: any) => {
+                        const param = new EventReturn([circle.getCenter().lat(), circle.getCenter().lng()]);
+                        eventFunction(param, circle.object, circle.getRadius());
+                    });
+                default:
+                    break;
+            }
+        });
+    }
+
+    public removeCircleEvent(circles: any, event: CircleEventType): void {
+        circles.forEach((circle: any) => {
+            switch (event) {
+                case CircleEventType.Click:
+                    this.google.maps.event.clearListeners(circle, 'click');
+                case CircleEventType.CenterChanged:
+                    this.google.maps.event.clearListeners(circle, 'center_changed');
+                case CircleEventType.RadiusChanged:
+                    this.google.maps.event.clearListeners(circle, 'radius_changed');
+                default:
+                    break;
+            }
+        });
+    }
+
+    isCircleOnMap(circle: any): boolean {
+        return circle.map !== null;
+    }
+
+    fitBoundsCircles(circles: any): void {
+        this.map.fitBounds(this.getCirclesBounds(circles));
+    }
+
+    private getCirclesBounds(circles: any) {
+        const bounds = new this.google.maps.LatLngBounds();
+
+        circles.forEach((circulo: any) => bounds.union(circulo.getBounds()));
+        return bounds;
+    }
+
     /* Polylines */
     public drawPolyline(options: PolylineOptions, eventClick: any) {
         const self = this;
@@ -444,7 +505,8 @@ export default class GoogleMaps implements IMapFunctions {
             object: options.object,
             path: null,
             strokeColor: options.color,
-            strokeWeight: options.weight
+            strokeWeight: options.weight,
+            suppressUndo: true
         };
 
         newOptions.path = options.path ? options.path.map((x) => {
@@ -459,7 +521,7 @@ export default class GoogleMaps implements IMapFunctions {
         if (eventClick) {
             this.google.maps.event.addListener(polyline, 'click', (event: any) => {
                 const param = new EventReturn([event.latLng.lat(), event.latLng.lng()]);
-                eventClick(polyline, param, polyline.object);
+                eventClick(param, polyline.object);
             });
         }
 
@@ -556,22 +618,24 @@ export default class GoogleMaps implements IMapFunctions {
     }
 
     /* Info Windows */
-    public drawPopup(options: PopupOptions) {
+    public drawPopup(options: PopupOptions, marker?: any) {
         const self = this;
         const infowindow = new this.google.maps.InfoWindow({
             content: options.content
         });
 
-        infowindow.setPosition({
-            lat: options.latlng[0],
-            lng: options.latlng[1]
-        });
+        if (options.latlng) {
+            infowindow.setPosition({
+                lat: options.latlng[0],
+                lng: options.latlng[1]
+            });
+        }
 
-        infowindow.open(self.map, options.marker || null);
+        infowindow.open(self.map, marker || null);
         return infowindow;
     }
 
-    public alterPopup(popup, options: PopupOptions) {
+    public alterPopup(popup, options: PopupOptions, marker?: any) {
         const self = this;
 
         if (options.content) {
@@ -583,10 +647,12 @@ export default class GoogleMaps implements IMapFunctions {
                 lat: options.latlng[0],
                 lng: options.latlng[1]
             });
+        } else if (marker) {
+            popup.setPosition(marker.getPosition());
         }
 
         if (!popup.getMap()) {
-            popup.open(self.map, options.marker || null);
+            popup.open(self.map, marker || null);
         }
     }
 
@@ -632,6 +698,10 @@ export default class GoogleMaps implements IMapFunctions {
         return this.map.getZoom();
     }
 
+    public setZoom(zoom: number) {
+        return this.map.setZoom(zoom);
+    }
+
     public getCenter(): number[] {
         const center = this.map.getCenter();
         return [center.lat(), center.lng()];
@@ -639,6 +709,24 @@ export default class GoogleMaps implements IMapFunctions {
 
     public setCenter(position: number[]) {
         this.map.setCenter(new google.maps.LatLng(position[0], position[1]));
+    }
+
+    public resizeMap(): void {
+        google.maps.event.trigger(this.map, 'resize');
+    }
+
+    public pixelsToLatLng(offsetx: number, offsety: number) {
+        var scale = Math.pow(2, this.map.getZoom());
+        var worldCoordinateCenter = this.map.getProjection().fromLatLngToPoint(this.map.getCenter());
+        var pixelOffset = new google.maps.Point(offsetx / scale || 0, offsety / scale || 0);
+
+        var worldCoordinateNewCenter = new google.maps.Point(
+            worldCoordinateCenter.x - pixelOffset.x,
+            worldCoordinateCenter.y + pixelOffset.y
+        );
+
+        const latlng = this.map.getProjection().fromPointToLatLng(worldCoordinateNewCenter);
+        return [latlng.lat(), latlng.lng()];
     }
 
     /* Overlay */

@@ -1,7 +1,7 @@
 import GoogleMaps from './models/apis/googleMaps';
 import Leaflet from './models/apis/leaflet';
 import IMapFunctions from './models/apis/mapFunctions';
-import { EventType, MarkerEventType } from './models/dto/event-type';
+import { EventType, MarkerEventType, CircleEventType } from './models/dto/event-type';
 import { MapType } from './models/dto/map-type';
 import CircleAlterOptions from './models/features/circle/circle-alter-options';
 import CircleOptions from './models/features/circle/circle-options';
@@ -181,10 +181,25 @@ export default class Map {
         }
     }
 
-    public addMarkerEvent(event: MarkerEventType, eventFunction: any, type: string, condition?: any) {
+    /**
+     * This function add new events on marker
+     * @param {string} type 
+     * @param {MarkerEventType} event 
+     * @param eventFunction 
+     * @param condition 
+     */
+    public addMarkerEvent(type: string, event: MarkerEventType, eventFunction: any, condition?: any) {
         const markers = this.getMarkers(type, condition);
 
         this.map.addMarkerEvent(markers, event, eventFunction);
+    }
+
+    /**
+     * This functions returns if marker exists
+     */
+    public markerExists(type: string, condition?: any): boolean {
+        var markers = this.getMarkers(type, condition);
+        return markers && markers.length > 0;
     }
 
     /* Polygons */
@@ -447,6 +462,79 @@ export default class Map {
         }
     }
 
+    /**
+     * Remove circles from the map and from internal list
+     * @param {string} type
+     * @param {any} condition remove circles with the condition
+     */
+    public removeCircles(type: string, condition?: any) {
+        if (this.circlesList[type] && condition) {
+            const circles = this.getCircles(type, condition);
+
+            // Hide circles with the condition
+            this.map.toggleCircles(circles, false);
+
+            // Keep circles that doesn't have the condition
+            this.circlesList[type] = this.circlesList[type].filter((circle: any) => !condition(circle.object));
+        } else {
+            if (this.circlesList[type]) {
+                this.map.toggleCircles(this.circlesList[type], false);
+            }
+            this.circlesList[type] = [];
+        }
+
+        if (this.circlesList[type].length === 0) {
+            delete this.circlesList[type];
+        }
+    }
+
+    /**
+     * Use this function to fit bounds of a polygon
+     * @param {string} type
+     * @param {any} condition fit polygon bounds with the condition
+     */
+    public fitBoundsCircles(type: string, condition?: any) {
+        const circles = this.getCircles(type, condition)
+            .filter((circle: any) => this.map.isCircleOnMap(circle));
+
+        if (circles && circles.length > 0) {
+            this.map.fitBoundsCircles(circles);
+        }
+    }
+
+    /**
+     * This functions returns if circle exists
+     */
+    public circleExists(type: string, condition?: any): boolean {
+        var circles = this.getCircles(type, condition);
+        return circles && circles.length > 0;
+    }
+
+    /**
+     * This function add new events on circle
+     * @param {string} type 
+     * @param {CircleEventType} event 
+     * @param eventFunction 
+     * @param condition 
+     */
+    public addCircleEvent(type: string, event: CircleEventType, eventFunction: any, condition?: any) {
+        const circles = this.getCircles(type, condition);
+
+        this.map.addCircleEvent(circles, event, eventFunction);
+    }
+
+    /**
+     * This function remove events of circle
+     * @param {string} type 
+     * @param {CircleEventType} event 
+     * @param condition 
+     */
+    public removeCircleEvent(type: string, event: CircleEventType, condition?: any) {
+        const circles = this.getCircles(type, condition);
+
+        this.map.removeCircleEvent(circles, event);
+    }
+
     /* Info Windows */
     /**
      * Use this function to draw popups on the currentMap
@@ -454,10 +542,16 @@ export default class Map {
      * @param {inlogMaps.PopupOptions} options
      */
     public drawPopup(type: string, options: PopupOptions) {
+        let marker: any = null;
+        if (options.marker) {
+            const markers = this.getMarkers(options.marker, options.conditionMarker);
+            marker = markers[0];
+        }
+
         if (this.infoWindowList[type]) {
-            this.map.alterPopup(this.infoWindowList[type], options);
+            this.map.alterPopup(this.infoWindowList[type], options, marker);
         } else {
-            const infoWindow = this.map.drawPopup(options);
+            const infoWindow = this.map.drawPopup(options, marker);
 
             this.infoWindowList[type] = infoWindow;
         }
@@ -471,8 +565,13 @@ export default class Map {
     public alterPopup(type: string, options: PopupOptions) {
         const popups = this.infoWindowList[type];
 
+        let markers: any;
+        if (options.marker) {
+            markers = this.getMarkers(options.marker, options.conditionMarker);
+        }
+
         if (popups) {
-            this.map.alterPopup(popups, options);
+            this.map.alterPopup(popups, options, markers[0]);
         }
     }
 
@@ -522,6 +621,13 @@ export default class Map {
     }
 
     /**
+     * Returns the current zoom level of the map view
+     */
+    public setZoom(zoom: number) {
+        return this.map.setZoom(zoom);
+    }
+
+    /**
      * Returns the center position of the map
      */
     public getCenter(): number[] {
@@ -535,6 +641,22 @@ export default class Map {
         this.map.setCenter(position);
     }
 
+    /**
+     * Resize de map based on html size
+     */
+    public resizeMap() {
+        this.map.resizeMap();
+    }
+
+    /**
+     * Returns the coordinates from pixels
+     * @param offsetx 
+     * @param offsety 
+     */
+    public pixelsToLatLng(offsetx: number, offsety: number): number[] {
+        return this.map.pixelsToLatLng(offsetx, offsety);
+    }
+
     /* Overlay */
     /**
      * Use this function to dray overlays on the current map
@@ -543,11 +665,11 @@ export default class Map {
      * @param {string} typePolygon
      * @param polygonCondition
      */
-    public drawOverlay(type: string, options: OverlayOptions, typePolygon?: string, polygonCondition?: any) {
+    public drawOverlay(type: string, options: OverlayOptions) {
         let overlay = null;
 
-        if (typePolygon) {
-            const polygons = this.getPolygons(typePolygon, polygonCondition);
+        if (options.polygon) {
+            const polygons = this.getPolygons(options.polygon, options.conditionPolygon);
 
             if (polygons && polygons.length > 0) {
                 overlay = this.map.drawOverlay(options, polygons);

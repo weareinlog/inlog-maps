@@ -1,4 +1,4 @@
-import { EventType, MarkerEventType } from '../dto/event-type';
+import { EventType, MarkerEventType, CircleEventType } from '../dto/event-type';
 import { MapType } from '../dto/map-type';
 import CircleAlterOptions from '../features/circle/circle-alter-options';
 import CircleOptions from '../features/circle/circle-options';
@@ -13,58 +13,65 @@ import PolylineOptions from '../features/polyline/polyline-options';
 import PopupOptions from '../features/popup/popup-options';
 
 export default interface IMapFunctions {
-    initialize(mapType: MapType, params: object, elementId: string);
+    initialize(mapType: MapType, params: object, elementId: string): Promise<any>;
 
     /* GEOJson */
-    loadGEOJson(data: object, options: GeoJsonOptions, eventClick: any);
+    loadGEOJson(data: object, options: GeoJsonOptions, eventClick: any): void;
 
     /* Markers */
-    drawMarker(options: MarkerOptions, eventClick: any);
-    fitBoundsPositions(markers: any[]);
-    drawCircleMarker(options: CircleMarkerOptions, eventClick: any);
-    toggleMarkers(markers: any[], show: boolean);
-    alterMarkerOptions(markers: any[], options: MarkerAlterOptions);
-    alterMarkerPosition(markers: any[], position: number[], addTransotion: boolean);
-    setCenterMarker(marker: any);
+    drawMarker(options: MarkerOptions, eventClick: any): any;
+    fitBoundsPositions(markers: any[]): void;
+    drawCircleMarker(options: CircleMarkerOptions, eventClick: any): any;
+    toggleMarkers(markers: any[], show: boolean): void;
+    alterMarkerOptions(markers: any[], options: MarkerAlterOptions): void;
+    alterMarkerPosition(markers: any[], position: number[], addTransation: boolean): void;
+    setCenterMarker(marker: any): void;
     isMarkerOnMap(marker: any): boolean;
-    addMarkerEvent(markers: any, event: MarkerEventType, eventFunction: any);
+    addMarkerEvent(markers: any, event: MarkerEventType, eventFunction: any): void;
 
     /* Polygons */
-    drawPolygon(options: PolygonOptions, eventClick: any);
-    fitBoundsPolygons(polygons: any);
-    togglePolygons(polygons: any[], show: boolean);
-    alterPolygonOptions(polygons: any[], options: PolygonAlterOptions);
+    drawPolygon(options: PolygonOptions, eventClick: any): any;
+    fitBoundsPolygons(polygons: any): void;
+    togglePolygons(polygons: any[], show: boolean): void;
+    alterPolygonOptions(polygons: any[], options: PolygonAlterOptions): void;
     isPolygonOnMap(polygon: any): boolean;
 
     /* Polylines */
-    drawPolyline(options: PolylineOptions, eventClick: any);
-    togglePolylines(polylines: any, show: boolean);
-    drawPolylineWithNavigation(options: PolylineOptions);
-    clearListenersPolyline(polylines: any);
-    addPolylinePath(polylines: any, position: number[]);
-    removePolylineHighlight();
-    alterPolylineOptions(polylines: any, options: PolylineOptions);
-    fitBoundsPolylines(polylines: any);
+    drawPolyline(options: PolylineOptions, eventClick: any): any;
+    togglePolylines(polylines: any, show: boolean): void;
+    drawPolylineWithNavigation(options: PolylineOptions): any;
+    clearListenersPolyline(polylines: any): void;
+    addPolylinePath(polylines: any, position: number[]): void;
+    removePolylineHighlight(): void;
+    alterPolylineOptions(polylines: any, options: PolylineOptions): void;
+    fitBoundsPolylines(polylines: any): void;
     isPolylineOnMap(polyline: any): boolean;
 
     /* Circles */
-    drawCircle(options: CircleOptions, eventClick: any);
-    toggleCircles(circles: any[], show: boolean);
-    alterCircleOptions(circles: any[], options: CircleAlterOptions);
+    drawCircle(options: CircleOptions, eventClick: any): any;
+    toggleCircles(circles: any[], show: boolean): void;
+    alterCircleOptions(circles: any[], options: CircleAlterOptions): void;
+    addCircleEvent(circles: any, event: CircleEventType, eventFunction: any): void;
+    removeCircleEvent(circles: any, event: CircleEventType): void;
+    isCircleOnMap(circle: any): boolean;
+    fitBoundsCircles(circles: any): void;
 
     /* Info Windows */
-    drawPopup(options: PopupOptions);
-    alterPopup(popup: any, options: PopupOptions);
-    closePopup(popup: any);
+    drawPopup(options: PopupOptions, marker?: any): any;
+    alterPopup(popup: any, options: PopupOptions, marker?: any): void;
+    closePopup(popup: any): void;
 
     /* Map */
-    addEventMap(eventType: EventType, eventFunction: any);
-    removeEventMap(eventType: EventType);
+    addEventMap(eventType: EventType, eventFunction: any): void;
+    removeEventMap(eventType: EventType): void;
     getZoom(): number;
+    setZoom(zoom: number): void;
     getCenter(): number[];
-    setCenter(position: number[]);
+    setCenter(position: number[]): void;
+    resizeMap(): void;
+    pixelsToLatLng(offsetx: number, offsety: number): number[];
 
     /* Overlay */
-    drawOverlay(options: OverlayOptions, polygons?: any);
-    toggleOverlay(overlays: any[], show: boolean);
+    drawOverlay(options: OverlayOptions, polygons?: any): any;
+    toggleOverlay(overlays: any[], show: boolean): void;
 }
