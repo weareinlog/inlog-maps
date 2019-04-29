@@ -31,7 +31,7 @@ export default class GoogleMaps implements IMapFunctions {
 
     constructor() { /* */ }
 
-    public initialize(mapType: MapType, params: any, elementId: string): Promise<any> {
+    public initialize(mapType: MapType, params: any, elementId?: string): Promise<any> {
         return this.mapsApiLoader.loadApi(mapType, params)
             .then((api) => {
                 this.google = api;
@@ -516,11 +516,11 @@ export default class GoogleMaps implements IMapFunctions {
         });
     }
 
-    isCircleOnMap(circle: any): boolean {
+    public isCircleOnMap(circle: any): boolean {
         return circle.map !== null;
     }
 
-    fitBoundsCircles(circles: any): void {
+    public fitBoundsCircles(circles: any): void {
         this.map.fitBounds(this.getCirclesBounds(circles));
     }
 
@@ -529,6 +529,12 @@ export default class GoogleMaps implements IMapFunctions {
 
         circles.forEach((circulo: any) => bounds.union(circulo.getBounds()));
         return bounds;
+    }
+
+    public getCircleCenter(circle: any): number[] {
+        const center = circle.getCenter();
+
+        return [center.lat(), center.lng()];
     }
 
     /* Polylines */

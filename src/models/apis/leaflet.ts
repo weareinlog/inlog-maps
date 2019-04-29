@@ -30,7 +30,7 @@ export default class Leaflet implements IMapFunctions {
 
     constructor() { /* */ }
 
-    public initialize(mapType: MapType, params: any, elementId: string): Promise<any> {
+    public initialize(mapType: MapType, params: any, elementId?: string): Promise<any> {
         return this.mapsApiLoader.loadApi(mapType, params)
             .then(async (api) => {
                 this.leaflet = api;
@@ -232,7 +232,7 @@ export default class Leaflet implements IMapFunctions {
         return this.map.hasLayer(marker);
     }
 
-    public addPolylineListeners(polylines: any,  event: EventType, eventFunction: any) {
+    public addPolylineListeners(polylines: any, event: EventType, eventFunction: any) {
         polylines.forEach(polyline => {
             switch (event) {
                 case EventType.Move:
@@ -471,7 +471,7 @@ export default class Leaflet implements IMapFunctions {
         });
     }
 
-    isCircleOnMap(circle: any): boolean {
+    public isCircleOnMap(circle: any): boolean {
         return this.map.hasLayer(circle);
     }
 
@@ -482,6 +482,12 @@ export default class Leaflet implements IMapFunctions {
     private getBoundsCircles(circles: any) {
         const group = new this.leaflet.FeatureGroup(circles);
         return group.getBounds();
+    }
+
+    public getCircleCenter(circle: any): number[] {
+        const center = circle.getLatLng();
+
+        return [center.lat, center.lng];
     }
 
     /* Polylines */
