@@ -19,7 +19,7 @@ Use this to initialize map
 | ---- | ---- | ----------- | -------- |
 | mapType | `InlogMaps.MapType`  |  | &nbsp; |
 | options | `any`  |  | &nbsp; |
-| elementId | `string`  | [nullable] | &nbsp; |
+| elementId | `string`  | default: 'inlog-map' [nullable] | &nbsp; |
 
 
 

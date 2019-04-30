@@ -32,10 +32,10 @@ export default class Map {
      * Use this to initialize map
      * @param {InlogMaps.MapType} mapType  
      * @param {any} options 
-     * @param {string} elementId [nullable]
+     * @param {string} elementId default: 'inlog-map' [nullable]
      * @returns {Promisse<any>}
      */
-    public initialize(mapType: MapType, options: any, elementId?: string): Promise<any> {
+    public initialize(mapType: MapType, options: any, elementId?: 'inlog-map'): Promise<any> {
         this.map = mapType === MapType.Google ? new GoogleMaps() : new Leaflet();
         return this.map.initialize(mapType, options, elementId);
     }

@@ -14,7 +14,7 @@ import PolylineOptions from '../features/polyline/polyline-options';
 import PopupOptions from '../features/popup/popup-options';
 
 export default interface IMapFunctions {
-    initialize(mapType: MapType, params: object, elementId?: string): Promise<any>;
+    initialize(mapType: MapType, params: object, elementId: string): Promise<any>;
 
     /* GEOJson */
     loadGEOJson(data: object, options: GeoJsonOptions, eventClick: any): void;

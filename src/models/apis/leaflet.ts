@@ -30,7 +30,7 @@ export default class Leaflet implements IMapFunctions {
 
     constructor() { /* */ }
 
-    public initialize(mapType: MapType, params: any, elementId?: string): Promise<any> {
+    public initialize(mapType: MapType, params: any, elementId: string): Promise<any> {
         return this.mapsApiLoader.loadApi(mapType, params)
             .then(async (api) => {
                 this.leaflet = api;
@@ -50,7 +50,7 @@ export default class Leaflet implements IMapFunctions {
                     mapOptions.gestureHandling = true;
                 }
 
-                this.map = new this.leaflet.Map(elementId || 'inlog-map', mapOptions);
+                this.map = new this.leaflet.Map(elementId, mapOptions);
                 new this.leaflet.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', mapOptions)
                     .addTo(this.map);
 
@@ -186,16 +186,11 @@ export default class Leaflet implements IMapFunctions {
         markers.forEach((marker) => {
             if (marker.type === 'circle' && options.style) {
                 const style = {
-                    fillColor: options.style.fillColor !== null && options.style.fillColor !== undefined ?
-                        options.style.fillColor : marker.options.fillColor,
-                    fillOpacity: options.style.fillOpacity !== null && options.style.fillOpacity !== undefined ?
-                        options.style.fillOpacity : marker.options.fillOpacity,
-                    radius: options.style.radius !== null && options.style.radius !== undefined ?
-                        options.style.radius : marker.options.radius,
-                    strokeColor: options.style.color !== null && options.style.color !== undefined ?
-                        options.style.color : marker.options.strokeColor,
-                    strokeWeight: options.style.weight !== null && options.style.weight !== undefined ?
-                        options.style.weight : marker.options.strokeWeight
+                    fillColor: options.style.fillColor ? options.style.fillColor : marker.options.fillColor,
+                    fillOpacity: options.style.fillOpacity ? options.style.fillOpacity : marker.options.fillOpacity,
+                    radius: options.style.radius ? options.style.radius : marker.options.radius,
+                    strokeColor: options.style.color ? options.style.color : marker.options.strokeColor,
+                    strokeWeight: options.style.weight ? options.style.weight : marker.options.strokeWeight
                 };
 
                 marker.setStyle(style);
@@ -344,16 +339,11 @@ export default class Leaflet implements IMapFunctions {
     public alterPolygonOptions(polygons: any[], options: PolygonAlterOptions) {
         polygons.forEach((polygon) => {
             const style = {
-                color: options.color !== null && options.color !== undefined ?
-                    options.color : polygon.options.color,
-                fillColor: options.fillColor !== null && options.fillColor !== undefined ?
-                    options.fillColor : polygon.options.fillColor,
-                fillOpacity: options.fillOpacity !== null && options.fillOpacity !== undefined ?
-                    options.fillOpacity : polygon.options.fillOpacity,
-                opacity: options.opacity !== null && options.opacity !== undefined ?
-                    options.opacity : polygon.options.opacity,
-                weight: options.weight !== null && options.weight !== undefined ?
-                    options.weight : polygon.options.weight
+                color: options.color ? options.color : polygon.options.color,
+                fillColor: options.fillColor ? options.fillColor : polygon.options.fillColor,
+                fillOpacity: options.fillOpacity ? options.fillOpacity : polygon.options.fillOpacity,
+                opacity: options.opacity ? options.opacity : polygon.options.opacity,
+                weight: options.weight ? options.weight : polygon.options.weight
             };
 
             polygon.setStyle(style);
@@ -408,16 +398,11 @@ export default class Leaflet implements IMapFunctions {
     public alterCircleOptions(circles: any[], options: CircleAlterOptions) {
         circles.forEach((circle) => {
             const style = {
-                color: options.color !== null && options.color !== undefined ?
-                    options.color : circle.options.color,
-                fillColor: options.fillColor !== null && options.fillColor !== undefined ?
-                    options.fillColor : circle.options.fillColor,
-                fillOpacity: options.fillOpacity !== null && options.fillOpacity !== undefined ?
-                    options.fillOpacity : circle.options.fillOpacity,
-                opacity: options.opacity !== null && options.opacity !== undefined ?
-                    options.opacity : circle.options.opacity,
-                weight: options.weight !== null && options.weight !== undefined ?
-                    options.weight : circle.options.weight
+                color: options.color ? options.color : circle.options.color,
+                fillColor: options.fillColor ? options.fillColor : circle.options.fillColor,
+                fillOpacity: options.fillOpacity ? options.fillOpacity : circle.options.fillOpacity,
+                opacity: options.opacity ? options.opacity : circle.options.opacity,
+                weight: options.weight ? options.weight : circle.options.weight
             };
 
             circle.setStyle(style);
@@ -588,14 +573,10 @@ export default class Leaflet implements IMapFunctions {
     public alterPolylineOptions(polylines: any, options: PolylineOptions) {
         polylines.forEach((polyline: any) => {
             const style = {
-                color: options.color !== null && options.color !== undefined ?
-                    options.color : polyline.options.color,
-                draggable: options.draggable !== null && options.draggable !== undefined ?
-                    options.draggable : polyline.options.draggable,
-                object: options.object !== null && options.object !== undefined ?
-                    options.object : polyline.options.object,
-                weight: options.weight !== null && options.weight !== undefined ?
-                    options.weight : polyline.options.weight
+                color: options.color ? options.color : polyline.options.color,
+                draggable: options.draggable ? options.draggable : polyline.options.draggable,
+                object: options.object ? options.object : polyline.options.object,
+                weight: options.weight ? options.weight : polyline.options.weight
             };
 
             polyline.setStyle(style);
