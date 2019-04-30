@@ -25,7 +25,7 @@ export default interface IMapFunctions {
     drawCircleMarker(options: CircleMarkerOptions, eventClick: any): any;
     toggleMarkers(markers: any[], show: boolean): void;
     alterMarkerOptions(markers: any[], options: MarkerAlterOptions): void;
-    alterMarkerPosition(markers: any[], position: number[], addTransation: boolean): void;
+    alterMarkerPosition(markers: any[], position: number[], addTransition: boolean): void;
     setCenterMarker(marker: any): void;
     isMarkerOnMap(marker: any): boolean;
     addMarkerEvent(markers: any, event: MarkerEventType, eventFunction: any): void;
