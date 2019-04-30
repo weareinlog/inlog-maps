@@ -11,3 +11,9 @@ export enum MarkerEventType {
     AfterDrag,
     MouseOver
 }
+
+export enum CircleEventType {
+    Click,
+    CenterChanged,
+    RadiusChanged
+}

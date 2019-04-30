@@ -1,6 +1,6 @@
 import { OverlayOptions } from '../..';
 import { MapsApiLoaderService } from '../../utils/maps-api-loader.service';
-import { EventType, MarkerEventType } from '../dto/event-type';
+import { EventType, MarkerEventType, CircleEventType } from '../dto/event-type';
 import { MapType } from '../dto/map-type';
 import { PolylineType } from '../dto/polyline-type';
 import CircleAlterOptions from '../features/circle/circle-alter-options';
@@ -30,7 +30,7 @@ export default class Leaflet implements IMapFunctions {
 
     constructor() { /* */ }
 
-    public initialize(mapType: MapType, params: any, elementId: string) {
+    public initialize(mapType: MapType, params: any, elementId: string): Promise<any> {
         return this.mapsApiLoader.loadApi(mapType, params)
             .then(async (api) => {
                 this.leaflet = api;
@@ -50,7 +50,7 @@ export default class Leaflet implements IMapFunctions {
                     mapOptions.gestureHandling = true;
                 }
 
-                this.map = new this.leaflet.Map(elementId || 'inlog-map', mapOptions);
+                this.map = new this.leaflet.Map(elementId, mapOptions);
                 new this.leaflet.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', mapOptions)
                     .addTo(this.map);
 
@@ -86,7 +86,7 @@ export default class Leaflet implements IMapFunctions {
     }
 
     /* GEOJson */
-    public loadGEOJson(data: object, options: GeoJsonOptions, eventClick) {
+    public loadGEOJson(data: object, options: GeoJsonOptions, eventClick: any) {
         const self = this;
         const objects = self.parseGeoJson(data, options);
 
@@ -132,7 +132,7 @@ export default class Leaflet implements IMapFunctions {
         if (eventClick) {
             marker.on('click', (event: any) => {
                 const param = new EventReturn([event.latlng.lat, event.latlng.lng]);
-                eventClick(marker, param, options.object);
+                eventClick(param, options.object);
             });
         }
 
@@ -153,14 +153,14 @@ export default class Leaflet implements IMapFunctions {
         this.map.fitBounds(group.getBounds());
     }
 
-    public drawCircleMarker(options: CircleMarkerOptions, eventClick) {
+    public drawCircleMarker(options: CircleMarkerOptions, eventClick: any) {
         const self = this;
         const marker = new this.leaflet.circleMarker(options.latlng, options.style);
 
         if (eventClick) {
             marker.on('click', (event: any) => {
                 const param = new EventReturn([event.latlng.lat, event.latlng.lng]);
-                eventClick(marker, param);
+                eventClick(param);
             }, options.object);
         }
 
@@ -186,16 +186,11 @@ export default class Leaflet implements IMapFunctions {
         markers.forEach((marker) => {
             if (marker.type === 'circle' && options.style) {
                 const style = {
-                    fillColor: options.style.fillColor !== null && options.style.fillColor !== undefined ?
-                        options.style.fillColor : marker.options.fillColor,
-                    fillOpacity: options.style.fillOpacity !== null && options.style.fillOpacity !== undefined ?
-                        options.style.fillOpacity : marker.options.fillOpacity,
-                    radius: options.style.radius !== null && options.style.radius !== undefined ?
-                        options.style.radius : marker.options.radius,
-                    strokeColor: options.style.color !== null && options.style.color !== undefined ?
-                        options.style.color : marker.options.strokeColor,
-                    strokeWeight: options.style.weight !== null && options.style.weight !== undefined ?
-                        options.style.weight : marker.options.strokeWeight
+                    fillColor: options.style.fillColor ? options.style.fillColor : marker.options.fillColor,
+                    fillOpacity: options.style.fillOpacity ? options.style.fillOpacity : marker.options.fillOpacity,
+                    radius: options.style.radius ? options.style.radius : marker.options.radius,
+                    strokeColor: options.style.color ? options.style.color : marker.options.strokeColor,
+                    strokeWeight: options.style.weight ? options.style.weight : marker.options.strokeWeight
                 };
 
                 marker.setStyle(style);
@@ -232,7 +227,7 @@ export default class Leaflet implements IMapFunctions {
         return this.map.hasLayer(marker);
     }
 
-    public addPolylineListeners(polylines: any,  event: EventType, eventFunction: any) {
+    public addPolylineListeners(polylines: any, event: EventType, eventFunction: any) {
         polylines.forEach(polyline => {
             switch (event) {
                 case EventType.Move:
@@ -266,13 +261,13 @@ export default class Leaflet implements IMapFunctions {
                 case MarkerEventType.Click:
                     marker.on('click', (event: any) => {
                         const param = new EventReturn([event.latlng.lat, event.latlng.lng]);
-                        eventFunction(marker, param, marker.object);
+                        eventFunction(param, marker.object);
                     });
                     break;
                 case MarkerEventType.AfterDrag:
                     marker.on('dragend', (event: any) => {
                         const param = new EventReturn([event.target.getLatLng().lat, event.target.getLatLng().lng]);
-                        eventFunction(marker, param, marker.object);
+                        eventFunction(param, marker.object);
                     });
                     break;
                 case MarkerEventType.MouseOver:
@@ -303,7 +298,7 @@ export default class Leaflet implements IMapFunctions {
         if (eventClick) {
             polygon.on('click', (event: any) => {
                 const param = new EventReturn([event.latlng.lat, event.latlng.lng]);
-                eventClick(polygon, param, options.object);
+                eventClick(param, options.object);
             });
         }
 
@@ -344,16 +339,11 @@ export default class Leaflet implements IMapFunctions {
     public alterPolygonOptions(polygons: any[], options: PolygonAlterOptions) {
         polygons.forEach((polygon) => {
             const style = {
-                color: options.color !== null && options.color !== undefined ?
-                    options.color : polygon.options.color,
-                fillColor: options.fillColor !== null && options.fillColor !== undefined ?
-                    options.fillColor : polygon.options.fillColor,
-                fillOpacity: options.fillOpacity !== null && options.fillOpacity !== undefined ?
-                    options.fillOpacity : polygon.options.fillOpacity,
-                opacity: options.opacity !== null && options.opacity !== undefined ?
-                    options.opacity : polygon.options.opacity,
-                weight: options.weight !== null && options.weight !== undefined ?
-                    options.weight : polygon.options.weight
+                color: options.color ? options.color : polygon.options.color,
+                fillColor: options.fillColor ? options.fillColor : polygon.options.fillColor,
+                fillOpacity: options.fillOpacity ? options.fillOpacity : polygon.options.fillOpacity,
+                opacity: options.opacity ? options.opacity : polygon.options.opacity,
+                weight: options.weight ? options.weight : polygon.options.weight
             };
 
             polygon.setStyle(style);
@@ -365,7 +355,7 @@ export default class Leaflet implements IMapFunctions {
     }
 
     /* Circles */
-    public drawCircle(options: CircleOptions, eventClick) {
+    public drawCircle(options: CircleOptions, eventClick: any) {
         const self = this;
         const newOptions = {
             color: options.color,
@@ -379,9 +369,9 @@ export default class Leaflet implements IMapFunctions {
         const circle = new this.leaflet.Circle(options.center, newOptions);
 
         if (eventClick) {
-            circle.on('click', (event) => {
+            circle.on('click', (event: any) => {
                 const param = new EventReturn([event.latlng.lat, event.latlng.lng]);
-                eventClick(circle, param, options.object);
+                eventClick(param, options.object);
             });
         }
 
@@ -408,20 +398,81 @@ export default class Leaflet implements IMapFunctions {
     public alterCircleOptions(circles: any[], options: CircleAlterOptions) {
         circles.forEach((circle) => {
             const style = {
-                color: options.color !== null && options.color !== undefined ?
-                    options.color : circle.options.color,
-                fillColor: options.fillColor !== null && options.fillColor !== undefined ?
-                    options.fillColor : circle.options.fillColor,
-                fillOpacity: options.fillOpacity !== null && options.fillOpacity !== undefined ?
-                    options.fillOpacity : circle.options.fillOpacity,
-                opacity: options.opacity !== null && options.opacity !== undefined ?
-                    options.opacity : circle.options.opacity,
-                weight: options.weight !== null && options.weight !== undefined ?
-                    options.weight : circle.options.weight
+                color: options.color ? options.color : circle.options.color,
+                fillColor: options.fillColor ? options.fillColor : circle.options.fillColor,
+                fillOpacity: options.fillOpacity ? options.fillOpacity : circle.options.fillOpacity,
+                opacity: options.opacity ? options.opacity : circle.options.opacity,
+                weight: options.weight ? options.weight : circle.options.weight
             };
 
             circle.setStyle(style);
+
+            if (options.radius) {
+                circle.setRadius(options.radius);
+            }
+
+            if (options.center) {
+                circle.setLatLng(options.center);
+            }
         });
+    }
+
+    public addCircleEvent(circles: any, event: CircleEventType, eventFunction: any): void {
+        circles.forEach((circle: any) => {
+            switch (event) {
+                case CircleEventType.Click:
+                    circle.on('click', (event: any) => {
+                        const param = new EventReturn([event.latlng.lat, event.latlng.lng]);
+                        eventFunction(param, circle.object);
+                    });
+                case CircleEventType.CenterChanged:
+                    circle.on('dragend', (event: any) => {
+                        const param = new EventReturn([event.target.getLatLng().lat, event.target.getLatLng().lng]);
+                        eventFunction(param, circle.object);
+                    });
+                case CircleEventType.RadiusChanged:
+                    circle.on('editable:vertex:dragend', (event: any) => {
+                        const param = new EventReturn([event.vertex.latlng.lat, event.vertex.latlng.lng]);
+                        eventFunction(param, circle.object, circle.getRadius());
+                    });
+                default:
+                    break;
+            }
+        });
+    }
+
+    public removeCircleEvent(circles: any, event: CircleEventType): void {
+        circles.forEach((circle: any) => {
+            switch (event) {
+                case CircleEventType.Click:
+                    circle.off('click');
+                case CircleEventType.CenterChanged:
+                    circle.off('dragend');
+                case CircleEventType.RadiusChanged:
+                    circle.off('editable:vertex:dragend');
+                default:
+                    break;
+            }
+        });
+    }
+
+    public isCircleOnMap(circle: any): boolean {
+        return this.map.hasLayer(circle);
+    }
+
+    public fitBoundsCircles(circles: any) {
+        this.map.fitBounds(this.getBoundsCircles(circles));
+    }
+
+    private getBoundsCircles(circles: any) {
+        const group = new this.leaflet.FeatureGroup(circles);
+        return group.getBounds();
+    }
+
+    public getCircleCenter(circle: any): number[] {
+        const center = circle.getLatLng();
+
+        return [center.lat, center.lng];
     }
 
     /* Polylines */
@@ -433,7 +484,6 @@ export default class Leaflet implements IMapFunctions {
             draggable: options.draggable,
             editable: options.editable,
             infowindows: options.infowindows,
-            object: options.object,
             weight: options.weight || 3,
             opacity: null,
             dashArray: null
@@ -453,9 +503,9 @@ export default class Leaflet implements IMapFunctions {
         const polyline = new this.leaflet.Polyline(options.path || [], newOptions);
 
         if (eventClick) {
-            polyline.on('click', (event) => {
+            polyline.on('click', (event: any) => {
                 const param = new EventReturn([event.latlng.lat, event.latlng.lng]);
-                eventClick(polyline, param, polyline.options.object);
+                eventClick(param, options.object);
             });
         }
 
@@ -464,6 +514,10 @@ export default class Leaflet implements IMapFunctions {
             if (options.editable) {
                 polyline.enableEdit();
             }
+        }
+
+        if (options.object) {
+            polyline.object = options.object;
         }
 
         if (options.fitBounds) {
@@ -492,9 +546,7 @@ export default class Leaflet implements IMapFunctions {
     }
 
     public clearListenersPolyline(polylines: any) {
-        polylines.forEach((polyline: any) => {
-            polyline.clearAllEventListeners();
-        });
+        polylines.forEach((polyline: any) => polyline.clearAllEventListeners());
     }
 
     public addPolylinePath(polylines: any, position: number[]) {
@@ -521,17 +573,16 @@ export default class Leaflet implements IMapFunctions {
     public alterPolylineOptions(polylines: any, options: PolylineOptions) {
         polylines.forEach((polyline: any) => {
             const style = {
-                color: options.color !== null && options.color !== undefined ?
-                    options.color : polyline.options.color,
-                draggable: options.draggable !== null && options.draggable !== undefined ?
-                    options.draggable : polyline.options.draggable,
-                object: options.object !== null && options.object !== undefined ?
-                    options.object : polyline.options.object,
-                weight: options.weight !== null && options.weight !== undefined ?
-                    options.weight : polyline.options.weight
+                color: options.color ? options.color : polyline.options.color,
+                draggable: options.draggable ? options.draggable : polyline.options.draggable,
+                weight: options.weight ? options.weight : polyline.options.weight
             };
 
             polyline.setStyle(style);
+
+            if (options.object) {
+                polyline.object = options.object;
+            }
 
             if (options.editable) {
                 polyline.enableEdit();
@@ -554,40 +605,50 @@ export default class Leaflet implements IMapFunctions {
     }
 
     /* Popups */
-    public drawPopup(options: PopupOptions) {
+    public drawPopup(options: PopupOptions, marker?: any) {
         const self = this;
         let popup = null;
 
-        if (options.marker) {
-            options.marker.bindPopup(options.content);
-            popup = options.marker.getPopup();
-
-            options.marker.openPopup();
-            popup.marker = true;
-        } else {
+        if (!marker) {
             popup = new this.leaflet.Popup();
             popup.setLatLng(options.latlng);
             popup.setContent(options.content);
-
             popup.openOn(self.map);
+
+        } else {
+            popup = self.drawPopupOnMarker(marker, options);
         }
 
         return popup;
     }
 
-    public alterPopup(popup: any, options: PopupOptions) {
+    private drawPopupOnMarker(marker: any, options: PopupOptions) {
+        marker.bindPopup(options.content);
+        let popup = marker.getPopup();
+
+        marker.openPopup();
+        popup.marker = options.marker;
+
+        return popup;
+    }
+
+    public alterPopup(popup: any, options: PopupOptions, marker?: any) {
         const self = this;
 
-        if (options.content) {
-            popup.setContent(options.content);
-        }
+        if (popup.marker === options.marker) {
+            if (options.content) {
+                popup.setContent(options.content);
+            }
 
-        if (options.latlng) {
-            popup.setLatLng(options.latlng);
-        }
+            if (options.latlng) {
+                popup.setLatLng(options.latlng);
+            }
 
-        if (!popup.isOpen() && !popup.marker) {
-            popup.openOn(self.map);
+            if (!popup.isOpen() && !popup.marker) {
+                popup.openOn(self.map);
+            }
+        } else {
+            self.drawPopupOnMarker(marker, options);
         }
     }
 
@@ -629,12 +690,34 @@ export default class Leaflet implements IMapFunctions {
         return this.map.getZoom();
     }
 
+    public setZoom(zoom: number) {
+        this.map.setZoom(zoom);
+    }
+
     public getCenter(): number[] {
         return this.map.getCenter();
     }
 
     public setCenter(position: number[]) {
         this.map.panTo(position);
+    }
+
+    public resizeMap(): void {
+        this.map.invalidateSize();
+    }
+
+    public pixelsToLatLng(offsetx: number, offsety: number) {
+        var scale = Math.pow(2, this.map.getZoom());
+        var worldCoordinateCenter = this.map.project(this.map.getCenter());
+        var pixelOffset = new this.leaflet.Point(offsetx / scale || 0, offsety / scale || 0);
+
+        var worldCoordinateNewCenter = new this.leaflet.Point(
+            worldCoordinateCenter.x - pixelOffset.x,
+            worldCoordinateCenter.y + pixelOffset.y
+        );
+
+        const latlng = this.map.unproject(worldCoordinateNewCenter);
+        return latlng;
     }
 
     /* Overlay */

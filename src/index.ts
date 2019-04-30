@@ -1,7 +1,6 @@
 'use strict';
 
 import Map from './map';
-
 import IMapFunctions from './models/apis/mapFunctions';
 import CircleAlterOptions from './models/features/circle/circle-alter-options';
 import CircleOptions from './models/features/circle/circle-options';
@@ -18,7 +17,7 @@ import PolygonOptions from './models/features/polygons/polygon-options';
 import NavigationOptions from './models/features/polyline/navigations-options';
 import PolylineOptions from './models/features/polyline/polyline-options';
 import PopupOptions from './models/features/popup/popup-options';
-import { EventType, MarkerEventType } from './models/dto/event-type';
+import { EventType, MarkerEventType, CircleEventType } from './models/dto/event-type';
 import { MapType } from './models/dto/map-type';
 import { PolylineType } from './models/dto/polyline-type';
 
@@ -43,3 +42,4 @@ export { MapType };
 export { PolylineType };
 export { EventType };
 export { MarkerEventType };
+export { CircleEventType };

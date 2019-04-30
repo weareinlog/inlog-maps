@@ -1,4 +1,4 @@
-# [@inlog/inlog-maps](https://github.com/weareinlog/inlog-maps#readme) *2.4.0*
+# [@inlog/inlog-maps](https://github.com/weareinlog/inlog-maps#readme) *3.0.0*
 
 > A library for using generic layer maps 
 
@@ -6,7 +6,7 @@
 ### lib/map.js
 
 
-#### Map.initialize(mapType, options) 
+#### Map.initialize(mapType, options, elementId) 
 
 Use this to initialize map
 
@@ -17,8 +17,9 @@ Use this to initialize map
 
 | Name | Type | Description |  |
 | ---- | ---- | ----------- | -------- |
-| mapType |  | {inlogMaps.MapType} | &nbsp; |
-| options |  | {any} | &nbsp; |
+| mapType | `InlogMaps.MapType`  |  | &nbsp; |
+| options | `any`  |  | &nbsp; |
+| elementId | `string`  | default: 'inlog-map' [nullable] | &nbsp; |
 
 
 
@@ -26,7 +27,7 @@ Use this to initialize map
 ##### Returns
 
 
-- `Void`
+- `Promisse.&lt;any&gt;`  
 
 
 
@@ -42,8 +43,8 @@ Use this function to add GEOJSON to the currentMap
 | Name | Type | Description |  |
 | ---- | ---- | ----------- | -------- |
 | data | `object`  | Geojson | &nbsp; |
-| options | `inlogMaps.GeoJsonOptions`  |  | &nbsp; |
-| eventClick | `any`  | is a function callback on click | &nbsp; |
+| options | `InlogMaps.GeoJsonOptions`  |  | &nbsp; |
+| eventClick | `any`  | is a function callback on click [nullable] | &nbsp; |
 
 
 
@@ -67,8 +68,8 @@ Use this function to draw markers in the currentMap
 | Name | Type | Description |  |
 | ---- | ---- | ----------- | -------- |
 | type | `string`  |  | &nbsp; |
-| options | `inlogMaps.MarkerOptions`  |  | &nbsp; |
-| eventClick | `any`  | is a function callback on click | &nbsp; |
+| options | `InlogMaps.MarkerOptions`  |  | &nbsp; |
+| eventClick | `any`  | is a function callback on click [nullable] | &nbsp; |
 
 
 
@@ -80,7 +81,7 @@ Use this function to draw markers in the currentMap
 
 
 
-#### Map.fitBoundsMarkers(type) 
+#### Map.fitBoundsMarkers(type, condition) 
 
 Use this function to fit bounds in the markers with the especified type
 
@@ -92,6 +93,7 @@ Use this function to fit bounds in the markers with the especified type
 | Name | Type | Description |  |
 | ---- | ---- | ----------- | -------- |
 | type | `string`  |  | &nbsp; |
+| condition | `any`  | [nullable] | &nbsp; |
 
 
 
@@ -115,8 +117,8 @@ Use this function to draw circle markers in the currentMap
 | Name | Type | Description |  |
 | ---- | ---- | ----------- | -------- |
 | type | `string`  |  | &nbsp; |
-| options | `inlogMaps.CircleMarkerOptions`  |  | &nbsp; |
-| eventClick | `any`  | is a function callback on click | &nbsp; |
+| options | `InlogMaps.CircleMarkerOptions`  |  | &nbsp; |
+| eventClick | `any`  | is a function callback on click [nullable] | &nbsp; |
 
 
 
@@ -141,7 +143,7 @@ Use this function to show/hide markers from a specific type
 | ---- | ---- | ----------- | -------- |
 | show | `boolean`  |  | &nbsp; |
 | type | `string`  |  | &nbsp; |
-| condition | `any`  | toogle markers with the condition | &nbsp; |
+| condition | `any`  | toogle markers with the condition [nullable] | &nbsp; |
 
 
 
@@ -165,8 +167,8 @@ Use this function to alter marker style
 | Name | Type | Description |  |
 | ---- | ---- | ----------- | -------- |
 | type | `string`  |  | &nbsp; |
-| options | `inlogMaps.MarkerAlterOptions`  |  | &nbsp; |
-| condition | `any`  | alter markers with the condition | &nbsp; |
+| options | `InlogMaps.MarkerAlterOptions`  |  | &nbsp; |
+| condition | `any`  | alter markers with the condition [nullable] | &nbsp; |
 
 
 
@@ -178,7 +180,7 @@ Use this function to alter marker style
 
 
 
-#### Map.alterMarkerPosition(type, position, condition) 
+#### Map.alterMarkerPosition(type, position, addTransition, condition) 
 
 Use this functions to alterar marker position
 
@@ -191,7 +193,8 @@ Use this functions to alterar marker position
 | ---- | ---- | ----------- | -------- |
 | type | `string`  |  | &nbsp; |
 | position | `Array.<number>`  |  | &nbsp; |
-| condition | `any`  |  | &nbsp; |
+| addTransition | `boolean`  | [nullable] | &nbsp; |
+| condition | `any`  | [nullable] | &nbsp; |
 
 
 
@@ -215,7 +218,7 @@ Remove markers from the map and from internal list
 | Name | Type | Description |  |
 | ---- | ---- | ----------- | -------- |
 | type | `string`  |  | &nbsp; |
-| condition | `any`  | remove markers with the condition | &nbsp; |
+| condition | `any`  | remove markers with the condition [nullable] | &nbsp; |
 
 
 
@@ -239,7 +242,7 @@ Use this functions to set the center of the map on marker
 | Name | Type | Description |  |
 | ---- | ---- | ----------- | -------- |
 | type | `string`  |  | &nbsp; |
-| condition | `any`  | center on marker with the condition | &nbsp; |
+| condition | `any`  | center on marker with the condition [nullable] | &nbsp; |
 
 
 
@@ -248,6 +251,56 @@ Use this functions to set the center of the map on marker
 
 
 - `Void`
+
+
+
+#### Map.addMarkerEvent(type, event, eventFunction, condition) 
+
+This function add new events on marker
+
+
+
+
+##### Parameters
+
+| Name | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| type | `string`  |  | &nbsp; |
+| event | `MarkerEventType`  |  | &nbsp; |
+| eventFunction | `any`  |  | &nbsp; |
+| condition | `any`  | [nullable] | &nbsp; |
+
+
+
+
+##### Returns
+
+
+- `Void`
+
+
+
+#### Map.markerExists(type, condition) 
+
+This functions returns if marker exists
+
+
+
+
+##### Parameters
+
+| Name | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| type |  |  | &nbsp; |
+| condition |  | [nullable] | &nbsp; |
+
+
+
+
+##### Returns
+
+
+- `boolean`  
 
 
 
@@ -263,8 +316,8 @@ Use this function to draw polygons
 | Name | Type | Description |  |
 | ---- | ---- | ----------- | -------- |
 | type | `string`  |  | &nbsp; |
-| options | `inlogMaps.PolygonOptions`  |  | &nbsp; |
-| eventClick | `any`  |  | &nbsp; |
+| options | `InlogMaps.PolygonOptions`  |  | &nbsp; |
+| eventClick | `any`  | [nullable] | &nbsp; |
 
 
 
@@ -288,7 +341,7 @@ Use this function to fit bounds of a polygon
 | Name | Type | Description |  |
 | ---- | ---- | ----------- | -------- |
 | type | `string`  |  | &nbsp; |
-| condition | `any`  | fit polygon bounds with the condition | &nbsp; |
+| condition | `any`  | fit polygon bounds with the condition [nullable] | &nbsp; |
 
 
 
@@ -313,7 +366,7 @@ Use this function to show/hide polygon from a especific type
 | ---- | ---- | ----------- | -------- |
 | show | `boolean`  |  | &nbsp; |
 | type | `string`  |  | &nbsp; |
-| condition | `any`  | toggle polygon with the condition | &nbsp; |
+| condition | `any`  | toggle polygon with the condition [nullable] | &nbsp; |
 
 
 
@@ -337,8 +390,8 @@ Use this function to alter polygons options/style
 | Name | Type | Description |  |
 | ---- | ---- | ----------- | -------- |
 | type | `string`  |  | &nbsp; |
-| options | `inlogMaps.PolygonAlterOptions`  |  | &nbsp; |
-| condition | `any`  | alter polygon with the condition | &nbsp; |
+| options | `InlogMaps.PolygonAlterOptions`  |  | &nbsp; |
+| condition | `any`  | alter polygon with the condition [nullable] | &nbsp; |
 
 
 
@@ -362,7 +415,7 @@ Remove polygons from the map and from internal list
 | Name | Type | Description |  |
 | ---- | ---- | ----------- | -------- |
 | type | `string`  |  | &nbsp; |
-| condition | `any`  | remove polygons with the condition | &nbsp; |
+| condition | `any`  | remove polygons with the condition [nullable] | &nbsp; |
 
 
 
@@ -374,19 +427,27 @@ Remove polygons from the map and from internal list
 
 
 
-#### Map.polygonExists() 
+#### Map.polygonExists(type, condition) 
 
 This functions returns if polygon exists
 
 
 
 
+##### Parameters
+
+| Name | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| type |  |  | &nbsp; |
+| condition |  | [nullable] | &nbsp; |
+
+
 
 
 ##### Returns
 
 
-- `Void`
+- `boolean`  
 
 
 
@@ -402,8 +463,34 @@ Use this function to draw polylines on the currentMap
 | Name | Type | Description |  |
 | ---- | ---- | ----------- | -------- |
 | type | `string`  |  | &nbsp; |
-| options | `inlogMaps.PolylineOptions`  |  | &nbsp; |
-| eventClick | `any`  |  | &nbsp; |
+| options | `InlogMaps.PolylineOptions`  |  | &nbsp; |
+| eventClick | `any`  | [nullable] | &nbsp; |
+
+
+
+
+##### Returns
+
+
+- `Void`
+
+
+
+#### Map.addPolylineListeners(type, event, eventFunction, condition) 
+
+Use this function to add listeners on polyline
+
+
+
+
+##### Parameters
+
+| Name | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| type | `string`  |  | &nbsp; |
+| event | `InlogMaps.EventType`  |  | &nbsp; |
+| eventFunction | `any`  |  | &nbsp; |
+| condition | `any`  | [nullable] | &nbsp; |
 
 
 
@@ -427,7 +514,7 @@ Use this function to draw polylines with navigation on the currentMap
 | Name | Type | Description |  |
 | ---- | ---- | ----------- | -------- |
 | type | `string`  |  | &nbsp; |
-| options | `inlogMaps.PolylineOptions`  |  | &nbsp; |
+| options | `InlogMaps.PolylineOptions`  |  | &nbsp; |
 
 
 
@@ -452,7 +539,7 @@ Use this function to add more paths to a polyline
 | ---- | ---- | ----------- | -------- |
 | type | `string`  |  | &nbsp; |
 | position | `Array.<number>`  |  | &nbsp; |
-| condition |  |  | &nbsp; |
+| condition | `any`  | [nullable] | &nbsp; |
 
 
 
@@ -493,7 +580,7 @@ Use this function to toggle polylines
 | ---- | ---- | ----------- | -------- |
 | show | `boolean`  |  | &nbsp; |
 | type | `string`  |  | &nbsp; |
-| condition | `any`  | toggle polyline with the condition | &nbsp; |
+| condition | `any`  | toggle polyline with the condition [nullable] | &nbsp; |
 
 
 
@@ -517,7 +604,7 @@ Use this function to remove polylines
 | Name | Type | Description |  |
 | ---- | ---- | ----------- | -------- |
 | type | `string`  |  | &nbsp; |
-| condition | `any`  | remove polyline with the condition | &nbsp; |
+| condition | `any`  | remove polyline with the condition [nullable] | &nbsp; |
 
 
 
@@ -541,8 +628,8 @@ Use this function to alter polyline options
 | Name | Type | Description |  |
 | ---- | ---- | ----------- | -------- |
 | type | `string`  |  | &nbsp; |
-| options | `inlogMaps.PolylineOptions`  |  | &nbsp; |
-| condition | `any`  | alter polyline with the condition | &nbsp; |
+| options | `InlogMaps.PolylineOptions`  |  | &nbsp; |
+| condition | `any`  | alter polyline with the condition [nullable] | &nbsp; |
 
 
 
@@ -565,8 +652,8 @@ Use this functions to fit polylines bounds
 
 | Name | Type | Description |  |
 | ---- | ---- | ----------- | -------- |
-| type |  |  | &nbsp; |
-| condition |  |  | &nbsp; |
+| type | `string`  |  | &nbsp; |
+| condition | `any`  | [nullable] | &nbsp; |
 
 
 
@@ -575,6 +662,30 @@ Use this functions to fit polylines bounds
 
 
 - `Void`
+
+
+
+#### Map.polylineExists(type, condition) 
+
+This functions returns if polyline exists
+
+
+
+
+##### Parameters
+
+| Name | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| type | `string`  |  | &nbsp; |
+| condition | `any`  | [nullable] | &nbsp; |
+
+
+
+
+##### Returns
+
+
+- `boolean`  
 
 
 
@@ -590,8 +701,8 @@ Use this function to draw circles on the currentMap
 | Name | Type | Description |  |
 | ---- | ---- | ----------- | -------- |
 | type | `string`  |  | &nbsp; |
-| options | `inlogMaps.CircleOptions`  |  | &nbsp; |
-| eventClick | `any`  |  | &nbsp; |
+| options | `InlogMaps.CircleOptions`  |  | &nbsp; |
+| eventClick | `any`  | [nullable] | &nbsp; |
 
 
 
@@ -616,7 +727,7 @@ Use this function to show/hide circles from a especific type
 | ---- | ---- | ----------- | -------- |
 | show | `boolean`  |  | &nbsp; |
 | type | `string`  |  | &nbsp; |
-| condition | `any`  | toggle circles with the condition | &nbsp; |
+| condition | `any`  | toggle circles with the condition [nullable] | &nbsp; |
 
 
 
@@ -640,8 +751,8 @@ Use this function to alter circle options
 | Name | Type | Description |  |
 | ---- | ---- | ----------- | -------- |
 | type | `string`  |  | &nbsp; |
-| options | `inlogMaps.CircleAlterOptions`  |  | &nbsp; |
-| condition | `any`  | alter circle with the condition | &nbsp; |
+| options | `InlogMaps.CircleAlterOptions`  |  | &nbsp; |
+| condition | `any`  | alter circle with the condition [nullable] | &nbsp; |
 
 
 
@@ -650,6 +761,153 @@ Use this function to alter circle options
 
 
 - `Void`
+
+
+
+#### Map.removeCircles(type, condition) 
+
+Remove circles from the map and from internal list
+
+
+
+
+##### Parameters
+
+| Name | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| type | `string`  |  | &nbsp; |
+| condition | `any`  | remove circles with the condition [nullable] | &nbsp; |
+
+
+
+
+##### Returns
+
+
+- `Void`
+
+
+
+#### Map.fitBoundsCircles(type, condition) 
+
+Use this function to fit bounds of a polygon
+
+
+
+
+##### Parameters
+
+| Name | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| type | `string`  |  | &nbsp; |
+| condition | `any`  | fit polygon bounds with the condition [nullable] | &nbsp; |
+
+
+
+
+##### Returns
+
+
+- `Void`
+
+
+
+#### Map.circleExists(type, condition) 
+
+This functions returns if circle exists
+
+
+
+
+##### Parameters
+
+| Name | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| type | `string`  |  | &nbsp; |
+| condition | `any`  | [nullable] | &nbsp; |
+
+
+
+
+##### Returns
+
+
+- `boolean`  
+
+
+
+#### Map.addCircleEvent(type, event, eventFunction, condition) 
+
+This function add new events on circle
+
+
+
+
+##### Parameters
+
+| Name | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| type | `string`  |  | &nbsp; |
+| event | `InlogMaps.CircleEventType`  |  | &nbsp; |
+| eventFunction | `any`  |  | &nbsp; |
+| condition | `any`  | [nullable] | &nbsp; |
+
+
+
+
+##### Returns
+
+
+- `Void`
+
+
+
+#### Map.removeCircleEvent(type, event, condition) 
+
+This function remove events of circle
+
+
+
+
+##### Parameters
+
+| Name | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| type | `string`  |  | &nbsp; |
+| event | `InlogMaps.CircleEventType`  |  | &nbsp; |
+| condition | `any`  | [nullable] | &nbsp; |
+
+
+
+
+##### Returns
+
+
+- `Void`
+
+
+
+#### Map.getCircleCenter(type, condition) 
+
+This function return circle center
+
+
+
+
+##### Parameters
+
+| Name | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| type | `string`  |  | &nbsp; |
+| condition | `any`  | [nullable] | &nbsp; |
+
+
+
+
+##### Returns
+
+
+- `Array.&lt;number&gt;`  
 
 
 
@@ -665,7 +923,7 @@ Use this function to draw popups on the currentMap
 | Name | Type | Description |  |
 | ---- | ---- | ----------- | -------- |
 | type | `string`  |  | &nbsp; |
-| options | `inlogMaps.PopupOptions`  |  | &nbsp; |
+| options | `InlogMaps.PopupOptions`  |  | &nbsp; |
 
 
 
@@ -689,7 +947,7 @@ Use this function to alter popups
 | Name | Type | Description |  |
 | ---- | ---- | ----------- | -------- |
 | type | `string`  |  | &nbsp; |
-| options | `inlogMaps.PopupOptions`  |  | &nbsp; |
+| options | `InlogMaps.PopupOptions`  |  | &nbsp; |
 
 
 
@@ -758,7 +1016,7 @@ Use this function to add event clicks on the currentMap
 
 | Name | Type | Description |  |
 | ---- | ---- | ----------- | -------- |
-| eventType | `EventType`  |  | &nbsp; |
+| eventType | `InlogMaps.EventType`  |  | &nbsp; |
 | eventFunction |  | function callback | &nbsp; |
 
 
@@ -782,7 +1040,7 @@ Use this function to remove event clicks from the currentMap
 
 | Name | Type | Description |  |
 | ---- | ---- | ----------- | -------- |
-| eventType | `EventType`  |  | &nbsp; |
+| eventType | `InlogMaps.EventType`  |  | &nbsp; |
 
 
 
@@ -806,6 +1064,29 @@ Returns the current zoom level of the map view
 ##### Returns
 
 
+- `number`  
+
+
+
+#### Map.setZoom(zoom) 
+
+Set the current zoom level of the map view
+
+
+
+
+##### Parameters
+
+| Name | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| zoom | `number`  |  | &nbsp; |
+
+
+
+
+##### Returns
+
+
 - `Void`
 
 
@@ -822,13 +1103,36 @@ Returns the center position of the map
 ##### Returns
 
 
+- `Array.&lt;number&gt;`  
+
+
+
+#### Map.setCenter(position) 
+
+Set the position center of the map
+
+
+
+
+##### Parameters
+
+| Name | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| position | `Array.<number>`  |  | &nbsp; |
+
+
+
+
+##### Returns
+
+
 - `Void`
 
 
 
-#### Map.setCenter() 
+#### Map.resizeMap() 
 
-Set the position center of the map
+Resize de map based on html size
 
 
 
@@ -842,7 +1146,31 @@ Set the position center of the map
 
 
 
-#### Map.drawOverlay(type, options, typePolygon, polygonCondition) 
+#### Map.pixelsToLatLng(offsetx, offsety) 
+
+Returns the coordinates from pixels
+
+
+
+
+##### Parameters
+
+| Name | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| offsetx | `number`  |  | &nbsp; |
+| offsety | `number`  |  | &nbsp; |
+
+
+
+
+##### Returns
+
+
+- `Array.&lt;number&gt;`  
+
+
+
+#### Map.drawOverlay(type, options) 
 
 Use this function to dray overlays on the current map
 
@@ -854,9 +1182,7 @@ Use this function to dray overlays on the current map
 | Name | Type | Description |  |
 | ---- | ---- | ----------- | -------- |
 | type | `string`  |  | &nbsp; |
-| options | `OverlayOptions`  |  | &nbsp; |
-| typePolygon | `string`  |  | &nbsp; |
-| polygonCondition |  |  | &nbsp; |
+| options | `InlogMaps.OverlayOptions`  |  | &nbsp; |
 
 
 
@@ -879,9 +1205,9 @@ Use this function to show or hide overlay
 
 | Name | Type | Description |  |
 | ---- | ---- | ----------- | -------- |
-| show |  |  | &nbsp; |
-| type |  |  | &nbsp; |
-| condition |  |  | &nbsp; |
+| show | `boolean`  |  | &nbsp; |
+| type | `string`  |  | &nbsp; |
+| condition | `any`  | [nullable] | &nbsp; |
 
 
 
@@ -905,7 +1231,7 @@ Remove overlays from the map and from internal list
 | Name | Type | Description |  |
 | ---- | ---- | ----------- | -------- |
 | type | `string`  |  | &nbsp; |
-| condition | `any`  | remove overlays with the condition | &nbsp; |
+| condition | `any`  | remove overlays with the condition [nullable] | &nbsp; |
 
 
 

@@ -134,8 +134,8 @@ function geojsonPolygon() {
 }
 
 /* Marker tests */
-function onClickMarker(marker, event) {
-    let options = new inlogMaps.PopupOptions(event.latlng, '<p>Hello world!<br />This is a nice popup.</p>', marker);
+function onClickMarker(event) {
+    let options = new inlogMaps.PopupOptions(event.latlng, '<p>Hello world!<br />This is a nice popup.</p>', 'simple');
     currentMap.drawPopup('marker', options);
 }
 
@@ -164,7 +164,7 @@ function changeMarkerPosition() {
     }
 }
 
-function onClickMarkerCustom(marker, event, object) {
+function onClickMarkerCustom(event, object) {
     let content = `
                 <div class="infowindow-default">
                     <h3 class="title">
@@ -181,7 +181,7 @@ function onClickMarkerCustom(marker, event, object) {
                     </div>
                 </div>`;
 
-    let options = new inlogMaps.PopupOptions(event.latlng, content, marker);
+    let options = new inlogMaps.PopupOptions(event.latlng, content, 'custom');
     currentMap.drawPopup('markerCustom', options);
 }
 
@@ -217,12 +217,17 @@ function changeCustomMarkerImage() {
     }
 }
 
+function onClickCircleMarker(event) {
+    let options = new inlogMaps.PopupOptions(event.latlng, '<p>Hello world!<br />This is a nice popup.</p>', 'circleMarker');
+    currentMap.drawPopup('circleMarker', options);
+}
+
 function addCircleMarker() {
     if (circleMarkerShow === null) {
         let style = new inlogMaps.CircleMarkerStyle(5, 1, '#000000', '#FF0000', 0.8);
         let options = new inlogMaps.CircleMarkerOptions([-24, -48], style, true, true);
 
-        currentMap.drawCircleMarker('circleMarker', options, onClickMarker);
+        currentMap.drawCircleMarker('circleMarker', options, onClickCircleMarker);
 
         circleMarkerShow = true;
     } else {
@@ -260,7 +265,7 @@ function toogleOnZoomChanged() {
 }
 
 /* Polyline tests */
-function onClickPolyline(polyline, event, object) {
+function onClickPolyline(event, object) {
     let options = new inlogMaps.PopupOptions(event.latlng, `<p>${object.item}.</p>`);
 
     currentMap.drawPopup('polyline', options);
@@ -381,7 +386,7 @@ function changePolyline() {
 }
 
 /* Polygon tests */
-function onClickPolygon(polygon, event) {
+function onClickPolygon(event) {
     let options = new inlogMaps.PopupOptions(event.latlng, '<p>Hello world!<br />This is a nice popup.</p>');
 
     currentMap.drawPopup('polygon', options);
@@ -413,7 +418,8 @@ function addPolygon() {
         div.appendChild(span);
 
         const overlayOptions = new inlogMaps.OverlayOptions(div, true);
-        currentMap.drawOverlay('ocupacao', overlayOptions, 'polygon');
+        overlayOptions.polygon = 'polygon';
+        currentMap.drawOverlay('ocupacao', overlayOptions);
     } else {
         polygonShow = !polygonShow;
         currentMap.togglePolygons(polygonShow, 'polygon');
@@ -442,10 +448,10 @@ function changePopupValue() {
 }
 
 /* Circle tests */
-function onClickCircle(circle, event) {
+function onClickCircle(event) {
     let options = new inlogMaps.PopupOptions(event.latlng, '<p>Hello world!<br />This is a nice popup.</p>');
 
-    currentMap.drawPopup('marker', options);
+    currentMap.drawPopup('circle', options);
 }
 
 function addCircle() {
