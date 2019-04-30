@@ -499,7 +499,6 @@ export default class Leaflet implements IMapFunctions {
             draggable: options.draggable,
             editable: options.editable,
             infowindows: options.infowindows,
-            object: options.object,
             weight: options.weight || 3,
             opacity: null,
             dashArray: null
@@ -530,6 +529,10 @@ export default class Leaflet implements IMapFunctions {
             if (options.editable) {
                 polyline.enableEdit();
             }
+        }
+
+        if (options.object) {
+            polyline.object = options.object;
         }
 
         if (options.fitBounds) {
