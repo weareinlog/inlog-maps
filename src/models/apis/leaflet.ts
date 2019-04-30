@@ -516,6 +516,20 @@ export default class Leaflet implements IMapFunctions {
             }
         }
 
+        if (options.style && options.style === PolylineType.Arrow) {
+            const pathOptions = { fillOpacity: 1, weight: 0, color: polyline.options.color };
+
+            self.leaflet.polylineDecorator(polyline, {
+                patterns: [{
+                    offset: '20%',
+                    repeat: '90px',
+                    symbol: self.leaflet.Symbol.arrowHead({ pixelSize: 20, pathOptions: pathOptions })
+                },
+                { offset: '0%', symbol: self.leaflet.Symbol.arrowHead({ pixelSize: 20, pathOptions: pathOptions }) },
+                { offset: '100%', symbol: self.leaflet.Symbol.arrowHead({ pixelSize: 20, pathOptions: pathOptions }) }]
+            }).addTo(self.map);
+        }
+
         if (options.object) {
             polyline.object = options.object;
         }

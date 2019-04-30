@@ -552,6 +552,19 @@ export default class GoogleMaps implements IMapFunctions {
                         repeat: '10px'
                     }];
                     break;
+                case PolylineType.Arrow:
+                    newOptions.icons = [{
+                        icon: {
+                            size: new google.maps.Size(20, 20),
+                            scaledSize: new google.maps.Size(20, 20),
+                            path: google.maps.SymbolPath.FORWARD_OPEN_ARROW
+                        },
+                        offset: '90%',
+                        repeat: '20%'
+                    },
+                    { icon: { path: google.maps.SymbolPath.FORWARD_OPEN_ARROW }, offset: '0%' },
+                    { icon: { path: google.maps.SymbolPath.FORWARD_OPEN_ARROW }, offset: '100%' }]
+                    break;
                 default:
                     break;
             }
