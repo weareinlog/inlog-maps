@@ -1,7 +1,6 @@
 'use strict';
 
 import Map from './map';
-
 import IMapFunctions from './models/apis/mapFunctions';
 import CircleAlterOptions from './models/features/circle/circle-alter-options';
 import CircleOptions from './models/features/circle/circle-options';
@@ -39,8 +38,8 @@ export { PolylineOptions };
 export { NavigationOptions };
 export { IMapFunctions };
 export { OverlayOptions };
-export { MapType }
+export { MapType };
 export { PolylineType };
-export { EventType }
+export { EventType };
 export { MarkerEventType };
 export { CircleEventType };

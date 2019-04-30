@@ -503,9 +503,9 @@ export default class Leaflet implements IMapFunctions {
         const polyline = new this.leaflet.Polyline(options.path || [], newOptions);
 
         if (eventClick) {
-            polyline.on('click', (event) => {
+            polyline.on('click', (event: any) => {
                 const param = new EventReturn([event.latlng.lat, event.latlng.lng]);
-                eventClick(param, polyline.options.object);
+                eventClick(param, options.object);
             });
         }
 
@@ -575,11 +575,14 @@ export default class Leaflet implements IMapFunctions {
             const style = {
                 color: options.color ? options.color : polyline.options.color,
                 draggable: options.draggable ? options.draggable : polyline.options.draggable,
-                object: options.object ? options.object : polyline.options.object,
                 weight: options.weight ? options.weight : polyline.options.weight
             };
 
             polyline.setStyle(style);
+
+            if (options.object) {
+                polyline.object = options.object;
+            }
 
             if (options.editable) {
                 polyline.enableEdit();
