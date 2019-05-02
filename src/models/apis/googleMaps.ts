@@ -630,7 +630,8 @@ export default class GoogleMaps implements IMapFunctions {
     public removePolylineHighlight() {
         this.google.maps.event.clearListeners(document, 'keyup');
         if (this.selectedPath) {
-            this.clearPolylinePath(this.selectedPath);
+            this.selectedPath.setMap(null);
+            this.selectedPath = null;
         }
         if (this.navigateInfoWindow) {
             this.navigateInfoWindow.close();
@@ -1102,9 +1103,5 @@ export default class GoogleMaps implements IMapFunctions {
         });
 
         return bounds;
-    }
-
-    private clearPolylinePath(polyline: any) {
-        polyline.setPath([]);
     }
 }

@@ -519,7 +519,7 @@ export default class Leaflet implements IMapFunctions {
         if (options.style && options.style === PolylineType.Arrow) {
             const pathOptions = { fillOpacity: 1, weight: 0, color: polyline.options.color };
 
-            self.leaflet.polylineDecorator(polyline, {
+            polyline.decorator = self.leaflet.polylineDecorator(polyline, {
                 patterns: [{
                     offset: '20%',
                     repeat: '90px',
@@ -546,8 +546,10 @@ export default class Leaflet implements IMapFunctions {
         polylines.forEach((polyline: any) => {
             if (show) {
                 self.map.addLayer(polyline);
+                if (polyline.decorator) { self.map.addLayer(polyline.decorator); }
             } else {
                 self.map.removeLayer(polyline);
+                if (polyline.decorator) { self.map.removeLayer(polyline.decorator); }
             }
         });
     }
@@ -576,11 +578,13 @@ export default class Leaflet implements IMapFunctions {
         const self = this;
 
         if (self.selectedPath) {
-            self.clearPolylinePath(self.selectedPath);
+            this.map.removeLayer(self.selectedPath);
+            self.selectedPath = null;
         }
         if (self.navigateInfoWindow) {
             self.navigateInfoWindow.remove();
         }
+
         document.onkeyup = null;
     }
 
@@ -731,7 +735,7 @@ export default class Leaflet implements IMapFunctions {
         );
 
         const latlng = this.map.unproject(worldCoordinateNewCenter);
-        return latlng;
+        return [latlng.lat, latlng.lng];
     }
 
     /* Overlay */
@@ -973,10 +977,6 @@ export default class Leaflet implements IMapFunctions {
             default:
                 throw new Error('Forma de objeto desconhecida.');
         }
-    }
-
-    private clearPolylinePath(polyline) {
-        polyline.setLatLngs([]);
     }
 
     private moveTransitionMarker(position: any, marker: any) {
