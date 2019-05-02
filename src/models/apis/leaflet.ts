@@ -645,15 +645,15 @@ export default class Leaflet implements IMapFunctions {
         let popup = marker.getPopup();
 
         marker.openPopup();
-        popup.marker = options.marker;
-
         return popup;
     }
 
     public alterPopup(popup: any, options: PopupOptions, marker?: any) {
         const self = this;
 
-        if (popup.marker === options.marker) {
+        if (marker && !marker.getPopup()) {
+            popup = self.drawPopup(options, marker);
+        } else {
             if (options.content) {
                 popup.setContent(options.content);
             }
@@ -662,11 +662,13 @@ export default class Leaflet implements IMapFunctions {
                 popup.setLatLng(options.latlng);
             }
 
-            if (!popup.isOpen() && !popup.marker) {
-                popup.openOn(self.map);
+            if (!popup.isOpen()) {
+                if (!marker) {
+                    popup.openOn(self.map);
+                } else if (options.notCalledByMap) {
+                    marker.openPopup();
+                }
             }
-        } else {
-            self.drawPopupOnMarker(marker, options);
         }
     }
 
