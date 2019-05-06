@@ -1,5 +1,5 @@
 import { MapsApiLoaderService } from '../../utils/maps-api-loader.service';
-import { EventType, MarkerEventType, CircleEventType } from '../dto/event-type';
+import { MarkerEventType, CircleEventType, PolygonEventType, PolylineEventType, MapEventType } from '../dto/event-type';
 import { MapType } from '../dto/map-type';
 import { PolylineType } from '../dto/polyline-type';
 import CircleAlterOptions from '../features/circle/circle-alter-options';
@@ -153,12 +153,6 @@ export default class GoogleMaps implements IMapFunctions {
         return marker;
     }
 
-    public fitBoundsPositions(markers: any[]) {
-        const bounds = new this.google.maps.LatLngBounds();
-        markers.map((marker) => marker.position).forEach((position) => bounds.extend(position));
-        this.map.fitBounds(bounds);
-    }
-
     public drawCircleMarker(options: CircleMarkerOptions, eventClick: any) {
         const self = this;
         const newOptions = {
@@ -259,40 +253,18 @@ export default class GoogleMaps implements IMapFunctions {
         });
     }
 
-    public setCenterMarker(marker: any) {
-        this.map.setCenter(marker.getPosition());
+    public fitBoundsPositions(markers: any[]) {
+        const bounds = new this.google.maps.LatLngBounds();
+        markers.map((marker) => marker.position).forEach((position) => bounds.extend(position));
+        this.map.fitBounds(bounds);
     }
 
     public isMarkerOnMap(marker: any): boolean {
         return marker.map !== null;
     }
 
-    public addPolylineListeners(polylines: any, event: EventType, eventFunction: any) {
-        polylines.forEach(polyline => {
-            switch (event) {
-                case EventType.Move:
-                    this.google.maps.event.addListener(polyline.getPath(), "set_at", (event: any) => {
-                        const param = new EventReturn([polyline.getPath().getAt(event).lat(), polyline.getPath().getAt(event).lng()]);
-                        eventFunction(param);
-                    });
-                    break;
-                case EventType.InsertAt:
-                    this.google.maps.event.addListener(polyline.getPath(), "insert_at", (event: any) => {
-                        const param = new EventReturn([polyline.getPath().getAt(event).lat(), polyline.getPath().getAt(event).lng()]);
-                        eventFunction(param);
-                    });
-                    break;
-                case EventType.RemoveAt:
-                    this.google.maps.event.addListener(polyline.getPath(), "remove_at", (event: any) => {
-                        const param = new EventReturn([polyline.getPath().getAt(event).lat(), polyline.getPath().getAt(event).lng()]);
-                        eventFunction(param);
-                    });
-                    break;
-                default:
-                    break;
-            }
-        })
-
+    public setCenterMarker(marker: any) {
+        this.map.setCenter(marker.getPosition());
     }
 
     public addMarkerEvent(markers: any, event: MarkerEventType, eventFunction: any) {
@@ -315,6 +287,24 @@ export default class GoogleMaps implements IMapFunctions {
                         const param = new EventReturn([event.latLng.lat(), event.latLng.lng()]);
                         eventFunction(marker, param, marker.object);
                     });
+                    break;
+                default:
+                    break;
+            }
+        });
+    }
+
+    public removeMarkerEvent(markers: any, event: MarkerEventType): void {
+        markers.forEach((marker: any) => {
+            switch (event) {
+                case MarkerEventType.Click:
+                    this.google.maps.event.clearListeners(marker, 'click');
+                    break;
+                case MarkerEventType.AfterDrag:
+                    this.google.maps.event.clearListeners(marker, 'dragend');
+                    break;
+                case MarkerEventType.MouseOver:
+                    this.google.maps.event.clearListeners(marker, 'mouseover');
                     break;
                 default:
                     break;
@@ -367,11 +357,6 @@ export default class GoogleMaps implements IMapFunctions {
         return polygon;
     }
 
-    public fitBoundsPolygons(polygons) {
-        const self = this;
-        self.map.fitBounds(self.getPolygonsBounds(polygons));
-    }
-
     public togglePolygons(polygons: any[], show: boolean) {
         const self = this;
         polygons.forEach((polygon) => polygon.setMap(show ? self.map : null));
@@ -393,8 +378,49 @@ export default class GoogleMaps implements IMapFunctions {
         });
     }
 
+    public fitBoundsPolygons(polygons) {
+        const self = this;
+        self.map.fitBounds(self.getPolygonsBounds(polygons));
+    }
+
     public isPolygonOnMap(polygon: any): boolean {
         return polygon.map !== null;
+    }
+
+    public addPolygonEvent(polygons: any, event: PolygonEventType, eventFunction: any): void {
+        polygons.forEach((polygon: any) => {
+            switch (event) {
+                case PolygonEventType.Move:
+                    this.google.maps.event.addListener(polygon.getPath(), 'set_at', (event: any) => {
+                        const param = new EventReturn([polygon.getPath().getAt(event).lat(), polygon.getPath().getAt(event).lng()]);
+                        eventFunction(param, polygon.getPath().getArray().map((x: any) => [x.lat(), x.lng()]));
+                    });
+                    break;
+                case PolygonEventType.InsertAt:
+                    this.google.maps.event.addListener(polygon.getPath(), 'insert_at', (event: any) => {
+                        const param = new EventReturn([polygon.getPath().getAt(event).lat(), polygon.getPath().getAt(event).lng()]);
+                        eventFunction(param, polygon.getPath().getArray().map((x: any) => [x.lat(), x.lng()]));
+                    });
+                    break;
+                default:
+                    break;
+            }
+        });
+    }
+
+    public removePolygonEvent(polygons: any, event: PolygonEventType): void {
+        polygons.forEach((polygon: any) => {
+            switch (event) {
+                case PolygonEventType.Move:
+                    this.google.maps.event.clearListeners(polygon.getPath(), 'set_at');
+                    break;
+                case PolygonEventType.InsertAt:
+                    this.google.maps.event.clearListeners(polygon.getPath(), 'insert_at');
+                    break;
+                default:
+                    break;
+            }
+        });
     }
 
     /* Circles */
@@ -461,6 +487,20 @@ export default class GoogleMaps implements IMapFunctions {
         });
     }
 
+    public fitBoundsCircles(circles: any): void {
+        this.map.fitBounds(this.getCirclesBounds(circles));
+    }
+
+    public isCircleOnMap(circle: any): boolean {
+        return circle.map !== null;
+    }
+
+    public getCircleCenter(circle: any): number[] {
+        const center = circle.getCenter();
+
+        return [center.lat(), center.lng()];
+    }
+
     public addCircleEvent(circles: any, event: CircleEventType, eventFunction: any): void {
         circles.forEach((circle: any) => {
             switch (event) {
@@ -499,27 +539,6 @@ export default class GoogleMaps implements IMapFunctions {
                     break;
             }
         });
-    }
-
-    public isCircleOnMap(circle: any): boolean {
-        return circle.map !== null;
-    }
-
-    public fitBoundsCircles(circles: any): void {
-        this.map.fitBounds(this.getCirclesBounds(circles));
-    }
-
-    private getCirclesBounds(circles: any) {
-        const bounds = new this.google.maps.LatLngBounds();
-
-        circles.forEach((circulo: any) => bounds.union(circulo.getBounds()));
-        return bounds;
-    }
-
-    public getCircleCenter(circle: any): number[] {
-        const center = circle.getCenter();
-
-        return [center.lat(), center.lng()];
     }
 
     /* Polylines */
@@ -597,13 +616,6 @@ export default class GoogleMaps implements IMapFunctions {
         return polyline;
     }
 
-    public togglePolylines(polylines: any, show: boolean) {
-        polylines.forEach((polyline: any) => {
-            const self = this;
-            polyline.setMap(show ? self.map : null);
-        });
-    }
-
     public drawPolylineWithNavigation(options: PolylineOptions) {
         const self = this;
         const polyline = self.drawPolyline(options, null);
@@ -612,30 +624,11 @@ export default class GoogleMaps implements IMapFunctions {
         return polyline;
     }
 
-    public clearListenersPolyline(polylines: any) {
+    public togglePolylines(polylines: any, show: boolean) {
         polylines.forEach((polyline: any) => {
-            this.google.maps.event.clearListeners(polyline, 'click');
+            const self = this;
+            polyline.setMap(show ? self.map : null);
         });
-    }
-
-    public addPolylinePath(polylines: any, position: number[]) {
-        polylines.forEach((polyline: any) => {
-            const path = polyline.getPath();
-
-            path.push(new this.google.maps.LatLng(position[0], position[1]));
-            polyline.setPath(path);
-        });
-    }
-
-    public removePolylineHighlight() {
-        this.google.maps.event.clearListeners(document, 'keyup');
-        if (this.selectedPath) {
-            this.selectedPath.setMap(null);
-            this.selectedPath = null;
-        }
-        if (this.navigateInfoWindow) {
-            this.navigateInfoWindow.close();
-        }
     }
 
     public alterPolylineOptions(polylines, options: PolylineOptions) {
@@ -658,19 +651,75 @@ export default class GoogleMaps implements IMapFunctions {
         self.map.fitBounds(self.getPolylinesBounds(polylines));
     }
 
-    private getPolylinesBounds(polylines: any) {
-        const bounds = new this.google.maps.LatLngBounds();
-
-        polylines.forEach((polyline: any) => {
-            const paths = polyline.getPath().getArray();
-            paths.forEach((path: any) => bounds.extend(path));
-        });
-
-        return bounds;
-    }
-
     public isPolylineOnMap(polyline: any): boolean {
         return polyline.map !== null;
+    }
+
+    public addPolylinePath(polylines: any, position: number[]) {
+        polylines.forEach((polyline: any) => {
+            const path = polyline.getPath();
+
+            path.push(new this.google.maps.LatLng(position[0], position[1]));
+            polyline.setPath(path);
+        });
+    }
+
+    public removePolylineHighlight() {
+        this.google.maps.event.clearListeners(document, 'keyup');
+        if (this.selectedPath) {
+            this.selectedPath.setMap(null);
+            this.selectedPath = null;
+        }
+        if (this.navigateInfoWindow) {
+            this.navigateInfoWindow.close();
+        }
+    }
+
+    public addPolylineEvent(polylines: any, event: PolylineEventType, eventFunction: any) {
+        polylines.forEach((polyline: any) => {
+            switch (event) {
+                case PolylineEventType.Move:
+                    this.google.maps.event.addListener(polyline.getPath(), 'set_at', (event: any) => {
+                        const param = new EventReturn([polyline.getPath().getAt(event).lat(), polyline.getPath().getAt(event).lng()]);
+                        eventFunction(param);
+                    });
+                    break;
+                case PolylineEventType.InsertAt:
+                    this.google.maps.event.addListener(polyline.getPath(), 'insert_at', (event: any) => {
+                        const param = new EventReturn([polyline.getPath().getAt(event).lat(), polyline.getPath().getAt(event).lng()]);
+                        eventFunction(param);
+                    });
+                    break;
+                case PolylineEventType.RemoveAt:
+                    this.google.maps.event.addListener(polyline.getPath(), 'remove_at', (event: any) => {
+                        const param = new EventReturn([polyline.getPath().getAt(event).lat(), polyline.getPath().getAt(event).lng()]);
+                        eventFunction(param);
+                    });
+                    break;
+                default:
+                    break;
+            }
+        });
+    }
+
+    public removePolylineEvent(polylines: any, event: PolylineEventType) {
+        polylines.forEach((polyline: any) =>
+            this.google.maps.event.clearListeners(polyline, 'click'));
+        polylines.forEach((polyline: any) => {
+            switch (event) {
+                case PolylineEventType.Move:
+                    this.google.maps.event.clearListeners(polyline.getPath(), 'set_at');
+                    break;
+                case PolylineEventType.InsertAt:
+                    this.google.maps.event.clearListeners(polyline.getPath(), 'insert_at');
+                    break;
+                case PolylineEventType.RemoveAt:
+                    this.google.maps.event.clearListeners(polyline.getPath(), 'remove_at');
+                    break;
+                default:
+                    break;
+            }
+        });
     }
 
     /* Info Windows */
@@ -717,17 +766,21 @@ export default class GoogleMaps implements IMapFunctions {
     }
 
     /* Map */
-    public addEventMap(eventType: EventType, eventFunction: any) {
+    public resizeMap(): void {
+        google.maps.event.trigger(this.map, 'resize');
+    }
+
+    public addEventMap(eventType: MapEventType, eventFunction: any) {
         const self = this;
 
         switch (eventType) {
-            case EventType.Click:
+            case MapEventType.Click:
                 this.google.maps.event.addListener(self.map, 'click', (event: any) => {
                     const param = new EventReturn([event.latLng.lat(), event.latLng.lng()]);
                     eventFunction(param);
                 });
                 break;
-            case EventType.ZoomChanged:
+            case MapEventType.ZoomChanged:
                 self.map.addListener('zoom_changed', () => {
                     const param = new EventReturn([self.map.getCenter().lat(), self.map.getCenter().lng()]);
                     eventFunction(param);
@@ -737,13 +790,13 @@ export default class GoogleMaps implements IMapFunctions {
         }
     }
 
-    public removeEventMap(eventType: EventType) {
+    public removeEventMap(eventType: MapEventType) {
         const self = this;
         switch (eventType) {
-            case EventType.Click:
+            case MapEventType.Click:
                 this.google.maps.event.clearListeners(self.map, 'click');
                 break;
-            case EventType.ZoomChanged:
+            case MapEventType.ZoomChanged:
                 this.google.maps.event.clearListeners(self.map, 'zoom_changed');
             default:
                 break;
@@ -767,16 +820,12 @@ export default class GoogleMaps implements IMapFunctions {
         this.map.setCenter(new google.maps.LatLng(position[0], position[1]));
     }
 
-    public resizeMap(): void {
-        google.maps.event.trigger(this.map, 'resize');
-    }
-
     public pixelsToLatLng(offsetx: number, offsety: number) {
-        var scale = Math.pow(2, this.map.getZoom());
-        var worldCoordinateCenter = this.map.getProjection().fromLatLngToPoint(this.map.getCenter());
-        var pixelOffset = new google.maps.Point(offsetx / scale || 0, offsety / scale || 0);
+        const scale = Math.pow(2, this.map.getZoom());
+        const worldCoordinateCenter = this.map.getProjection().fromLatLngToPoint(this.map.getCenter());
+        const pixelOffset = new google.maps.Point(offsetx / scale || 0, offsety / scale || 0);
 
-        var worldCoordinateNewCenter = new google.maps.Point(
+        const worldCoordinateNewCenter = new google.maps.Point(
             worldCoordinateCenter.x - pixelOffset.x,
             worldCoordinateCenter.y + pixelOffset.y
         );
@@ -811,7 +860,7 @@ export default class GoogleMaps implements IMapFunctions {
     }
 
     /* Private Methods */
-    private addNavigation(polyline, options: NavigationOptions) {
+    private addNavigation(polyline: any, options: NavigationOptions) {
         const self = this;
 
         this.google.maps.event.clearListeners(polyline, 'click');
@@ -976,7 +1025,7 @@ export default class GoogleMaps implements IMapFunctions {
             incIntersect = -1;
         }
 
-        // A interseção ocorre fora do segmento de reta, "antes" do pt1.
+        // A interseção ocorre fora do segmento de reta, 'antes' do pt1.
         if (incIntersect < 0) {
             return self.kmTo(pt, pt1);
         } else if (incIntersect > 1) {
@@ -1074,6 +1123,19 @@ export default class GoogleMaps implements IMapFunctions {
     }
 
     // --------------- HELPER FUNCTIONS
+    private getPolygonsBounds(polygons: any) {
+        const bounds = new this.google.maps.LatLngBounds();
+
+        polygons.forEach((polygon: any) => {
+            const paths = polygon.getPaths().getArray();
+
+            paths.forEach((path: any) => path.getArray()
+                .forEach((x: any) => bounds.extend(x)));
+        });
+
+        return bounds;
+    }
+
     private getPolygonBounds(polygon: any) {
         const bounds = new this.google.maps.LatLngBounds();
         const paths = polygon.getPaths().getArray();
@@ -1081,6 +1143,17 @@ export default class GoogleMaps implements IMapFunctions {
         paths.forEach((path) => {
             path.getArray().forEach((x) => bounds.extend(x));
         });
+        return bounds;
+    }
+
+    private getPolylinesBounds(polylines: any) {
+        const bounds = new this.google.maps.LatLngBounds();
+
+        polylines.forEach((polyline: any) => {
+            const paths = polyline.getPath().getArray();
+            paths.forEach((path: any) => bounds.extend(path));
+        });
+
         return bounds;
     }
 
@@ -1092,16 +1165,10 @@ export default class GoogleMaps implements IMapFunctions {
         return bounds;
     }
 
-    private getPolygonsBounds(polygons: any) {
+    private getCirclesBounds(circles: any) {
         const bounds = new this.google.maps.LatLngBounds();
 
-        polygons.forEach((polygon: any) => {
-            const paths = polygon.getPaths().getArray();
-
-            paths.forEach((path: any) => path.getArray()
-                .forEach((x: any) => bounds.extend(x)));
-        });
-
+        circles.forEach((circulo: any) => bounds.union(circulo.getBounds()));
         return bounds;
     }
 }

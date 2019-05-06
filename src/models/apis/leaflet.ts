@@ -1,6 +1,6 @@
 import { OverlayOptions } from '../..';
 import { MapsApiLoaderService } from '../../utils/maps-api-loader.service';
-import { EventType, MarkerEventType, CircleEventType } from '../dto/event-type';
+import { MapEventType, MarkerEventType, CircleEventType, PolygonEventType, PolylineEventType } from '../dto/event-type';
 import { MapType } from '../dto/map-type';
 import { PolylineType } from '../dto/polyline-type';
 import CircleAlterOptions from '../features/circle/circle-alter-options';
@@ -30,58 +30,29 @@ export default class Leaflet implements IMapFunctions {
 
     constructor() { /* */ }
 
-    public initialize(mapType: MapType, params: any, elementId: string): Promise<any> {
-        return this.mapsApiLoader.loadApi(mapType, params)
-            .then(async (api) => {
-                this.leaflet = api;
-                this.loadDependencies(params);
-
-                await this.mapTimeout(200);
-
-                const mapOptions: any = {
-                    center: new this.leaflet.LatLng(-14, -54),
-                    editable: true,
-                    maxZoom: 20,
-                    minZoom: 4,
-                    zoom: 4
-                };
-
-                if (params.gestureHandling) {
-                    mapOptions.gestureHandling = true;
-                }
-
-                this.map = new this.leaflet.Map(elementId, mapOptions);
-                new this.leaflet.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', mapOptions)
-                    .addTo(this.map);
-
-                return this;
-            })
-            .catch((err) => err);
-    }
-
-    private mapTimeout(ms: number) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
-
-    private loadDependencies(params: any) {
-        const styles = params.cssDependencies;
-        if (styles && styles.length > 0) {
-            styles.forEach((path: any) => {
-                const link = document.createElement('link');
-                link.rel = 'stylesheet';
-                link.href = path;
-                document.querySelector('head').appendChild(link);
-            });
+    public async initialize(mapType: MapType, params: any, elementId: string): Promise<any> {
+        try {
+            const api = await this.mapsApiLoader.loadApi(mapType, params);
+            this.leaflet = api;
+            this.loadDependencies(params);
+            await this.mapTimeout(200);
+            const mapOptions: any = {
+                center: new this.leaflet.LatLng(-14, -54),
+                editable: true,
+                maxZoom: 19,
+                minZoom: 4,
+                zoom: 4
+            };
+            if (params.gestureHandling) {
+                mapOptions.gestureHandling = true;
+            }
+            this.map = new this.leaflet.Map(elementId, mapOptions);
+            new this.leaflet.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', mapOptions)
+                .addTo(this.map);
+            return this;
         }
-
-        const scripts = params.scriptsDependencies;
-        if (scripts && scripts.length > 0) {
-            scripts.forEach((path: any) => {
-                const script = document.createElement('script');
-                script.type = 'text/javascript';
-                script.src = path;
-                document.querySelector('head').appendChild(script);
-            });
+        catch (err) {
+            return err;
         }
     }
 
@@ -146,11 +117,6 @@ export default class Leaflet implements IMapFunctions {
         }
 
         return marker;
-    }
-
-    public fitBoundsPositions(markers: any[]) {
-        const group = new this.leaflet.featureGroup(markers);
-        this.map.fitBounds(group.getBounds());
     }
 
     public drawCircleMarker(options: CircleMarkerOptions, eventClick: any) {
@@ -219,40 +185,17 @@ export default class Leaflet implements IMapFunctions {
         });
     }
 
-    public setCenterMarker(marker: any) {
-        this.map.panTo(marker.getLatLng());
+    public fitBoundsPositions(markers: any[]) {
+        const group = new this.leaflet.featureGroup(markers);
+        this.map.fitBounds(group.getBounds());
     }
 
     public isMarkerOnMap(marker: any): boolean {
         return this.map.hasLayer(marker);
     }
 
-    public addPolylineListeners(polylines: any, event: EventType, eventFunction: any) {
-        polylines.forEach(polyline => {
-            switch (event) {
-                case EventType.Move:
-                    polyline.on('editable:vertex:dragstart', (event: any) => {
-                        console.log(event)
-                        const param = new EventReturn([event.vertex.latlng.lat, event.vertex.latlng.lng]);
-                        eventFunction(param);
-                    });
-                    break;
-                case EventType.InsertAt:
-                    polyline.on('editable:vertex:dragend', (event: any) => {
-                        const param = new EventReturn([event.vertex.latlng.lat, event.vertex.latlng.lng]);
-                        eventFunction(param);
-                    });
-                    break;
-                case EventType.RemoveAt:
-                    polyline.on('editable:vertex:deleted', (event: any) => {
-                        const param = new EventReturn([event.vertex.latlng.lat, event.vertex.latlng.lng]);
-                        eventFunction(param);
-                    });
-                    break;
-                default:
-                    break;
-            }
-        })
+    public setCenterMarker(marker: any) {
+        this.map.panTo(marker.getLatLng());
     }
 
     public addMarkerEvent(markers: any, event: MarkerEventType, eventFunction: any) {
@@ -275,6 +218,24 @@ export default class Leaflet implements IMapFunctions {
                         const param = new EventReturn([event.latlng.lat, event.latlng.lng]);
                         eventFunction(marker, param, marker.object);
                     });
+                    break;
+                default:
+                    break;
+            }
+        });
+    }
+
+    public removeMarkerEvent(markers: any, event: MarkerEventType): void {
+        markers.forEach((marker: any) => {
+            switch (event) {
+                case MarkerEventType.Click:
+                    marker.off('click');
+                    break;
+                case MarkerEventType.AfterDrag:
+                    marker.off('dragend');
+                    break;
+                case MarkerEventType.MouseOver:
+                    marker.off('mouseover');
                     break;
                 default:
                     break;
@@ -321,16 +282,6 @@ export default class Leaflet implements IMapFunctions {
         return polygon;
     }
 
-    public fitBoundsPolygons(polygons) {
-        const self = this;
-        self.map.fitBounds(self.getBoundsPolygons(polygons));
-    }
-
-    private getBoundsPolygons(polygons) {
-        const group = new this.leaflet.FeatureGroup(polygons);
-        return group.getBounds();
-    }
-
     public togglePolygons(polygons: any[], show: boolean) {
         const self = this;
         polygons.forEach((polygon) => show ? self.map.addLayer(polygon) : self.map.removeLayer(polygon));
@@ -350,8 +301,45 @@ export default class Leaflet implements IMapFunctions {
         });
     }
 
+    public fitBoundsPolygons(polygons) {
+        const self = this;
+        self.map.fitBounds(self.getBoundsPolygons(polygons));
+    }
+
     public isPolygonOnMap(polygon: any): boolean {
         return this.map.hasLayer(polygon);
+    }
+
+    public addPolygonEvent(polygons: any, event: PolygonEventType, eventFunction: any): void {
+        polygons.forEach((polygon: any) => {
+            switch (event) {
+                case PolygonEventType.Move:
+                    polygon.on('dragend', (event: any) => {
+                        const param = new EventReturn([event.target.getCenter().lat, event.target.getCenter().lng]);
+                        eventFunction(param, event.target.getLatLngs()[0].map((x: any) => [x.lat, x.lng]));
+                    });
+                    break;
+                case PolygonEventType.InsertAt:
+                    polygon.on('editable:vertex:dragend', (event: any) => {
+                        const param = new EventReturn([event.vertex.latlng.lat, event.vertex.latlng.lng]);
+                        eventFunction(param, event.vertex.latlngs.map((x: any) => [x.lat, x.lng]));
+                    });
+                    break;
+            }
+        });
+    }
+
+    public removePolygonEvent(polygons: any, event: PolygonEventType): void {
+        polygons.forEach((polygon: any) => {
+            switch (event) {
+                case PolygonEventType.Move:
+                    polygon.off('editable:vertex:dragstart');
+                    break;
+                case PolygonEventType.InsertAt:
+                    polygon.off('editable:vertex:dragend');
+                    break;
+            }
+        });
     }
 
     /* Circles */
@@ -417,6 +405,20 @@ export default class Leaflet implements IMapFunctions {
         });
     }
 
+    public fitBoundsCircles(circles: any) {
+        this.map.fitBounds(this.getBoundsCircles(circles));
+    }
+
+    public isCircleOnMap(circle: any): boolean {
+        return this.map.hasLayer(circle);
+    }
+
+    public getCircleCenter(circle: any): number[] {
+        const center = circle.getLatLng();
+
+        return [center.lat, center.lng];
+    }
+
     public addCircleEvent(circles: any, event: CircleEventType, eventFunction: any): void {
         circles.forEach((circle: any) => {
             switch (event) {
@@ -454,25 +456,6 @@ export default class Leaflet implements IMapFunctions {
                     break;
             }
         });
-    }
-
-    public isCircleOnMap(circle: any): boolean {
-        return this.map.hasLayer(circle);
-    }
-
-    public fitBoundsCircles(circles: any) {
-        this.map.fitBounds(this.getBoundsCircles(circles));
-    }
-
-    private getBoundsCircles(circles: any) {
-        const group = new this.leaflet.FeatureGroup(circles);
-        return group.getBounds();
-    }
-
-    public getCircleCenter(circle: any): number[] {
-        const center = circle.getLatLng();
-
-        return [center.lat, center.lng];
     }
 
     /* Polylines */
@@ -541,6 +524,13 @@ export default class Leaflet implements IMapFunctions {
         return polyline;
     }
 
+    public drawPolylineWithNavigation(options: PolylineOptions) {
+        const polyline = this.drawPolyline(options, null);
+
+        this.addNavigation(polyline, options.navigateOptions);
+        return polyline;
+    }
+
     public togglePolylines(polylines: any, show: boolean) {
         const self = this;
         polylines.forEach((polyline: any) => {
@@ -552,40 +542,6 @@ export default class Leaflet implements IMapFunctions {
                 if (polyline.decorator) { self.map.removeLayer(polyline.decorator); }
             }
         });
-    }
-
-    public drawPolylineWithNavigation(options: PolylineOptions) {
-        const polyline = this.drawPolyline(options, null);
-
-        this.addNavigation(polyline, options.navigateOptions);
-        return polyline;
-    }
-
-    public clearListenersPolyline(polylines: any) {
-        polylines.forEach((polyline: any) => polyline.clearAllEventListeners());
-    }
-
-    public addPolylinePath(polylines: any, position: number[]) {
-        polylines.forEach((polyline: any) => {
-            const path = polyline.getLatLngs();
-
-            path.push(new this.leaflet.LatLng(position[0], position[1]));
-            polyline.setLatLngs(path);
-        });
-    }
-
-    public removePolylineHighlight() {
-        const self = this;
-
-        if (self.selectedPath) {
-            this.map.removeLayer(self.selectedPath);
-            self.selectedPath = null;
-        }
-        if (self.navigateInfoWindow) {
-            self.navigateInfoWindow.remove();
-        }
-
-        document.onkeyup = null;
     }
 
     public alterPolylineOptions(polylines: any, options: PolylineOptions) {
@@ -613,13 +569,76 @@ export default class Leaflet implements IMapFunctions {
         self.map.fitBounds(self.getBoundsPolylines(polylines));
     }
 
-    private getBoundsPolylines(polylines: any) {
-        const group = new this.leaflet.FeatureGroup(polylines);
-        return group.getBounds();
-    }
-
     public isPolylineOnMap(polyline: any): boolean {
         return this.map.hasLayer(polyline);
+    }
+
+    public addPolylinePath(polylines: any, position: number[]) {
+        polylines.forEach((polyline: any) => {
+            const path = polyline.getLatLngs();
+
+            path.push(new this.leaflet.LatLng(position[0], position[1]));
+            polyline.setLatLngs(path);
+        });
+    }
+
+    public removePolylineHighlight() {
+        const self = this;
+
+        if (self.selectedPath) {
+            this.map.removeLayer(self.selectedPath);
+            self.selectedPath = null;
+        }
+        if (self.navigateInfoWindow) {
+            self.navigateInfoWindow.remove();
+        }
+
+        document.onkeyup = null;
+    }
+
+    public addPolylineEvent(polylines: any, event: PolylineEventType, eventFunction: any) {
+        polylines.forEach((polyline: any) => {
+            switch (event) {
+                case PolylineEventType.Move:
+                    polyline.on('editable:vertex:dragstart', (event: any) => {
+                        const param = new EventReturn([event.vertex.latlng.lat, event.vertex.latlng.lng]);
+                        eventFunction(param);
+                    });
+                    break;
+                case PolylineEventType.InsertAt:
+                    polyline.on('editable:vertex:dragend', (event: any) => {
+                        const param = new EventReturn([event.vertex.latlng.lat, event.vertex.latlng.lng]);
+                        eventFunction(param);
+                    });
+                    break;
+                case PolylineEventType.RemoveAt:
+                    polyline.on('editable:vertex:deleted', (event: any) => {
+                        const param = new EventReturn([event.vertex.latlng.lat, event.vertex.latlng.lng]);
+                        eventFunction(param);
+                    });
+                    break;
+                default:
+                    break;
+            }
+        });
+    }
+
+    public removePolylineEvent(polylines: any, event: PolylineEventType) {
+        polylines.forEach((polyline: any) => {
+            switch (event) {
+                case PolylineEventType.Move:
+                    polyline.off('editable:vertex:dragstart');
+                    break;
+                case PolylineEventType.InsertAt:
+                    polyline.off('editable:vertex:dragend');
+                    break;
+                case PolylineEventType.RemoveAt:
+                    polyline.off('editable:vertex:deleted');
+                    break;
+                default:
+                    break;
+            }
+        });
     }
 
     /* Popups */
@@ -637,14 +656,6 @@ export default class Leaflet implements IMapFunctions {
             popup = self.drawPopupOnMarker(marker, options);
         }
 
-        return popup;
-    }
-
-    private drawPopupOnMarker(marker: any, options: PopupOptions) {
-        marker.bindPopup(options.content);
-        let popup = marker.getPopup();
-
-        marker.openPopup();
         return popup;
     }
 
@@ -677,17 +688,21 @@ export default class Leaflet implements IMapFunctions {
     }
 
     /* Map */
-    public addEventMap(eventType: EventType, eventFunction: any) {
+    public resizeMap(): void {
+        this.map.invalidateSize();
+    }
+
+    public addEventMap(eventType: MapEventType, eventFunction: any) {
         const self = this;
 
         switch (eventType) {
-            case EventType.Click:
+            case MapEventType.Click:
                 self.map.on('click', (event: any) => {
                     const param = new EventReturn([event.latlng.lat, event.latlng.lng]);
                     eventFunction(param);
                 });
                 break;
-            case EventType.ZoomChanged:
+            case MapEventType.ZoomChanged:
                 self.map.on('zoomend', (event: any) => {
                     const param = new EventReturn([event.target.getCenter().lat, event.target.getCenter().lng]);
                     eventFunction(param);
@@ -697,11 +712,11 @@ export default class Leaflet implements IMapFunctions {
         }
     }
 
-    public removeEventMap(eventType: EventType) {
+    public removeEventMap(eventType: MapEventType) {
         const self = this;
         switch (eventType) {
-            case EventType.Click: self.map.off('click'); break;
-            case EventType.ZoomChanged: self.map.off('zoomend');
+            case MapEventType.Click: self.map.off('click'); break;
+            case MapEventType.ZoomChanged: self.map.off('zoomend');
             default: break;
         }
     }
@@ -722,16 +737,12 @@ export default class Leaflet implements IMapFunctions {
         this.map.panTo(position);
     }
 
-    public resizeMap(): void {
-        this.map.invalidateSize();
-    }
-
     public pixelsToLatLng(offsetx: number, offsety: number) {
-        var scale = Math.pow(2, this.map.getZoom());
-        var worldCoordinateCenter = this.map.project(this.map.getCenter());
-        var pixelOffset = new this.leaflet.Point(offsetx / scale || 0, offsety / scale || 0);
+        const scale = Math.pow(2, this.map.getZoom());
+        const worldCoordinateCenter = this.map.project(this.map.getCenter());
+        const pixelOffset = new this.leaflet.Point(offsetx / scale || 0, offsety / scale || 0);
 
-        var worldCoordinateNewCenter = new this.leaflet.Point(
+        const worldCoordinateNewCenter = new this.leaflet.Point(
             worldCoordinateCenter.x - pixelOffset.x,
             worldCoordinateCenter.y + pixelOffset.y
         );
@@ -764,12 +775,38 @@ export default class Leaflet implements IMapFunctions {
     }
 
     /* Private Methods */
-    private addNavigation(polyline, options: NavigationOptions) {
+    private mapTimeout(ms: number) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    private loadDependencies(params: any) {
+        const styles = params.cssDependencies;
+        if (styles && styles.length > 0) {
+            styles.forEach((path: any) => {
+                const link = document.createElement('link');
+                link.rel = 'stylesheet';
+                link.href = path;
+                document.querySelector('head').appendChild(link);
+            });
+        }
+
+        const scripts = params.scriptsDependencies;
+        if (scripts && scripts.length > 0) {
+            scripts.forEach((path: any) => {
+                const script = document.createElement('script');
+                script.type = 'text/javascript';
+                script.src = path;
+                document.querySelector('head').appendChild(script);
+            });
+        }
+    }
+
+    private addNavigation(polyline: any, options: NavigationOptions) {
         polyline.clearAllEventListeners();
         polyline.on('click', this.onClickPolyline.bind(this, polyline, options));
     }
 
-    private onClickPolyline(polyline, options: NavigationOptions, event) {
+    private onClickPolyline(polyline: any, options: NavigationOptions, event) {
         const index = this.checkIdx(polyline, event.latlng);
 
         polyline.idxInicial = index;
@@ -781,7 +818,7 @@ export default class Leaflet implements IMapFunctions {
         document.onkeyup = this.onKeyUp.bind(this);
     }
 
-    private onKeyUp(event) {
+    private onKeyUp(event: any) {
         const self = this;
 
         if (self.selectedPath && event.ctrlKey) {
@@ -809,7 +846,7 @@ export default class Leaflet implements IMapFunctions {
         this.moveSelectedPath(polyline, null);
     }
 
-    private navigateFoward(multiSelection: boolean, polyline) {
+    private navigateFoward(multiSelection: boolean, polyline: any) {
         if (!multiSelection) {
             polyline.idxFinal++;
             polyline.idxInicial = this.multiSelection ? polyline.idxFinal - 1 : polyline.idxInicial + 1;
@@ -833,7 +870,7 @@ export default class Leaflet implements IMapFunctions {
         this.moveSelectedPath(polyline, null);
     }
 
-    private navigateBackward(multiSelection: boolean, polyline) {
+    private navigateBackward(multiSelection: boolean, polyline: any) {
         const self = this;
         if (!multiSelection) {
             polyline.idxInicial--;
@@ -885,7 +922,7 @@ export default class Leaflet implements IMapFunctions {
         }
     }
 
-    private checkIdx(polyline, point) {
+    private checkIdx(polyline: any, point: any) {
         const self = this;
         const path = polyline.getLatLngs();
         let distance = 0;
@@ -903,7 +940,7 @@ export default class Leaflet implements IMapFunctions {
         return returnValue;
     }
 
-    private distanceToLine(pt1, pt2, pt) {
+    private distanceToLine(pt1: any, pt2: any, pt: any) {
         const self = this;
         const deltaX = pt2.lng - pt1.lng;
         const deltaY = pt2.lat - pt1.lat;
@@ -930,7 +967,7 @@ export default class Leaflet implements IMapFunctions {
         return self.kmTo(pt, intersect);
     }
 
-    private kmTo(pt1, pt2) {
+    private kmTo(pt1: any, pt2: any) {
         const e = Math;
         const ra = e.PI / 180;
         const b = pt1.lat * ra;
@@ -942,7 +979,7 @@ export default class Leaflet implements IMapFunctions {
         return f * 6378.137 * 1000;
     }
 
-    private parseGeoJson(data, options: GeoJsonOptions) {
+    private parseGeoJson(data: any, options: GeoJsonOptions) {
         const self = this;
         const parsedFeatures = [];
 
@@ -957,7 +994,7 @@ export default class Leaflet implements IMapFunctions {
         return parsedFeatures;
     }
 
-    private parseGeoJsonToObject(data, objectOptions) {
+    private parseGeoJsonToObject(data: any, objectOptions: any) {
         const geometry = data.geometry;
         let parsedCoordinates = [];
 
@@ -1001,5 +1038,29 @@ export default class Leaflet implements IMapFunctions {
             referencia.i++;
             setTimeout(() => this.moveMarker(marker, referencia, numDeltas), 20);
         }
+    }
+
+    // --------------- HELPER FUNCTIONS
+    private getBoundsPolygons(polygons) {
+        const group = new this.leaflet.FeatureGroup(polygons);
+        return group.getBounds();
+    }
+
+    private getBoundsCircles(circles: any) {
+        const group = new this.leaflet.FeatureGroup(circles);
+        return group.getBounds();
+    }
+
+    private getBoundsPolylines(polylines: any) {
+        const group = new this.leaflet.FeatureGroup(polylines);
+        return group.getBounds();
+    }
+
+    private drawPopupOnMarker(marker: any, options: PopupOptions) {
+        marker.bindPopup(options.content);
+        let popup = marker.getPopup();
+
+        marker.openPopup();
+        return popup;
     }
 }
