@@ -16,6 +16,8 @@ import NavigationOptions from '../features/polyline/navigations-options';
 import PolylineOptions from '../features/polyline/polyline-options';
 import PopupOptions from '../features/popup/popup-options';
 import IMapFunctions from './mapFunctions';
+import * as MarkerClusterer from '../../../node_modules/@google/markerclustererplus';
+import MarkerClustererConfig from '../features/marker-clusterer/marker-clusterer-config';
 
 export default class GoogleMaps implements IMapFunctions {
     private map = null;
@@ -310,6 +312,39 @@ export default class GoogleMaps implements IMapFunctions {
                     break;
             }
         });
+    }
+
+    /* Marker Clusterer */
+    public addMarkerClusterer(config: MarkerClustererConfig): any {
+        return new MarkerClusterer(this.map, [], {
+            'minimumClusterSize': config.clusterMinSize,
+            'maxZoom': config.clusterMaxZoom,
+            'zoomOnClick': config.clusterZoomOnClick
+        });
+    }
+
+    public alterMarkerClustererConfig(markerClusterer: any, config: MarkerClustererConfig): void {
+        markerClusterer.setZoomOnClick(config.clusterZoomOnClick);
+        markerClusterer.setMinimumClusterSize(config.clusterMinSize);
+        markerClusterer.setMaxZoom(config.clusterMaxZoom);
+    }
+
+    public refreshClusterer(markerClusterer: any): void {
+        markerClusterer.repaint();
+    }
+
+    public addMarkerOnClusterer(marker: any, markerClusterer: any): void {
+        if (markerClusterer.getMarkers().indexOf(marker) == -1) {
+            markerClusterer.addMarker(marker, true);
+        }
+    }
+
+    public removeMarkerFromClusterer(marker: any, markerClusterer: any): void {
+        markerClusterer.removeMarker(marker);
+    }
+
+    public clearMarkersClusterer(markerClusterer: any): void {
+        markerClusterer.clearMarkers();
     }
 
     /* Polygons */

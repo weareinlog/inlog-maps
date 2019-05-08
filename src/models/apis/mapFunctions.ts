@@ -11,6 +11,7 @@ import PolygonAlterOptions from '../features/polygons/polygon-alter-options';
 import PolygonOptions from '../features/polygons/polygon-options';
 import PolylineOptions from '../features/polyline/polyline-options';
 import PopupOptions from '../features/popup/popup-options';
+import MarkerClustererConfig from '../features/marker-clusterer/marker-clusterer-config';
 
 export default interface IMapFunctions {
     initialize(mapType: MapType, params: object, elementId: string): Promise<any>;
@@ -29,6 +30,13 @@ export default interface IMapFunctions {
     setCenterMarker(marker: any): void;
     addMarkerEvent(markers: any, event: MarkerEventType, eventFunction: any): void;
     removeMarkerEvent(markers: any, event: MarkerEventType): void;
+    /* Marker Clusterer */
+    addMarkerClusterer(config: MarkerClustererConfig): any;
+    refreshClusterer(markerClusterer: any): void;
+    addMarkerOnClusterer(marker: any, markerClusterer: any): void;
+    removeMarkerFromClusterer(marker: any, markerClusterer: any): void;
+    clearMarkersClusterer(markerClusterer: any): void;
+    alterMarkerClustererConfig(markerClusterer: any, config: MarkerClustererConfig): void;
 
     /* Polygons */
     drawPolygon(options: PolygonOptions, eventClick: any): any;

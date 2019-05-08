@@ -14,6 +14,7 @@ import PolygonAlterOptions from './models/features/polygons/polygon-alter-option
 import PolygonOptions from './models/features/polygons/polygon-options';
 import PolylineOptions from './models/features/polyline/polyline-options';
 import PopupOptions from './models/features/popup/popup-options';
+import MarkerClustererConfig from './models/features/marker-clusterer/marker-clusterer-config';
 
 export default class Map {
     private markersList = {};
@@ -23,6 +24,7 @@ export default class Map {
     private infoWindowList = {};
     private overlayList = {};
     private map: IMapFunctions;
+    private markerClusterer = {};
 
     constructor() { /**/ }
 
@@ -64,6 +66,14 @@ export default class Map {
         }
         marker.type = 'simple';
         this.markersList[type].push(marker);
+
+        if (options.addClusterer) {
+            if (!this.markerClusterer[type]) {
+                this.markerClusterer[type] = this.addMarkerClusterer(type, new MarkerClustererConfig(true, 1, 10));
+            }
+
+            this.map.addMarkerOnClusterer(marker, this.markerClusterer[type]);
+        }
     }
 
     /**
@@ -93,6 +103,11 @@ export default class Map {
 
         if (markers && markers.length) {
             this.map.toggleMarkers(markers, show);
+        }
+
+        if (this.markerClusterer[type]) {
+            markers.forEach(marker => show ? this.map.addMarkerOnClusterer(marker, this.markerClusterer[type]) :
+                this.map.removeMarkerFromClusterer(marker, this.markerClusterer[type]));
         }
     }
 
@@ -234,6 +249,47 @@ export default class Map {
         const markers = this.getMarkers(type, condition);
 
         this.map.removeMarkerEvent(markers, event);
+    }
+
+    /* Marker Clusterer */
+    /**
+     * Use this function to add MarkerClusterer on the map
+     * @param {string} type same type of markers
+     * @param {InlogMaps.MarkerClusterConfig} config 
+     */
+    public addMarkerClusterer(type: string, config: MarkerClustererConfig): void {
+        this.markerClusterer[type] = this.map.addMarkerClusterer(config);
+    }
+
+    /**
+     * Use this function to alter clusterer options
+     * @param type same type of markers
+     * @param {InlogMaps.MarkerClusterConfig} config 
+     */
+    public alterMarkerClustererConfig(type: string, config: MarkerClustererConfig): void {
+        if (this.markerClusterer[type]) {
+            this.map.alterMarkerClustererConfig(this.markerClusterer[type], config);
+        }
+    }
+
+    /**
+     * Use this function to redraw marker clusterer
+     * @param type same type of markers
+     */
+    public refreshClusterer(type: string): void {
+        if (this.markerClusterer[type]) {
+            this.map.refreshClusterer(this.markerClusterer[type]);
+        }
+    }
+
+    /**
+     * Use this to clear markers on clusterer
+     * @param type same type of markers
+     */
+    public clearMarkersClusterer(type: string): void {
+        if (this.markerClusterer[type]) {
+            this.map.clearMarkersClusterer(this.markerClusterer[type]);
+        }
     }
 
     /* Polygons */

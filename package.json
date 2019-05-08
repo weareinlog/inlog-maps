@@ -34,6 +34,7 @@
     "typescript": "^3.1.6"
   },
   "dependencies": {
+    "@google/markerclustererplus": "^2.1.11",
     "@types/google-maps": "^3.2.0",
     "@types/googlemaps": "^3.30.16",
     "awesome-typescript-loader": "^3.0.4-rc.2",

@@ -16,6 +16,7 @@ import NavigationOptions from '../features/polyline/navigations-options';
 import PolylineOptions from '../features/polyline/polyline-options';
 import PopupOptions from '../features/popup/popup-options';
 import IMapFunctions from './mapFunctions';
+import MarkerClustererConfig from '../features/marker-clusterer/marker-clusterer-config';
 
 export default class Leaflet implements IMapFunctions {
     private map = null;
@@ -241,6 +242,31 @@ export default class Leaflet implements IMapFunctions {
                     break;
             }
         });
+    }
+
+    /* Marker Clusterer */
+    public addMarkerClusterer(config: MarkerClustererConfig): any {
+        console.log('wait implementation');
+    }
+
+    public alterMarkerClustererConfig(markerClusterer: any, config: MarkerClustererConfig): void {
+        console.log('wait implementation');
+    }
+
+    public refreshClusterer(markerClusterer: any): void {
+        console.log('wait implementation');
+    }
+
+    public addMarkerOnClusterer(marker: any, markerClusterer: any): void {
+        console.log('wait implementation');
+    }
+
+    public removeMarkerFromClusterer(marker: any, markerClusterer: any): void {
+        console.log('wait implementation');
+    }
+
+    public clearMarkersClusterer(markerClusterer: any): void {
+        console.log('wait implementation');
     }
 
     /* Polygons */
