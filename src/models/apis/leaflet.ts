@@ -656,6 +656,9 @@ export default class Leaflet implements IMapFunctions {
             popup = self.drawPopupOnMarker(marker, options);
         }
 
+        if (options.object) {
+            popup.object = options.object;
+        }
         return popup;
     }
 
@@ -665,13 +668,7 @@ export default class Leaflet implements IMapFunctions {
         if (marker && !marker.getPopup()) {
             popup = self.drawPopup(options, marker);
         } else {
-            if (options.content) {
-                popup.setContent(options.content);
-            }
-
-            if (options.latlng) {
-                popup.setLatLng(options.latlng);
-            }
+            self.alterPopupContent(popup, options, marker);
 
             if (!popup.isOpen()) {
                 if (!marker) {
@@ -680,6 +677,32 @@ export default class Leaflet implements IMapFunctions {
                     marker.openPopup();
                 }
             }
+        }
+
+        if (options.object) {
+            popup.object = options.object;
+        }
+
+        return popup;
+    }
+
+    public alterPopupContent(popup: any, options: PopupOptions, marker?: any) {
+        if (marker) {
+            popup = marker._popup;
+        }
+
+        if (popup) {
+            if (options.content) {
+                popup.setContent(options.content);
+            }
+
+            if (options.latlng) {
+                popup.setLatLng(options.latlng);
+            }
+        }
+
+        if (options.object) {
+            popup.object = options.object;
         }
     }
 

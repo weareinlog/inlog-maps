@@ -665,13 +665,14 @@ export default class Map {
             marker = markers[0];
         }
 
+        let popup: any;
         if (this.infoWindowList[type]) {
-            this.map.alterPopup(this.infoWindowList[type], options, marker);
+            popup = this.map.alterPopup(this.infoWindowList[type], options, marker);
         } else {
-            const infoWindow = this.map.drawPopup(options, marker);
-
-            this.infoWindowList[type] = infoWindow;
+            popup = this.map.drawPopup(options, marker);
         }
+
+        this.infoWindowList[type] = popup;
     }
 
     /**
@@ -688,8 +689,17 @@ export default class Map {
         }
 
         if (popups) {
-            this.map.alterPopup(popups, options, markers[0]);
+            this.map.alterPopupContent(popups, options, markers[0]);
         }
+    }
+
+    /**
+     * 
+     * @param {string} type 
+     * @returns {object}
+     */
+    public getObjectOpenPopup(type: string): object {
+        return this.infoWindowList[type] ? this.infoWindowList[type].object : null;
     }
 
     /**

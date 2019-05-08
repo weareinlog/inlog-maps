@@ -737,12 +737,29 @@ export default class GoogleMaps implements IMapFunctions {
         }
 
         infowindow.open(self.map, marker || null);
+
+        if (options.object) {
+            infowindow.object = options.object;
+        }
         return infowindow;
     }
 
-    public alterPopup(popup, options: PopupOptions, marker?: any) {
+    public alterPopup(popup: any, options: PopupOptions, marker?: any) {
         const self = this;
+        self.alterPopupContent(popup, options, marker);
 
+        if (!popup.getMap()) {
+            popup.open(self.map, marker || null);
+        }
+
+        if (options.object) {
+            popup.object = options.object;
+        }
+
+        return popup;
+    }
+
+    public alterPopupContent(popup: any, options: PopupOptions, marker?: any) {
         if (options.content) {
             popup.setContent(options.content);
         }
@@ -756,8 +773,8 @@ export default class GoogleMaps implements IMapFunctions {
             popup.setPosition(marker.getPosition());
         }
 
-        if (!popup.getMap()) {
-            popup.open(self.map, marker || null);
+        if (options.object) {
+            popup.object = options.object;
         }
     }
 

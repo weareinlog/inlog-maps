@@ -64,6 +64,7 @@ export default interface IMapFunctions {
     /* Info Windows */
     drawPopup(options: PopupOptions, marker?: any): any;
     alterPopup(popup: any, options: PopupOptions, marker?: any): void;
+    alterPopupContent(popup: any, options: PopupOptions, marker?: any): void;
     closePopup(popup: any): void;
 
     /* Map */
