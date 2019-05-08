@@ -195,9 +195,18 @@ export default class GoogleMaps implements IMapFunctions {
         return marker;
     }
 
-    public toggleMarkers(markers: any[], show: boolean) {
+    public toggleMarkers(markers: any[], show: boolean, markerClusterer?: any) {
         const self = this;
-        markers.forEach((marker) => marker.setMap(show ? self.map : null));
+        markers.forEach((marker) => {
+            marker.setMap(show ? self.map : null);
+
+            if (show) {
+                self.addMarkerOnClusterer(marker, markerClusterer);
+            }
+            else {
+                self.removeMarkerFromClusterer(marker, markerClusterer);
+            }
+        });
     }
 
     public alterMarkerOptions(markers: any[], options: MarkerAlterOptions) {
@@ -345,6 +354,10 @@ export default class GoogleMaps implements IMapFunctions {
 
     public clearMarkersClusterer(markerClusterer: any): void {
         markerClusterer.clearMarkers();
+    }
+
+    public countMarkersOnCluster(markerClusterer: any): number {
+        return markerClusterer.getMarkers().length;
     }
 
     /* Polygons */

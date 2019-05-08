@@ -108,7 +108,7 @@ export default class Leaflet implements IMapFunctions {
             });
         }
 
-        if (options.addToMap) {
+        if (options.addToMap && !options.addClusterer) {
             marker.addTo(this.map);
         }
 
@@ -144,9 +144,24 @@ export default class Leaflet implements IMapFunctions {
         return marker;
     }
 
-    public toggleMarkers(markers: any[], show: boolean) {
+    public toggleMarkers(markers: any[], show: boolean, markerClusterer?: any) {
         const self = this;
-        markers.forEach((marker) => show ? self.map.addLayer(marker) : self.map.removeLayer(marker));
+        markers.forEach((marker) => {
+            if (markerClusterer) {
+                if (show) {
+                    self.addMarkerOnClusterer(marker, markerClusterer);
+                }
+                else {
+                    self.removeMarkerFromClusterer(marker, markerClusterer);
+                }
+            } else {
+                if (show) {
+                    self.map.addLayer(marker);
+                } else {
+                    self.map.removeLayer(marker);
+                }
+            }
+        });
     }
 
     public alterMarkerOptions(markers: any[], options: MarkerAlterOptions) {
@@ -246,27 +261,38 @@ export default class Leaflet implements IMapFunctions {
 
     /* Marker Clusterer */
     public addMarkerClusterer(config: MarkerClustererConfig): any {
-        console.log('wait implementation');
+        const layer = this.leaflet.markerClusterGroup({
+            showCoverageOnHover: false,
+            zoomToBoundsOnClick: config.clusterZoomOnClick,
+            maxClusterRadius: 50
+        });
+
+        this.map.addLayer(layer);
+        return layer;
     }
 
     public alterMarkerClustererConfig(markerClusterer: any, config: MarkerClustererConfig): void {
-        console.log('wait implementation');
+        markerClusterer.options.zoomToBoundsOnClick = config.clusterZoomOnClick;
     }
 
     public refreshClusterer(markerClusterer: any): void {
-        console.log('wait implementation');
+        markerClusterer.refreshClusters();
     }
 
     public addMarkerOnClusterer(marker: any, markerClusterer: any): void {
-        console.log('wait implementation');
+        markerClusterer.addLayer(marker);
     }
 
     public removeMarkerFromClusterer(marker: any, markerClusterer: any): void {
-        console.log('wait implementation');
+        markerClusterer.removeLayer(marker);
     }
 
     public clearMarkersClusterer(markerClusterer: any): void {
-        console.log('wait implementation');
+        markerClusterer.clearLayers();
+    }
+
+    public countMarkersOnCluster(markerClusterer: any): number {
+        return markerClusterer.getLayers().length;
     }
 
     /* Polygons */

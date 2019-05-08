@@ -43,6 +43,7 @@
     "leaflet-editable": "^1.2.0",
     "leaflet-gesture-handling": "^1.1.8",
     "leaflet-polylinedecorator": "^1.6.0",
+    "leaflet.markercluster": "^1.4.1",
     "leaflet.path.drag": "0.0.6",
     "shx": "^0.2.2",
     "typescript": "^2.1.6",

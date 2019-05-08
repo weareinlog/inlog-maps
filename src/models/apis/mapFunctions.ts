@@ -22,7 +22,7 @@ export default interface IMapFunctions {
     /* Markers */
     drawMarker(options: MarkerOptions, eventClick: any): any;
     drawCircleMarker(options: CircleMarkerOptions, eventClick: any): any;
-    toggleMarkers(markers: any[], show: boolean): void;
+    toggleMarkers(markers: any[], show: boolean, markerClusterer?: any): void;
     alterMarkerOptions(markers: any[], options: MarkerAlterOptions): void;
     alterMarkerPosition(markers: any[], position: number[], addTransition: boolean): void;
     fitBoundsPositions(markers: any[]): void;
@@ -30,6 +30,7 @@ export default interface IMapFunctions {
     setCenterMarker(marker: any): void;
     addMarkerEvent(markers: any, event: MarkerEventType, eventFunction: any): void;
     removeMarkerEvent(markers: any, event: MarkerEventType): void;
+
     /* Marker Clusterer */
     addMarkerClusterer(config: MarkerClustererConfig): any;
     refreshClusterer(markerClusterer: any): void;
@@ -37,6 +38,7 @@ export default interface IMapFunctions {
     removeMarkerFromClusterer(marker: any, markerClusterer: any): void;
     clearMarkersClusterer(markerClusterer: any): void;
     alterMarkerClustererConfig(markerClusterer: any, config: MarkerClustererConfig): void;
+    countMarkersOnCluster(markerClusterer: any): number;
 
     /* Polygons */
     drawPolygon(options: PolygonOptions, eventClick: any): any;

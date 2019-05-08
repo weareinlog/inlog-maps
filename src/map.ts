@@ -102,12 +102,7 @@ export default class Map {
         const markers = this.getMarkers(type, condition);
 
         if (markers && markers.length) {
-            this.map.toggleMarkers(markers, show);
-        }
-
-        if (this.markerClusterer[type]) {
-            markers.forEach(marker => show ? this.map.addMarkerOnClusterer(marker, this.markerClusterer[type]) :
-                this.map.removeMarkerFromClusterer(marker, this.markerClusterer[type]));
+            this.map.toggleMarkers(markers, show, this.markerClusterer[type]);
         }
     }
 
@@ -217,8 +212,11 @@ export default class Map {
      * @returns {number}
      */
     public countMarkers(type: string, onlyOnMap: boolean = true, condition?: any): number {
-        let markers = this.getMarkers(type, condition);
+        if (this.markerClusterer[type]) {
+            return this.map.countMarkersOnCluster(this.markerClusterer[type]);
+        }
 
+        let markers = this.getMarkers(type, condition);
         if (onlyOnMap) {
             markers = markers.filter((x: any) => this.map.isMarkerOnMap(x));
         }
