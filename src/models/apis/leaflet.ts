@@ -104,7 +104,7 @@ export default class Leaflet implements IMapFunctions {
         if (eventClick) {
             marker.on('click', (event: any) => {
                 const param = new EventReturn([event.latlng.lat, event.latlng.lng]);
-                eventClick(param, options.object);
+                eventClick(param, event.target.object);
             });
         }
 
@@ -127,8 +127,8 @@ export default class Leaflet implements IMapFunctions {
         if (eventClick) {
             marker.on('click', (event: any) => {
                 const param = new EventReturn([event.latlng.lat, event.latlng.lng]);
-                eventClick(param);
-            }, options.object);
+                eventClick(param, event.target.object);
+            });
         }
 
         if (options.addToMap) {
@@ -311,7 +311,7 @@ export default class Leaflet implements IMapFunctions {
         if (eventClick) {
             polygon.on('click', (event: any) => {
                 const param = new EventReturn([event.latlng.lat, event.latlng.lng]);
-                eventClick(param, options.object);
+                eventClick(param, event.target.object);
             });
         }
 
@@ -411,7 +411,7 @@ export default class Leaflet implements IMapFunctions {
         if (eventClick) {
             circle.on('click', (event: any) => {
                 const param = new EventReturn([event.latlng.lat, event.latlng.lng]);
-                eventClick(param, options.object);
+                eventClick(param, event.target.object);
             });
         }
 
@@ -540,7 +540,7 @@ export default class Leaflet implements IMapFunctions {
         if (eventClick) {
             polyline.on('click', (event: any) => {
                 const param = new EventReturn([event.latlng.lat, event.latlng.lng]);
-                eventClick(param, options.object);
+                eventClick(param, event.target.object);
             });
         }
 

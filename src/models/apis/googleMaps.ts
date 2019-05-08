@@ -200,11 +200,13 @@ export default class GoogleMaps implements IMapFunctions {
         markers.forEach((marker) => {
             marker.setMap(show ? self.map : null);
 
-            if (show) {
-                self.addMarkerOnClusterer(marker, markerClusterer);
-            }
-            else {
-                self.removeMarkerFromClusterer(marker, markerClusterer);
+            if (markerClusterer) {
+                if (show) {
+                    self.addMarkerOnClusterer(marker, markerClusterer);
+                }
+                else {
+                    self.removeMarkerFromClusterer(marker, markerClusterer);
+                }
             }
         });
     }
