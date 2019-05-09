@@ -1,3 +1,4 @@
 export enum PolylineType {
-    Dotted
+    Dotted,
+    Arrow
 }

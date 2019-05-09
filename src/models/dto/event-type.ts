@@ -1,9 +1,6 @@
-export enum EventType {
+export enum MapEventType {
     Click,
-    ZoomChanged,
-    Move,
-    InsertAt,
-    RemoveAt
+    ZoomChanged
 }
 
 export enum MarkerEventType {
@@ -16,4 +13,15 @@ export enum CircleEventType {
     Click,
     CenterChanged,
     RadiusChanged
+}
+
+export enum PolygonEventType {
+    InsertAt,
+    Move
+}
+
+export enum PolylineEventType {
+    Move,
+    InsertAt,
+    RemoveAt
 }

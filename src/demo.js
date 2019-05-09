@@ -256,10 +256,10 @@ function onZoomChanged() {
 
 function toogleOnZoomChanged() {
     if (zoomChanged) {
-        currentMap.removeEventMap(inlogMaps.EventType.ZoomChanged);
+        currentMap.removeEventMap(inlogMaps.MapEventType.ZoomChanged);
         zoomChanged = false;
     } else {
-        currentMap.addEventMap(inlogMaps.EventType.ZoomChanged, onZoomChanged);
+        currentMap.addEventMap(inlogMaps.MapEventType.ZoomChanged, onZoomChanged);
         zoomChanged = true;
     }
 }
@@ -363,10 +363,10 @@ function drawPolyline() {
         alert('The polyline is not on the currentMap!');
     } else {
         if (drawing) {
-            currentMap.removeEventMap(inlogMaps.EventType.Click);
+            currentMap.removeEventMap(inlogMaps.MapEventType.Click);
             drawing = false;
         } else {
-            currentMap.addEventMap(inlogMaps.EventType.Click, updatePolyline);
+            currentMap.addEventMap(inlogMaps.MapEventType.Click, updatePolyline);
             drawing = true;
         }
     }

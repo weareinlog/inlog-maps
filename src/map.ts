@@ -1,7 +1,7 @@
 import GoogleMaps from './models/apis/googleMaps';
 import Leaflet from './models/apis/leaflet';
 import IMapFunctions from './models/apis/mapFunctions';
-import { EventType, MarkerEventType, CircleEventType } from './models/dto/event-type';
+import { MarkerEventType, CircleEventType, PolygonEventType, PolylineEventType, MapEventType } from './models/dto/event-type';
 import { MapType } from './models/dto/map-type';
 import CircleAlterOptions from './models/features/circle/circle-alter-options';
 import CircleOptions from './models/features/circle/circle-options';
@@ -14,10 +14,9 @@ import PolygonAlterOptions from './models/features/polygons/polygon-alter-option
 import PolygonOptions from './models/features/polygons/polygon-options';
 import PolylineOptions from './models/features/polyline/polyline-options';
 import PopupOptions from './models/features/popup/popup-options';
+import MarkerClustererConfig from './models/features/marker-clusterer/marker-clusterer-config';
 
 export default class Map {
-    public mapType = MapType;
-    public eventType = EventType;
     private markersList = {};
     private polygonsList = {};
     private circlesList = {};
@@ -25,6 +24,7 @@ export default class Map {
     private infoWindowList = {};
     private overlayList = {};
     private map: IMapFunctions;
+    private markerClusterer = {};
 
     constructor() { /**/ }
 
@@ -66,19 +66,13 @@ export default class Map {
         }
         marker.type = 'simple';
         this.markersList[type].push(marker);
-    }
 
-    /**
-     * Use this function to fit bounds in the markers with the especified type
-     * @param {string} type
-     * @param {any} condition [nullable]
-     */
-    public fitBoundsMarkers(type: string, condition?: any): void {
-        const markers = this.getMarkers(type, condition)
-            .filter((x: any) => this.map.isMarkerOnMap(x));
+        if (options.addClusterer) {
+            if (!this.markerClusterer[type]) {
+                this.markerClusterer[type] = this.addMarkerClusterer(type, new MarkerClustererConfig(true, 1, 10));
+            }
 
-        if (markers && markers.length) {
-            this.map.fitBoundsPositions(markers);
+            this.map.addMarkerOnClusterer(marker, this.markerClusterer[type]);
         }
     }
 
@@ -108,7 +102,33 @@ export default class Map {
         const markers = this.getMarkers(type, condition);
 
         if (markers && markers.length) {
-            this.map.toggleMarkers(markers, show);
+            this.map.toggleMarkers(markers, show, this.markerClusterer[type]);
+        }
+    }
+
+    /**
+     * Remove markers from the map and from internal list
+     * @param {string} type
+     * @param {any} condition remove markers with the condition [nullable]
+     */
+    public removeMarkers(type: string, condition?: any): void {
+        if (this.markersList[type] && condition) {
+            const markers = this.getMarkers(type, condition);
+
+            // Hide markers with the condition
+            this.map.toggleMarkers(markers, false);
+
+            // Keep markers that doesn't have the condition
+            this.markersList[type] = this.markersList[type].filter((marker: any) => !condition(marker.object));
+        } else {
+            if (this.markersList[type]) {
+                this.map.toggleMarkers(this.markersList[type], false);
+            }
+            this.markersList[type] = [];
+        }
+
+        if (this.markersList[type].length === 0) {
+            delete this.markersList[type];
         }
     }
 
@@ -142,28 +162,16 @@ export default class Map {
     }
 
     /**
-     * Remove markers from the map and from internal list
+     * Use this function to fit bounds in the markers with the especified type
      * @param {string} type
-     * @param {any} condition remove markers with the condition [nullable]
+     * @param {any} condition [nullable]
      */
-    public removeMarkers(type: string, condition?: any): void {
-        if (this.markersList[type] && condition) {
-            const markers = this.getMarkers(type, condition);
+    public fitBoundsMarkers(type: string, condition?: any): void {
+        const markers = this.getMarkers(type, condition)
+            .filter((x: any) => this.map.isMarkerOnMap(x));
 
-            // Hide markers with the condition
-            this.map.toggleMarkers(markers, false);
-
-            // Keep markers that doesn't have the condition
-            this.markersList[type] = this.markersList[type].filter((marker: any) => !condition(marker.object));
-        } else {
-            if (this.markersList[type]) {
-                this.map.toggleMarkers(this.markersList[type], false);
-            }
-            this.markersList[type] = [];
-        }
-
-        if (this.markersList[type].length === 0) {
-            delete this.markersList[type];
+        if (markers && markers.length) {
+            this.map.fitBoundsPositions(markers);
         }
     }
 
@@ -186,9 +194,40 @@ export default class Map {
     }
 
     /**
+     * This functions returns if marker exists
+     * @param type 
+     * @param condition [nullable]
+     * @returns {boolean}
+     */
+    public markerExists(type: string, condition?: any): boolean {
+        const markers = this.getMarkers(type, condition);
+        return markers && markers.length > 0;
+    }
+
+    /**
+     * Use this function to count markers by type
+     * @param {string} type 
+     * @param {boolean} onlyOnMap exclude hidden markers, default true
+     * @param {any} condition 
+     * @returns {number}
+     */
+    public countMarkers(type: string, onlyOnMap: boolean = true, condition?: any): number {
+        if (this.markerClusterer[type]) {
+            return this.map.countMarkersOnCluster(this.markerClusterer[type]);
+        }
+
+        let markers = this.getMarkers(type, condition);
+        if (onlyOnMap) {
+            markers = markers.filter((x: any) => this.map.isMarkerOnMap(x));
+        }
+
+        return markers.length;
+    }
+
+    /**
      * This function add new events on marker
      * @param {string} type 
-     * @param {MarkerEventType} event 
+     * @param {InlogMaps.MarkerEventType} event 
      * @param {any} eventFunction 
      * @param {any} condition [nullable]
      */
@@ -199,14 +238,56 @@ export default class Map {
     }
 
     /**
-     * This functions returns if marker exists
-     * @param type 
-     * @param condition [nullable]
-     * @returns {boolean}
+     * This function remove events of marker
+     * @param {string} type 
+     * @param {InlogMaps.MarkerEventType} event 
+     * @param {any} condition [nullable]
      */
-    public markerExists(type: string, condition?: any): boolean {
-        var markers = this.getMarkers(type, condition);
-        return markers && markers.length > 0;
+    public removeMarkerEvent(type: string, event: MarkerEventType, condition?: any): void {
+        const markers = this.getMarkers(type, condition);
+
+        this.map.removeMarkerEvent(markers, event);
+    }
+
+    /* Marker Clusterer */
+    /**
+     * Use this function to add MarkerClusterer on the map
+     * @param {string} type same type of markers
+     * @param {InlogMaps.MarkerClusterConfig} config 
+     */
+    public addMarkerClusterer(type: string, config: MarkerClustererConfig): void {
+        this.markerClusterer[type] = this.map.addMarkerClusterer(config);
+    }
+
+    /**
+     * Use this function to alter clusterer options
+     * @param type same type of markers
+     * @param {InlogMaps.MarkerClusterConfig} config 
+     */
+    public alterMarkerClustererConfig(type: string, config: MarkerClustererConfig): void {
+        if (this.markerClusterer[type]) {
+            this.map.alterMarkerClustererConfig(this.markerClusterer[type], config);
+        }
+    }
+
+    /**
+     * Use this function to redraw marker clusterer
+     * @param type same type of markers
+     */
+    public refreshClusterer(type: string): void {
+        if (this.markerClusterer[type]) {
+            this.map.refreshClusterer(this.markerClusterer[type]);
+        }
+    }
+
+    /**
+     * Use this to clear markers on clusterer
+     * @param type same type of markers
+     */
+    public clearMarkersClusterer(type: string): void {
+        if (this.markerClusterer[type]) {
+            this.map.clearMarkersClusterer(this.markerClusterer[type]);
+        }
     }
 
     /* Polygons */
@@ -226,20 +307,6 @@ export default class Map {
     }
 
     /**
-     * Use this function to fit bounds of a polygon
-     * @param {string} type
-     * @param {any} condition fit polygon bounds with the condition [nullable]
-     */
-    public fitBoundsPolygons(type: string, condition?: any): void {
-        const polygons = this.getPolygons(type, condition)
-            .filter((polygon: any) => this.map.isPolygonOnMap(polygon));
-
-        if (polygons && polygons.length) {
-            this.map.fitBoundsPolygons(polygons);
-        }
-    }
-
-    /**
      * Use this function to show/hide polygon from a especific type
      * @param {boolean} show
      * @param {string} type
@@ -250,20 +317,6 @@ export default class Map {
 
         if (polygons && polygons.length) {
             this.map.togglePolygons(polygons, show);
-        }
-    }
-
-    /**
-     * Use this function to alter polygons options/style
-     * @param {string} type
-     * @param {InlogMaps.PolygonAlterOptions} options
-     * @param {any} condition alter polygon with the condition [nullable]
-     */
-    public alterPolygonOptions(type: string, options: PolygonAlterOptions, condition?: any): void {
-        const polygons = this.getPolygons(type, condition);
-
-        if (polygons && polygons.length) {
-            this.map.alterPolygonOptions(polygons, options);
         }
     }
 
@@ -294,14 +347,203 @@ export default class Map {
     }
 
     /**
+     * Use this function to alter polygons options/style
+     * @param {string} type
+     * @param {InlogMaps.PolygonAlterOptions} options
+     * @param {any} condition alter polygon with the condition [nullable]
+     */
+    public alterPolygonOptions(type: string, options: PolygonAlterOptions, condition?: any): void {
+        const polygons = this.getPolygons(type, condition);
+
+        if (polygons && polygons.length) {
+            this.map.alterPolygonOptions(polygons, options);
+        }
+    }
+
+    /**
+     * Use this function to fit bounds of a polygon
+     * @param {string} type
+     * @param {any} condition fit polygon bounds with the condition [nullable]
+     */
+    public fitBoundsPolygons(type: string, condition?: any): void {
+        const polygons = this.getPolygons(type, condition)
+            .filter((polygon: any) => this.map.isPolygonOnMap(polygon));
+
+        if (polygons && polygons.length) {
+            this.map.fitBoundsPolygons(polygons);
+        }
+    }
+
+    /**
      * This functions returns if polygon exists
      * @param type 
      * @param condition [nullable]
      * @returns {boolean}
      */
     public polygonExists(type: string, condition?: any): boolean {
-        var polygons = this.getPolygons(type, condition);
+        const polygons = this.getPolygons(type, condition);
         return polygons && polygons.length > 0;
+    }
+
+    /**
+     * This function add new events on polygon
+     * @param {string} type 
+     * @param {InlogMaps.PolygonEventType} event 
+     * @param {any} eventFunction 
+     * @param {any} condition [nullable]
+     */
+    public addPolygonEvent(type: string, event: PolygonEventType, eventFunction: any, condition?: any): void {
+        const polygons = this.getPolygons(type, condition);
+
+        this.map.addPolygonEvent(polygons, event, eventFunction);
+    }
+
+    /**
+     * This function remove events of polygon
+     * @param {string} type 
+     * @param {InlogMaps.PolygonEventType} event 
+     * @param {any} condition [nullable]
+     */
+    public removePolygonEvent(type: string, event: PolygonEventType, condition?: any): void {
+        const polygons = this.getPolygons(type, condition);
+
+        this.map.removePolygonEvent(polygons, event);
+    }
+
+    /* Circles */
+    /**
+     * Use this function to draw circles on the currentMap
+     * @param {string} type
+     * @param {InlogMaps.CircleOptions} options
+     * @param {any} eventClick [nullable]
+     */
+    public drawCircle(type: string, options: CircleOptions, eventClick?: any): void {
+        const circle = this.map.drawCircle(options, eventClick);
+
+        if (!this.circlesList[type]) {
+            this.circlesList[type] = [];
+        }
+        this.circlesList[type].push(circle);
+    }
+
+    /**
+     * Use this function to show/hide circles from a especific type
+     * @param {boolean} show
+     * @param {string} type
+     * @param {any} condition toggle circles with the condition [nullable]
+     */
+    public toggleCircles(show: boolean, type: string, condition?: any): void {
+        const circles = this.getCircles(type, condition);
+
+        if (circles && circles.length) {
+            this.map.toggleCircles(circles, show);
+        }
+    }
+
+    /**
+     * Remove circles from the map and from internal list
+     * @param {string} type
+     * @param {any} condition remove circles with the condition [nullable]
+     */
+    public removeCircles(type: string, condition?: any): void {
+        if (this.circlesList[type] && condition) {
+            const circles = this.getCircles(type, condition);
+
+            // Hide circles with the condition
+            this.map.toggleCircles(circles, false);
+
+            // Keep circles that doesn't have the condition
+            this.circlesList[type] = this.circlesList[type].filter((circle: any) => !condition(circle.object));
+        } else {
+            if (this.circlesList[type]) {
+                this.map.toggleCircles(this.circlesList[type], false);
+            }
+            this.circlesList[type] = [];
+        }
+
+        if (this.circlesList[type].length === 0) {
+            delete this.circlesList[type];
+        }
+    }
+
+    /**
+     * Use this function to alter circle options
+     * @param {string} type
+     * @param {InlogMaps.CircleAlterOptions} options
+     * @param {any} condition alter circle with the condition [nullable]
+     */
+    public alterCircleOptions(type: string, options: CircleAlterOptions, condition?: any): void {
+        const circles = this.getCircles(type, condition);
+
+        if (circles && circles.length) {
+            this.map.alterCircleOptions(circles, options);
+        }
+    }
+
+    /**
+     * Use this function to fit bounds of a polygon
+     * @param {string} type
+     * @param {any} condition fit polygon bounds with the condition [nullable]
+     */
+    public fitBoundsCircles(type: string, condition?: any): void {
+        const circles = this.getCircles(type, condition)
+            .filter((circle: any) => this.map.isCircleOnMap(circle));
+
+        if (circles && circles.length) {
+            this.map.fitBoundsCircles(circles);
+        }
+    }
+
+    /**
+     * This functions returns if circle exists
+     * @param {string} type 
+     * @param {any} condition [nullable]
+     * @returns {boolean}
+     */
+    public circleExists(type: string, condition?: any): boolean {
+        const circles = this.getCircles(type, condition);
+        return circles && circles.length > 0;
+    }
+
+    /**
+     * This function return circle center
+     * @param {string} type 
+     * @param {any} condition [nullable]
+     * @returns {number[]}
+     */
+    public getCircleCenter(type: string, condition?: any): number[] {
+        const circles = this.getCircles(type, condition);
+
+        if (circles && circles.length) {
+            return this.map.getCircleCenter(circles[0]);
+        }
+
+        return null;
+    }
+
+    /**
+     * This function add new events on circle
+     * @param {string} type 
+     * @param {InlogMaps.CircleEventType} event 
+     * @param {any} eventFunction 
+     * @param {any} condition [nullable]
+     */
+    public addCircleEvent(type: string, event: CircleEventType, eventFunction: any, condition?: any): void {
+        const circles = this.getCircles(type, condition);
+
+        this.map.addCircleEvent(circles, event, eventFunction);
+    }
+
+    /**
+     * This function remove events of circle
+     * @param {string} type 
+     * @param {InlogMaps.CircleEventType} event 
+     * @param {any} condition [nullable]
+     */
+    public removeCircleEvent(type: string, event: CircleEventType, condition?: any): void {
+        const circles = this.getCircles(type, condition);
+
+        this.map.removeCircleEvent(circles, event);
     }
 
     /* Polylines */
@@ -320,19 +562,6 @@ export default class Map {
         this.polylinesList[type].push(polyline);
     }
 
-
-    /**
-     * Use this function to add listeners on polyline
-     * @param {string} type 
-     * @param {InlogMaps.EventType} event 
-     * @param {any} eventFunction 
-     * @param {any} condition [nullable]
-     */
-    public addPolylineListeners(type: string, event: EventType, eventFunction: any, condition?: any): void {
-        const polyline = this.getPolylines(type, condition);
-        this.map.addPolylineListeners(polyline, event, eventFunction);
-    }
-
     /**
      * Use this function to draw polylines with navigation on the currentMap
      * @param {string} type
@@ -345,32 +574,6 @@ export default class Map {
             this.polylinesList[type] = [];
         }
         this.polylinesList[type].push(polyline);
-    }
-
-    /**
-     * Use this function to add more paths to a polyline
-     * @param {string} type
-     * @param {number[]} position
-     * @param {any} condition [nullable]
-     */
-    public addPolylinePath(type: string, position: number[], condition?: any): void {
-        const polyline = this.getPolylines(type, condition);
-
-        if (polyline && polyline.length) {
-            this.map.addPolylinePath(polyline, position);
-        } else {
-            const options = new PolylineOptions();
-            options.addToMap = true;
-
-            this.drawPolyline(type, options, null);
-        }
-    }
-
-    /**
-     * Use this function to clear polyline selected from the currentMap
-     */
-    public removePolylineHighlight(): void {
-        this.map.removePolylineHighlight();
     }
 
     /**
@@ -448,144 +651,59 @@ export default class Map {
      * @returns {boolean}
      */
     public polylineExists(type: string, condition?: any): boolean {
-        var polylines = this.getPolylines(type, condition);
+        const polylines = this.getPolylines(type, condition);
         return polylines && polylines.length > 0;
     }
 
-    /* Circles */
     /**
-     * Use this function to draw circles on the currentMap
+     * Use this function to add more paths to a polyline
      * @param {string} type
-     * @param {InlogMaps.CircleOptions} options
-     * @param {any} eventClick [nullable]
-     */
-    public drawCircle(type: string, options: CircleOptions, eventClick?: any): void {
-        const circle = this.map.drawCircle(options, eventClick);
-
-        if (!this.circlesList[type]) {
-            this.circlesList[type] = [];
-        }
-        this.circlesList[type].push(circle);
-    }
-
-    /**
-     * Use this function to show/hide circles from a especific type
-     * @param {boolean} show
-     * @param {string} type
-     * @param {any} condition toggle circles with the condition [nullable]
-     */
-    public toggleCircles(show: boolean, type: string, condition?: any): void {
-        const circles = this.getCircles(type, condition);
-
-        if (circles && circles.length) {
-            this.map.toggleCircles(circles, show);
-        }
-    }
-
-    /**
-     * Use this function to alter circle options
-     * @param {string} type
-     * @param {InlogMaps.CircleAlterOptions} options
-     * @param {any} condition alter circle with the condition [nullable]
-     */
-    public alterCircleOptions(type: string, options: CircleAlterOptions, condition?: any): void {
-        const circles = this.getCircles(type, condition);
-
-        if (circles && circles.length) {
-            this.map.alterCircleOptions(circles, options);
-        }
-    }
-
-    /**
-     * Remove circles from the map and from internal list
-     * @param {string} type
-     * @param {any} condition remove circles with the condition [nullable]
-     */
-    public removeCircles(type: string, condition?: any): void {
-        if (this.circlesList[type] && condition) {
-            const circles = this.getCircles(type, condition);
-
-            // Hide circles with the condition
-            this.map.toggleCircles(circles, false);
-
-            // Keep circles that doesn't have the condition
-            this.circlesList[type] = this.circlesList[type].filter((circle: any) => !condition(circle.object));
-        } else {
-            if (this.circlesList[type]) {
-                this.map.toggleCircles(this.circlesList[type], false);
-            }
-            this.circlesList[type] = [];
-        }
-
-        if (this.circlesList[type].length === 0) {
-            delete this.circlesList[type];
-        }
-    }
-
-    /**
-     * Use this function to fit bounds of a polygon
-     * @param {string} type
-     * @param {any} condition fit polygon bounds with the condition [nullable]
-     */
-    public fitBoundsCircles(type: string, condition?: any): void {
-        const circles = this.getCircles(type, condition)
-            .filter((circle: any) => this.map.isCircleOnMap(circle));
-
-        if (circles && circles.length) {
-            this.map.fitBoundsCircles(circles);
-        }
-    }
-
-    /**
-     * This functions returns if circle exists
-     * @param {string} type 
+     * @param {number[]} position
      * @param {any} condition [nullable]
-     * @returns {boolean}
      */
-    public circleExists(type: string, condition?: any): boolean {
-        var circles = this.getCircles(type, condition);
-        return circles && circles.length > 0;
+    public addPolylinePath(type: string, position: number[], condition?: any): void {
+        const polyline = this.getPolylines(type, condition);
+
+        if (polyline && polyline.length) {
+            this.map.addPolylinePath(polyline, position);
+        } else {
+            const options = new PolylineOptions();
+            options.addToMap = true;
+
+            this.drawPolyline(type, options, null);
+        }
     }
 
     /**
-     * This function add new events on circle
+     * Use this function to clear polyline selected from the currentMap
+     */
+    public removePolylineHighlight(): void {
+        this.map.removePolylineHighlight();
+    }
+
+    /**
+     * Use this function to add listeners on polyline
      * @param {string} type 
-     * @param {InlogMaps.CircleEventType} event 
+     * @param {InlogMaps.PolylineEventType} event 
      * @param {any} eventFunction 
      * @param {any} condition [nullable]
      */
-    public addCircleEvent(type: string, event: CircleEventType, eventFunction: any, condition?: any): void {
-        const circles = this.getCircles(type, condition);
+    public addPolylineEvent(type: string, event: PolylineEventType, eventFunction: any, condition?: any): void {
+        const polyline = this.getPolylines(type, condition);
 
-        this.map.addCircleEvent(circles, event, eventFunction);
+        this.map.addPolylineEvent(polyline, event, eventFunction);
     }
 
     /**
-     * This function remove events of circle
+     * Use this function to remove listeners of polyline
      * @param {string} type 
-     * @param {InlogMaps.CircleEventType} event 
+     * @param {InlogMaps.PolylineEventType} event 
      * @param {any} condition [nullable]
      */
-    public removeCircleEvent(type: string, event: CircleEventType, condition?: any): void {
-        const circles = this.getCircles(type, condition);
+    public removePolylineEvent(type: string, event: PolylineEventType, condition?: any): void {
+        const polyline = this.getPolylines(type, condition);
 
-        this.map.removeCircleEvent(circles, event);
-    }
-
-    /**
-     * This function return circle center
-     * @param {string} type 
-     * @param {any} condition [nullable]
-     * @returns {number[]}
-     */
-    public getCircleCenter(type: string, condition?: any): number[] {
-        const circles = this.getCircles(type, condition);
-
-        if (circles && circles.length) {
-            return this.map.getCircleCenter(circles[0]);
-        }
-
-        return null;
+        this.map.removePolylineEvent(polyline, event);
     }
 
     /* Info Windows */
@@ -601,13 +719,14 @@ export default class Map {
             marker = markers[0];
         }
 
+        let popup: any;
         if (this.infoWindowList[type]) {
-            this.map.alterPopup(this.infoWindowList[type], options, marker);
+            popup = this.map.alterPopup(this.infoWindowList[type], options, marker);
         } else {
-            const infoWindow = this.map.drawPopup(options, marker);
-
-            this.infoWindowList[type] = infoWindow;
+            popup = this.map.drawPopup(options, marker);
         }
+
+        this.infoWindowList[type] = popup;
     }
 
     /**
@@ -624,8 +743,17 @@ export default class Map {
         }
 
         if (popups) {
-            this.map.alterPopup(popups, options, markers[0]);
+            this.map.alterPopupContent(popups, options, markers[0]);
         }
+    }
+
+    /**
+     * 
+     * @param {string} type 
+     * @returns {object}
+     */
+    public getObjectOpenPopup(type: string): object {
+        return this.infoWindowList[type] ? this.infoWindowList[type].object : null;
     }
 
     /**
@@ -650,19 +778,26 @@ export default class Map {
 
     /* Map */
     /**
+     * Resize de map based on html size
+     */
+    public resizeMap(): void {
+        this.map.resizeMap();
+    }
+
+    /**
      * Use this function to add event clicks on the currentMap
-     * @param {InlogMaps.EventType} eventType
+     * @param {InlogMaps.MapEventType} eventType
      * @param eventFunction function callback
      */
-    public addEventMap(eventType: EventType, eventFunction: any): void {
+    public addEventMap(eventType: MapEventType, eventFunction: any): void {
         this.map.addEventMap(eventType, eventFunction);
     }
 
     /**
      * Use this function to remove event clicks from the currentMap
-     * @param {InlogMaps.EventType} eventType
+     * @param {InlogMaps.MapEventType} eventType
      */
-    public removeEventMap(eventType: EventType): void {
+    public removeEventMap(eventType: MapEventType): void {
         this.map.removeEventMap(eventType);
     }
 
@@ -696,13 +831,6 @@ export default class Map {
      */
     public setCenter(position: number[]): void {
         this.map.setCenter(position);
-    }
-
-    /**
-     * Resize de map based on html size
-     */
-    public resizeMap(): void {
-        this.map.resizeMap();
     }
 
     /**

@@ -1,6 +1,6 @@
 {
   "name": "@inlog/inlog-maps",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "description": "A library for using generic layer maps ",
   "main": "index.js",
   "types": "dist/index.d.ts",
@@ -34,6 +34,7 @@
     "typescript": "^3.1.6"
   },
   "dependencies": {
+    "@google/markerclustererplus": "^2.1.11",
     "@types/google-maps": "^3.2.0",
     "@types/googlemaps": "^3.30.16",
     "awesome-typescript-loader": "^3.0.4-rc.2",
@@ -41,6 +42,8 @@
     "leaflet": "^1.4.0",
     "leaflet-editable": "^1.2.0",
     "leaflet-gesture-handling": "^1.1.8",
+    "leaflet-polylinedecorator": "^1.6.0",
+    "leaflet.markercluster": "^1.4.1",
     "leaflet.path.drag": "0.0.6",
     "shx": "^0.2.2",
     "typescript": "^2.1.6",
