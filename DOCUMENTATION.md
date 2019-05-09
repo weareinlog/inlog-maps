@@ -1,4 +1,4 @@
-# [@inlog/inlog-maps](https://github.com/weareinlog/inlog-maps#readme) *4.0.0*
+# [@inlog/inlog-maps](https://github.com/weareinlog/inlog-maps#readme) *4.0.1*
 
 > A library for using generic layer maps 
 
@@ -206,7 +206,7 @@ Use this functions to alterar marker position
 
 
 
-#### Map.fitBoundsMarkers(type, condition) 
+#### Map.fitBoundsMarkers(type, condition, onlyMarkersOnMap) 
 
 Use this function to fit bounds in the markers with the especified type
 
@@ -219,6 +219,7 @@ Use this function to fit bounds in the markers with the especified type
 | ---- | ---- | ----------- | -------- |
 | type | `string`  |  | &nbsp; |
 | condition | `any`  | [nullable] | &nbsp; |
+| onlyMarkersOnMap | `boolean`  | default true | &nbsp; |
 
 
 

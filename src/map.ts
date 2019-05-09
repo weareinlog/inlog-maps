@@ -165,10 +165,14 @@ export default class Map {
      * Use this function to fit bounds in the markers with the especified type
      * @param {string} type
      * @param {any} condition [nullable]
+     * @param {boolean} onlyMarkersOnMap default true
      */
-    public fitBoundsMarkers(type: string, condition?: any): void {
-        const markers = this.getMarkers(type, condition)
-            .filter((x: any) => this.map.isMarkerOnMap(x));
+    public fitBoundsMarkers(type: string, condition?: any, onlyMarkersOnMap = true): void {
+        let markers = this.getMarkers(type, condition);
+
+        if (onlyMarkersOnMap) {
+            markers = markers.filter((x: any) => this.map.isMarkerOnMap(x));
+        }
 
         if (markers && markers.length) {
             this.map.fitBoundsPositions(markers);

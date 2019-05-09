@@ -264,7 +264,7 @@ export default class Leaflet implements IMapFunctions {
         const layer = this.leaflet.markerClusterGroup({
             showCoverageOnHover: false,
             zoomToBoundsOnClick: config.clusterZoomOnClick,
-            maxClusterRadius: 50
+            maxClusterRadius: 30
         });
 
         this.map.addLayer(layer);
