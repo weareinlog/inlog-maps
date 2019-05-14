@@ -167,7 +167,7 @@ export default class Map {
      * @param {any} condition [nullable]
      * @param {boolean} onlyMarkersOnMap default true
      */
-    public fitBoundsMarkers(type: string, condition?: any, onlyMarkersOnMap = true): void {
+    public fitBoundsMarkers(type: string, condition?: any, onlyMarkersOnMap: boolean = true): void {
         let markers = this.getMarkers(type, condition);
 
         if (onlyMarkersOnMap) {
