@@ -605,7 +605,7 @@ export default class GoogleMaps implements IMapFunctions {
             strokeWeight: options.weight,
             suppressUndo: true,
             icons: null,
-            strokeOpacity: null
+            strokeOpacity: options.opacity || 1
         };
 
         if (options.style !== null) {
@@ -690,7 +690,9 @@ export default class GoogleMaps implements IMapFunctions {
                 infowindows: options.infowindows ? options.infowindows : polyline.infowindows,
                 object: options.object ? options.object : polyline.object,
                 strokeColor: options.color ? options.color : polyline.strokeColor,
-                strokeWeight: options.weight ? options.weight : polyline.strokeWeight
+                strokeWeight: options.weight ? options.weight : polyline.strokeWeight,
+                strokeOpacity: options.opacity ? options.opacity : polyline.strokeOpacity,
+                zIndex: options.zIndex ? options.zIndex : polyline.zIndex,
             };
 
             polyline.setOptions(newOptions);
