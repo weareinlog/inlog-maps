@@ -13,10 +13,12 @@ export default class PolylineOptions {
     public infowindows?: string[];
     public style?: PolylineType;
     public navigateOptions?: NavigationOptions;
+    public opacity: number;
+    public zIndex: number;
 
     constructor(path?: number[][], addToMap?: boolean, fitBounds?: boolean,
         editable?: boolean, draggable?: boolean, color?: string, weight?: number,
-        object?: object, infowindows?: string[], navigateOptions?: NavigationOptions, style?: PolylineType) {
+        object?: object, infowindows?: string[], navigateOptions?: NavigationOptions, style?: PolylineType, opacity?: number, zIndex?: number) {
 
         this.path = path;
         this.addToMap = addToMap;
@@ -29,5 +31,7 @@ export default class PolylineOptions {
         this.infowindows = infowindows;
         this.navigateOptions = navigateOptions;
         this.style = style;
+        this.opacity = opacity;
+        this.zIndex = zIndex;
     }
 }

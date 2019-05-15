@@ -520,7 +520,8 @@ export default class Leaflet implements IMapFunctions {
             editable: options.editable,
             infowindows: options.infowindows,
             weight: options.weight || 3,
-            opacity: null,
+            opacity: options.opacity || 1,
+            zIndex: options.zIndex,
             dashArray: null
         };
 
@@ -601,7 +602,9 @@ export default class Leaflet implements IMapFunctions {
             const style = {
                 color: options.color ? options.color : polyline.options.color,
                 draggable: options.draggable ? options.draggable : polyline.options.draggable,
-                weight: options.weight ? options.weight : polyline.options.weight
+                weight: options.weight ? options.weight : polyline.options.weight,
+                opacity: options.opacity ? options.opacity : polyline.options.opacity,
+                zIndex: options.zIndex ? options.zIndex : polyline.options.zIndex
             };
 
             polyline.setStyle(style);
