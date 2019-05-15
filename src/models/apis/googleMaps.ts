@@ -31,6 +31,7 @@ export default class GoogleMaps implements IMapFunctions {
     private multiSelectionForward = false;
     private multiSelection = false;
     private OverlayGoogle = null;
+    private navigateByPoint: boolean;
 
     constructor() { /* */ }
 
@@ -937,13 +938,14 @@ export default class GoogleMaps implements IMapFunctions {
         this.google.maps.event.addListener(polyline, 'click', self.onClickPolyline.bind(self, polyline, options));
     }
 
-    private onClickPolyline(polyline, options: NavigationOptions, event) {
+    private onClickPolyline(polyline: any, options: NavigationOptions, event: any) {
         const self = this;
         const index = self.checkIdx(polyline, event.latLng);
 
         polyline.idxInicial = index;
         polyline.idxFinal = index + 1;
 
+        self.navigateByPoint = options.navigateByPoint;
         self.moveSelectedPath(polyline, options);
         self.selectedPolyline = polyline;
 
@@ -973,7 +975,7 @@ export default class GoogleMaps implements IMapFunctions {
         const self = this;
         const polyline = self.selectedPolyline;
 
-        if (self.directionForward && polyline.idxFinal < polyline.getPath().getArray().length - 1) {
+        if ((!self.navigateByPoint || self.directionForward) && polyline.idxFinal < polyline.getPath().getArray().length - 1) {
             self.navigateForward(multiSelection, polyline);
         }
         self.directionForward = true;
@@ -999,7 +1001,7 @@ export default class GoogleMaps implements IMapFunctions {
         const self = this;
         const polyline = self.selectedPolyline;
 
-        if (!self.directionForward && polyline.idxInicial > 0) {
+        if ((!self.navigateByPoint || !self.directionForward) && polyline.idxInicial > 0) {
             self.navigateBackward(multiSelection, polyline);
         }
         self.directionForward = false;
@@ -1021,7 +1023,7 @@ export default class GoogleMaps implements IMapFunctions {
         }
     }
 
-    private moveSelectedPath(polyline, options: NavigationOptions) {
+    private moveSelectedPath(polyline: any, options: NavigationOptions) {
         const pathSelected = polyline.getPath().getArray().slice(polyline.idxInicial, polyline.idxFinal + 1);
 
         if (this.selectedPath) {
@@ -1043,7 +1045,11 @@ export default class GoogleMaps implements IMapFunctions {
 
     private drawPopupNavigation(polyline: any) {
         const self = this;
-        const idx = self.directionForward ? polyline.idxFinal : polyline.idxInicial;
+        let idx = self.directionForward ? polyline.idxFinal : polyline.idxInicial;
+        if (!self.navigateByPoint) {
+            idx = polyline.idxFinal > polyline.idxInicial ? polyline.idxFinal : polyline.idxInicial;
+        }
+
         const infowindow = polyline.infowindows ? polyline.infowindows[idx] : null;
 
         if (infowindow) {
