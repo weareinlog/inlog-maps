@@ -18,7 +18,7 @@ import PopupOptions from '../features/popup/popup-options';
 import IMapFunctions from './mapFunctions';
 // import * as MarkerClusterer from '../../../node_modules/@google/markerclustererplus';
 import MarkerClustererConfig from '../features/marker-clusterer/marker-clusterer-config';
-const MarkerClusterer = require('../../../node_modules/@google/markerclustererplus');
+const MarkerClusterer = require('@google/markerclustererplus');
 
 export default class GoogleMaps implements IMapFunctions {
     private map = null;
