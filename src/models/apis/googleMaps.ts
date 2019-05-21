@@ -612,6 +612,8 @@ export default class GoogleMaps implements IMapFunctions {
         if (options.style !== null) {
             switch (options.style) {
                 case PolylineType.Dotted:
+                    console.warn('PolylineType.Dotted is deprecated, instead use PolylineType.Dashed.');
+                case PolylineType.Dashed:
                     newOptions.strokeOpacity = 0;
                     newOptions.icons = [{
                         icon: {
@@ -685,7 +687,7 @@ export default class GoogleMaps implements IMapFunctions {
 
     public alterPolylineOptions(polylines, options: PolylineOptions) {
         polylines.forEach((polyline: any) => {
-            const newOptions = {
+            const newOptions: any = {
                 draggable: options.draggable ? options.draggable : polyline.draggable,
                 editable: options.editable ? options.editable : polyline.editable,
                 infowindows: options.infowindows ? options.infowindows : polyline.infowindows,
@@ -695,6 +697,42 @@ export default class GoogleMaps implements IMapFunctions {
                 strokeOpacity: options.opacity ? options.opacity : polyline.strokeOpacity,
                 zIndex: options.zIndex ? options.zIndex : polyline.zIndex,
             };
+
+            if (options.style !== null) {
+                switch (options.style) {
+                    case PolylineType.Dotted:
+                        console.warn('PolylineType.Dotted is deprecated, instead use PolylineType.Dashed.');
+                    case PolylineType.Dashed:
+                        newOptions.strokeOpacity = 0;
+                        newOptions.icons = [{
+                            icon: {
+                                path: 'M 0,-1 0,1',
+                                strokeOpacity: 1,
+                                scale: 2
+                            },
+                            offset: '0',
+                            repeat: '10px'
+                        }];
+                        break;
+                    case PolylineType.Arrow:
+                        newOptions.icons = [{
+                            icon: {
+                                size: new google.maps.Size(20, 20),
+                                scaledSize: new google.maps.Size(20, 20),
+                                path: google.maps.SymbolPath.FORWARD_OPEN_ARROW
+                            },
+                            offset: '90%',
+                            repeat: '20%'
+                        },
+                        { icon: { path: google.maps.SymbolPath.FORWARD_OPEN_ARROW }, offset: '0%' },
+                        { icon: { path: google.maps.SymbolPath.FORWARD_OPEN_ARROW }, offset: '100%' }]
+                        break;
+                    default:
+                        break;
+                }
+            } else if (polyline.icons) {
+                newOptions.icons = null;
+            }
 
             polyline.setOptions(newOptions);
         });
@@ -942,8 +980,8 @@ export default class GoogleMaps implements IMapFunctions {
         const self = this;
         const index = self.checkIdx(polyline, event.latLng);
 
-        polyline.idxInicial = index;
-        polyline.idxFinal = index + 1;
+        polyline.initialIdx = index;
+        polyline.finalIdx = index + 1;
 
         self.navigateByPoint = options.navigateByPoint;
         self.moveSelectedPath(polyline, options);
@@ -975,7 +1013,7 @@ export default class GoogleMaps implements IMapFunctions {
         const self = this;
         const polyline = self.selectedPolyline;
 
-        if ((!self.navigateByPoint || self.directionForward) && polyline.idxFinal < polyline.getPath().getArray().length - 1) {
+        if ((!self.navigateByPoint || self.directionForward) && polyline.finalIdx < polyline.getPath().getArray().length - 1) {
             self.navigateForward(multiSelection, polyline);
         }
         self.directionForward = true;
@@ -985,13 +1023,13 @@ export default class GoogleMaps implements IMapFunctions {
     private navigateForward(multiSelection: boolean, polyline: any) {
         const self = this;
         if (!multiSelection) {
-            polyline.idxFinal++;
-            polyline.idxInicial = self.multiSelection ? polyline.idxFinal - 1 : polyline.idxInicial + 1;
+            polyline.finalIdx++;
+            polyline.initialIdx = self.multiSelection ? polyline.finalIdx - 1 : polyline.initialIdx + 1;
             self.multiSelection = false;
         } else {
             self.multiSelection = true;
             if (self.multiSelectionForward) {
-                polyline.idxFinal++;
+                polyline.finalIdx++;
             }
             self.multiSelectionForward = true;
         }
@@ -1001,7 +1039,7 @@ export default class GoogleMaps implements IMapFunctions {
         const self = this;
         const polyline = self.selectedPolyline;
 
-        if ((!self.navigateByPoint || !self.directionForward) && polyline.idxInicial > 0) {
+        if ((!self.navigateByPoint || !self.directionForward) && polyline.initialIdx > 0) {
             self.navigateBackward(multiSelection, polyline);
         }
         self.directionForward = false;
@@ -1011,20 +1049,20 @@ export default class GoogleMaps implements IMapFunctions {
     private navigateBackward(multiSelection: boolean, polyline) {
         const self = this;
         if (!multiSelection) {
-            polyline.idxInicial--;
-            polyline.idxFinal = !self.multiSelection ? polyline.idxFinal - 1 : polyline.idxInicial + 1;
+            polyline.initialIdx--;
+            polyline.finalIdx = !self.multiSelection ? polyline.finalIdx - 1 : polyline.initialIdx + 1;
             self.multiSelection = false;
         } else {
             self.multiSelection = true;
             if (!self.multiSelectionForward) {
-                polyline.idxInicial--;
+                polyline.initialIdx--;
             }
             self.multiSelectionForward = false;
         }
     }
 
     private moveSelectedPath(polyline: any, options: NavigationOptions) {
-        const pathSelected = polyline.getPath().getArray().slice(polyline.idxInicial, polyline.idxFinal + 1);
+        const pathSelected = polyline.getPath().getArray().slice(polyline.initialIdx, polyline.finalIdx + 1);
 
         if (this.selectedPath) {
             this.selectedPath.setPath(pathSelected);
@@ -1045,9 +1083,9 @@ export default class GoogleMaps implements IMapFunctions {
 
     private drawPopupNavigation(polyline: any) {
         const self = this;
-        let idx = self.directionForward ? polyline.idxFinal : polyline.idxInicial;
+        let idx = self.directionForward ? polyline.finalIdx : polyline.initialIdx;
         if (!self.navigateByPoint) {
-            idx = polyline.idxFinal > polyline.idxInicial ? polyline.idxFinal : polyline.idxInicial;
+            idx = polyline.finalIdx > polyline.initialIdx ? polyline.finalIdx : polyline.initialIdx;
         }
 
         const infowindow = polyline.infowindows ? polyline.infowindows[idx] : null;

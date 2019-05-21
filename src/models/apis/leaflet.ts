@@ -529,6 +529,8 @@ export default class Leaflet implements IMapFunctions {
         if (options.style !== null) {
             switch (options.style) {
                 case PolylineType.Dotted:
+                    console.warn('PolylineType.Dotted is deprecated, instead use PolylineType.Dashed.');
+                case PolylineType.Dashed:
                     newOptions.opacity = .7;
                     newOptions.dashArray = '20,15';
                     break;
@@ -599,14 +601,45 @@ export default class Leaflet implements IMapFunctions {
     }
 
     public alterPolylineOptions(polylines: any, options: PolylineOptions) {
+        const self = this;
+
         polylines.forEach((polyline: any) => {
-            const style = {
+            const style: any = {
                 color: options.color ? options.color : polyline.options.color,
                 draggable: options.draggable ? options.draggable : polyline.options.draggable,
                 weight: options.weight ? options.weight : polyline.options.weight,
                 opacity: options.opacity ? options.opacity : polyline.options.opacity,
                 zIndex: options.zIndex ? options.zIndex : polyline.options.zIndex
             };
+
+            if (options.style !== null) {
+                switch (options.style) {
+                    case PolylineType.Dotted:
+                        console.warn('PolylineType.Dotted is deprecated, instead use PolylineType.Dashed.');
+                    case PolylineType.Dashed:
+                        // style.opacity = .7;
+                        style.dashArray = '20,15';
+                        break;
+                    case PolylineType.Arrow:
+                        const pathOptions = { fillOpacity: 1, weight: 0, color: polyline.options.color };
+
+                        polyline.decorator = self.leaflet.polylineDecorator(polyline, {
+                            patterns: [{
+                                offset: '20%',
+                                repeat: '90px',
+                                symbol: self.leaflet.Symbol.arrowHead({ pixelSize: 20, pathOptions: pathOptions })
+                            },
+                            { offset: '0%', symbol: self.leaflet.Symbol.arrowHead({ pixelSize: 20, pathOptions: pathOptions }) },
+                            { offset: '100%', symbol: self.leaflet.Symbol.arrowHead({ pixelSize: 20, pathOptions: pathOptions }) }]
+                        }).addTo(self.map);
+                        break;
+                }
+            } else {
+                if (polyline.decorator) {
+                    self.map.removeLayer(polyline.decorator);
+                    polyline.decorator = null;
+                }
+            }
 
             polyline.setStyle(style);
 
@@ -888,8 +921,8 @@ export default class Leaflet implements IMapFunctions {
     private onClickPolyline(polyline: any, options: NavigationOptions, event: any) {
         const index = this.checkIdx(polyline, event.latlng);
 
-        polyline.idxInicial = index;
-        polyline.idxFinal = index + 1;
+        polyline.initialIdx = index;
+        polyline.finalIdx = index + 1;
 
         this.navigateByPoint = options.navigateByPoint;
         this.moveSelectedPath(polyline, options);
@@ -919,7 +952,7 @@ export default class Leaflet implements IMapFunctions {
     private moveFowards(multiselection: boolean) {
         const polyline = this.selectedPolyline;
 
-        if ((!this.navigateByPoint || this.directionForward) && polyline.idxFinal < polyline.getLatLngs().length - 1) {
+        if ((!this.navigateByPoint || this.directionForward) && polyline.finalIdx < polyline.getLatLngs().length - 1) {
             this.navigateFoward(multiselection, polyline);
         }
         this.directionForward = true;
@@ -928,13 +961,13 @@ export default class Leaflet implements IMapFunctions {
 
     private navigateFoward(multiSelection: boolean, polyline: any) {
         if (!multiSelection) {
-            polyline.idxFinal++;
-            polyline.idxInicial = this.multiSelection ? polyline.idxFinal - 1 : polyline.idxInicial + 1;
+            polyline.finalIdx++;
+            polyline.initialIdx = this.multiSelection ? polyline.finalIdx - 1 : polyline.initialIdx + 1;
             this.multiSelection = false;
         } else {
             this.multiSelection = true;
             if (this.multiSelectionForward) {
-                polyline.idxFinal++;
+                polyline.finalIdx++;
             }
             this.multiSelectionForward = true;
         }
@@ -943,7 +976,7 @@ export default class Leaflet implements IMapFunctions {
     private moveBackwards(multiSelection: boolean) {
         const polyline = this.selectedPolyline;
 
-        if ((!this.navigateByPoint || !this.directionForward) && polyline.idxInicial > 0) {
+        if ((!this.navigateByPoint || !this.directionForward) && polyline.initialIdx > 0) {
             this.navigateBackward(multiSelection, polyline);
         }
         this.directionForward = false;
@@ -953,13 +986,13 @@ export default class Leaflet implements IMapFunctions {
     private navigateBackward(multiSelection: boolean, polyline: any) {
         const self = this;
         if (!multiSelection) {
-            polyline.idxInicial--;
-            polyline.idxFinal = !self.multiSelection ? polyline.idxFinal - 1 : polyline.idxInicial + 1;
+            polyline.initialIdx--;
+            polyline.finalIdx = !self.multiSelection ? polyline.finalIdx - 1 : polyline.initialIdx + 1;
             self.multiSelection = false;
         } else {
             self.multiSelection = true;
             if (!self.multiSelectionForward) {
-                polyline.idxInicial--;
+                polyline.initialIdx--;
             }
             self.multiSelectionForward = false;
         }
@@ -967,7 +1000,7 @@ export default class Leaflet implements IMapFunctions {
 
     private moveSelectedPath(polyline: any, options: NavigationOptions) {
         const self = this;
-        const pathSelected = polyline.getLatLngs().slice(polyline.idxInicial, polyline.idxFinal + 1);
+        const pathSelected = polyline.getLatLngs().slice(polyline.initialIdx, polyline.finalIdx + 1);
 
         if (self.selectedPath) {
             self.selectedPath.setLatLngs(pathSelected);
@@ -982,10 +1015,10 @@ export default class Leaflet implements IMapFunctions {
             self.selectedPath.addTo(self.map);
         }
 
-        let idx = self.directionForward ? polyline.idxFinal : polyline.idxInicial;
+        let idx = self.directionForward ? polyline.finalIdx : polyline.initialIdx;
 
         if (!this.navigateByPoint) {
-            idx = polyline.idxFinal > polyline.idxInicial ? polyline.idxFinal : polyline.idxInicial;
+            idx = polyline.finalIdx > polyline.initialIdx ? polyline.finalIdx : polyline.initialIdx;
         }
         const infowindow = polyline.options.infowindows ? polyline.options.infowindows[idx] : null;
 
