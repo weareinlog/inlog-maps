@@ -612,6 +612,8 @@ export default class GoogleMaps implements IMapFunctions {
         if (options.style !== null) {
             switch (options.style) {
                 case PolylineType.Dotted:
+                    console.warn('PolylineType.Dotted is deprecated, instead use PolylineType.Dashed.');
+                case PolylineType.Dashed:
                     newOptions.strokeOpacity = 0;
                     newOptions.icons = [{
                         icon: {
@@ -699,6 +701,8 @@ export default class GoogleMaps implements IMapFunctions {
             if (options.style !== null) {
                 switch (options.style) {
                     case PolylineType.Dotted:
+                        console.warn('PolylineType.Dotted is deprecated, instead use PolylineType.Dashed.');
+                    case PolylineType.Dashed:
                         newOptions.strokeOpacity = 0;
                         newOptions.icons = [{
                             icon: {

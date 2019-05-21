@@ -529,6 +529,8 @@ export default class Leaflet implements IMapFunctions {
         if (options.style !== null) {
             switch (options.style) {
                 case PolylineType.Dotted:
+                    console.warn('PolylineType.Dotted is deprecated, instead use PolylineType.Dashed.');
+                case PolylineType.Dashed:
                     newOptions.opacity = .7;
                     newOptions.dashArray = '20,15';
                     break;
@@ -602,7 +604,7 @@ export default class Leaflet implements IMapFunctions {
         const self = this;
 
         polylines.forEach((polyline: any) => {
-            const style = {
+            const style: any = {
                 color: options.color ? options.color : polyline.options.color,
                 draggable: options.draggable ? options.draggable : polyline.options.draggable,
                 weight: options.weight ? options.weight : polyline.options.weight,
@@ -610,18 +612,28 @@ export default class Leaflet implements IMapFunctions {
                 zIndex: options.zIndex ? options.zIndex : polyline.options.zIndex
             };
 
-            if (options.style && options.style === PolylineType.Arrow) {
-                const pathOptions = { fillOpacity: 1, weight: 0, color: polyline.options.color };
+            if (options.style !== null) {
+                switch (options.style) {
+                    case PolylineType.Dotted:
+                        console.warn('PolylineType.Dotted is deprecated, instead use PolylineType.Dashed.');
+                    case PolylineType.Dashed:
+                        // style.opacity = .7;
+                        style.dashArray = '20,15';
+                        break;
+                    case PolylineType.Arrow:
+                        const pathOptions = { fillOpacity: 1, weight: 0, color: polyline.options.color };
 
-                polyline.decorator = self.leaflet.polylineDecorator(polyline, {
-                    patterns: [{
-                        offset: '20%',
-                        repeat: '90px',
-                        symbol: self.leaflet.Symbol.arrowHead({ pixelSize: 20, pathOptions: pathOptions })
-                    },
-                    { offset: '0%', symbol: self.leaflet.Symbol.arrowHead({ pixelSize: 20, pathOptions: pathOptions }) },
-                    { offset: '100%', symbol: self.leaflet.Symbol.arrowHead({ pixelSize: 20, pathOptions: pathOptions }) }]
-                }).addTo(self.map);
+                        polyline.decorator = self.leaflet.polylineDecorator(polyline, {
+                            patterns: [{
+                                offset: '20%',
+                                repeat: '90px',
+                                symbol: self.leaflet.Symbol.arrowHead({ pixelSize: 20, pathOptions: pathOptions })
+                            },
+                            { offset: '0%', symbol: self.leaflet.Symbol.arrowHead({ pixelSize: 20, pathOptions: pathOptions }) },
+                            { offset: '100%', symbol: self.leaflet.Symbol.arrowHead({ pixelSize: 20, pathOptions: pathOptions }) }]
+                        }).addTo(self.map);
+                        break;
+                }
             } else {
                 if (polyline.decorator) {
                     self.map.removeLayer(polyline.decorator);
