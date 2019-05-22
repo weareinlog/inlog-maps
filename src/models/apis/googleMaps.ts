@@ -987,18 +987,17 @@ export default class GoogleMaps implements IMapFunctions {
     }
 
     private onClickPolyline(polyline: any, event: any) {
-        const self = this;
-        const index = self.checkIdx(polyline, event.latLng);
+        const index = this.checkIdx(polyline, event.latLng);
 
         polyline.initialIdx = index;
         polyline.finalIdx = index + 1;
 
-        self.navigateByPoint = this.navigationOptions.navigateByPoint;
-        self.moveSelectedPath(polyline, this.navigationOptions);
-        self.selectedPolyline = polyline;
+        this.navigateByPoint = this.navigationOptions.navigateByPoint;
+        this.moveSelectedPath(polyline, this.navigationOptions);
+        this.selectedPolyline = polyline;
 
         this.google.maps.event.clearListeners(document, 'keyup');
-        this.google.maps.event.addDomListener(document, 'keyup', self.onKeyUp.bind(self));
+        this.google.maps.event.addDomListener(document, 'keyup', this.onKeyUp.bind(this));
     }
 
     private onKeyUp(event: any) {
