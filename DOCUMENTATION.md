@@ -1,4 +1,4 @@
-# [@inlog/inlog-maps](https://github.com/weareinlog/inlog-maps#readme) *4.0.6*
+# [@inlog/inlog-maps](https://github.com/weareinlog/inlog-maps#readme) *4.1.0*
 
 > A library for using generic layer maps 
 
@@ -1120,6 +1120,31 @@ Use this function to remove listeners of polyline
 | ---- | ---- | ----------- | -------- |
 | type | `string`  |  | &nbsp; |
 | event | `InlogMaps.PolylineEventType`  |  | &nbsp; |
+| condition | `any`  | [nullable] | &nbsp; |
+
+
+
+
+##### Returns
+
+
+- `Void`
+
+
+
+#### Map.setIndexPolylineHighlight(type, initialIndex, condition) 
+
+Use this function to set position of polyline highlight
+
+
+
+
+##### Parameters
+
+| Name | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| type | `string`  |  | &nbsp; |
+| initialIndex | `number`  |  | &nbsp; |
 | condition | `any`  | [nullable] | &nbsp; |
 
 

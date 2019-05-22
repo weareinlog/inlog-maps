@@ -70,6 +70,7 @@ export default interface IMapFunctions {
     removePolylineHighlight(): void;
     addPolylineEvent(polyline: any, event: PolylineEventType, eventFunction: any): any;
     removePolylineEvent(polyline: any, event: PolylineEventType): void;
+    setIndexPolylineHighlight(polyline: any, index: number): void;
 
     /* Info Windows */
     drawPopup(options: PopupOptions, marker?: any): any;

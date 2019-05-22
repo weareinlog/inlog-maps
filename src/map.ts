@@ -710,6 +710,20 @@ export default class Map {
         this.map.removePolylineEvent(polyline, event);
     }
 
+    /**
+     * Use this function to set position of polyline highlight
+     * @param {string} type 
+     * @param {number} initialIndex 
+     * @param {any} condition [nullable]
+     */
+    public setIndexPolylineHighlight(type: string, initialIndex: number, condition?: any) {
+        const polylines = this.getPolylines(type, condition);
+
+        if (polylines && polylines.length) {
+            this.map.setIndexPolylineHighlight(polylines[0], initialIndex);
+        }
+    }
+
     /* Info Windows */
     /**
      * Use this function to draw popups on the currentMap
