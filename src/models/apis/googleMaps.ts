@@ -32,6 +32,7 @@ export default class GoogleMaps implements IMapFunctions {
     private multiSelection = false;
     private OverlayGoogle = null;
     private navigateByPoint: boolean;
+    private navigationOptions: NavigationOptions;
 
     constructor() { /* */ }
 
@@ -674,7 +675,8 @@ export default class GoogleMaps implements IMapFunctions {
         const self = this;
         const polyline = self.drawPolyline(options, null);
 
-        self.addNavigation(polyline, options.navigateOptions);
+        this.navigationOptions = options.navigateOptions;
+        self.addNavigation(polyline);
         return polyline;
     }
 
@@ -698,40 +700,37 @@ export default class GoogleMaps implements IMapFunctions {
                 zIndex: options.zIndex ? options.zIndex : polyline.zIndex,
             };
 
-            if (options.style !== null) {
-                switch (options.style) {
-                    case PolylineType.Dotted:
-                        console.warn('PolylineType.Dotted is deprecated, instead use PolylineType.Dashed.');
-                    case PolylineType.Dashed:
-                        newOptions.strokeOpacity = 0;
-                        newOptions.icons = [{
-                            icon: {
-                                path: 'M 0,-1 0,1',
-                                strokeOpacity: 1,
-                                scale: 2
-                            },
-                            offset: '0',
-                            repeat: '10px'
-                        }];
-                        break;
-                    case PolylineType.Arrow:
-                        newOptions.icons = [{
-                            icon: {
-                                size: new google.maps.Size(20, 20),
-                                scaledSize: new google.maps.Size(20, 20),
-                                path: google.maps.SymbolPath.FORWARD_OPEN_ARROW
-                            },
-                            offset: '90%',
-                            repeat: '20%'
+            switch (options.style) {
+                case PolylineType.Dotted:
+                    console.warn('PolylineType.Dotted is deprecated, instead use PolylineType.Dashed.');
+                case PolylineType.Dashed:
+                    newOptions.strokeOpacity = 0;
+                    newOptions.icons = [{
+                        icon: {
+                            path: 'M 0,-1 0,1',
+                            strokeOpacity: 1,
+                            scale: 2
                         },
-                        { icon: { path: google.maps.SymbolPath.FORWARD_OPEN_ARROW }, offset: '0%' },
-                        { icon: { path: google.maps.SymbolPath.FORWARD_OPEN_ARROW }, offset: '100%' }]
-                        break;
-                    default:
-                        break;
-                }
-            } else if (polyline.icons) {
-                newOptions.icons = null;
+                        offset: '0',
+                        repeat: '10px'
+                    }];
+                    break;
+                case PolylineType.Arrow:
+                    newOptions.icons = [{
+                        icon: {
+                            size: new google.maps.Size(20, 20),
+                            scaledSize: new google.maps.Size(20, 20),
+                            path: google.maps.SymbolPath.FORWARD_OPEN_ARROW
+                        },
+                        offset: '90%',
+                        repeat: '20%'
+                    },
+                    { icon: { path: google.maps.SymbolPath.FORWARD_OPEN_ARROW }, offset: '0%' },
+                    { icon: { path: google.maps.SymbolPath.FORWARD_OPEN_ARROW }, offset: '100%' }]
+                    break;
+                default:
+                    newOptions.icons = null;
+                    break;
             }
 
             polyline.setOptions(newOptions);
@@ -812,6 +811,17 @@ export default class GoogleMaps implements IMapFunctions {
                     break;
             }
         });
+    }
+
+    public setIndexPolylineHighlight(polyline: any, index: number) {
+        polyline.initialIdx = index;
+        polyline.finalIdx = index + 1;
+
+        this.moveSelectedPath(polyline, this.navigationOptions);
+        this.selectedPolyline = polyline;
+
+        this.google.maps.event.clearListeners(document, 'keyup');
+        this.google.maps.event.addDomListener(document, 'keyup', this.onKeyUp.bind(self));
     }
 
     /* Info Windows */
@@ -969,26 +979,25 @@ export default class GoogleMaps implements IMapFunctions {
     }
 
     /* Private Methods */
-    private addNavigation(polyline: any, options: NavigationOptions) {
+    private addNavigation(polyline: any) {
         const self = this;
 
         this.google.maps.event.clearListeners(polyline, 'click');
-        this.google.maps.event.addListener(polyline, 'click', self.onClickPolyline.bind(self, polyline, options));
+        this.google.maps.event.addListener(polyline, 'click', self.onClickPolyline.bind(self, polyline));
     }
 
-    private onClickPolyline(polyline: any, options: NavigationOptions, event: any) {
-        const self = this;
-        const index = self.checkIdx(polyline, event.latLng);
+    private onClickPolyline(polyline: any, event: any) {
+        const index = this.checkIdx(polyline, event.latLng);
 
         polyline.initialIdx = index;
         polyline.finalIdx = index + 1;
 
-        self.navigateByPoint = options.navigateByPoint;
-        self.moveSelectedPath(polyline, options);
-        self.selectedPolyline = polyline;
+        this.navigateByPoint = this.navigationOptions.navigateByPoint;
+        this.moveSelectedPath(polyline, this.navigationOptions);
+        this.selectedPolyline = polyline;
 
         this.google.maps.event.clearListeners(document, 'keyup');
-        this.google.maps.event.addDomListener(document, 'keyup', self.onKeyUp.bind(self));
+        this.google.maps.event.addDomListener(document, 'keyup', this.onKeyUp.bind(this));
     }
 
     private onKeyUp(event: any) {

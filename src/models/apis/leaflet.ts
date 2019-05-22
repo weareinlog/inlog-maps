@@ -29,6 +29,7 @@ export default class Leaflet implements IMapFunctions {
     private multiSelectionForward = false;
     private multiSelection = false;
     private navigateByPoint: boolean;
+    private navigationOptions: NavigationOptions;
 
     constructor() { /* */ }
 
@@ -583,7 +584,8 @@ export default class Leaflet implements IMapFunctions {
     public drawPolylineWithNavigation(options: PolylineOptions) {
         const polyline = this.drawPolyline(options, null);
 
-        this.addNavigation(polyline, options.navigateOptions);
+        this.navigationOptions = options.navigateOptions;
+        this.addNavigation(polyline);
         return polyline;
     }
 
@@ -728,6 +730,16 @@ export default class Leaflet implements IMapFunctions {
                     break;
             }
         });
+    }
+
+    public setIndexPolylineHighlight(polyline: any, index: number) {
+        polyline.initialIdx = index;
+        polyline.finalIdx = index + 1;
+
+        this.moveSelectedPath(polyline, this.navigationOptions);
+        this.selectedPolyline = polyline;
+
+        document.onkeyup = this.onKeyUp.bind(this);
     }
 
     /* Popups */
@@ -913,19 +925,19 @@ export default class Leaflet implements IMapFunctions {
         }
     }
 
-    private addNavigation(polyline: any, options: NavigationOptions) {
+    private addNavigation(polyline: any) {
         polyline.clearAllEventListeners();
-        polyline.on('click', this.onClickPolyline.bind(this, polyline, options));
+        polyline.on('click', this.onClickPolyline.bind(this, polyline));
     }
 
-    private onClickPolyline(polyline: any, options: NavigationOptions, event: any) {
+    private onClickPolyline(polyline: any, event: any) {
         const index = this.checkIdx(polyline, event.latlng);
 
         polyline.initialIdx = index;
         polyline.finalIdx = index + 1;
 
-        this.navigateByPoint = options.navigateByPoint;
-        this.moveSelectedPath(polyline, options);
+        this.navigateByPoint = this.navigationOptions.navigateByPoint;
+        this.moveSelectedPath(polyline, this.navigationOptions);
         this.selectedPolyline = polyline;
 
         document.onkeyup = this.onKeyUp.bind(this);
