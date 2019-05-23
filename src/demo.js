@@ -143,11 +143,16 @@ function addMarker() {
     if (simpleMarkerShow === null) {
         let options = new inlogMaps.MarkerOptions([-25.4327193, -49.2806026], true, true, null, true);
         currentMap.drawMarker('simple', options, onClickMarker);
+        currentMap.addMarkerEvent('simple', inlogMaps.MarkerEventType.MouseOver, onMouseOver);
         simpleMarkerShow = true;
     } else {
         simpleMarkerShow = !simpleMarkerShow;
         currentMap.toggleMarkers(simpleMarkerShow, 'simple');
     }
+}
+
+function onMouseOver(event) {
+    console.log(event);
 }
 
 function setCenterOnMarker() {
