@@ -493,7 +493,8 @@ export default class GoogleMaps implements IMapFunctions {
             strokeColor: options.color,
             strokeOpacity: options.opacity,
             strokeWeight: options.weight,
-            suppressUndo: true
+            suppressUndo: true,
+            object: options.object
         };
 
         const circle = new this.google.maps.Circle(newOptions);
