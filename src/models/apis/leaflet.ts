@@ -92,9 +92,15 @@ export default class Leaflet implements IMapFunctions {
 
         if (options.icon) {
             newOptions.icon = new this.leaflet.Icon({
-                iconSize: options.icon.size,
                 iconUrl: options.icon.url
             });
+
+            const size = options.icon.size;
+            if (size) {
+                newOptions.icon.options.iconSize = size;
+                newOptions.icon.options.iconAnchor = [size[0] / 2, size[1]];
+                newOptions.icon.options.popupAnchor = [0, -size[1]];
+            }
         }
 
         const marker = new this.leaflet.Marker(options.latlng, newOptions);
@@ -423,6 +429,10 @@ export default class Leaflet implements IMapFunctions {
             if (options.editable) {
                 circle.enableEdit();
             }
+        }
+
+        if (options.object) {
+            circle.object = options.object;
         }
 
         if (options.fitBounds) {
