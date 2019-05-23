@@ -16,7 +16,6 @@ import NavigationOptions from '../features/polyline/navigations-options';
 import PolylineOptions from '../features/polyline/polyline-options';
 import PopupOptions from '../features/popup/popup-options';
 import IMapFunctions from './mapFunctions';
-// import * as MarkerClusterer from '../../../node_modules/@google/markerclustererplus';
 import MarkerClustererConfig from '../features/marker-clusterer/marker-clusterer-config';
 const MarkerClusterer = require('@google/markerclustererplus');
 
@@ -41,7 +40,7 @@ export default class GoogleMaps implements IMapFunctions {
             .then((api) => {
                 this.google = api;
 
-                let options: any = {
+                const options: any = {
                     center: new this.google.maps.LatLng(-14, -54),
                     fullscreenControl: false,
                     keyboardShortcuts: false,
@@ -206,8 +205,7 @@ export default class GoogleMaps implements IMapFunctions {
             if (markerClusterer) {
                 if (show) {
                     self.addMarkerOnClusterer(marker, markerClusterer);
-                }
-                else {
+                } else {
                     self.removeMarkerFromClusterer(marker, markerClusterer);
                 }
             }
@@ -283,9 +281,9 @@ export default class GoogleMaps implements IMapFunctions {
         this.map.setCenter(marker.getPosition());
     }
 
-    public addMarkerEvent(markers: any, event: MarkerEventType, eventFunction: any) {
+    public addMarkerEvent(markers: any, eventType: MarkerEventType, eventFunction: any) {
         markers.forEach((marker: any) => {
-            switch (event) {
+            switch (eventType) {
                 case MarkerEventType.Click:
                     this.google.maps.event.addListener(marker, 'click', (event: any) => {
                         const param = new EventReturn([event.latLng.lat(), event.latLng.lng()]);
@@ -331,9 +329,9 @@ export default class GoogleMaps implements IMapFunctions {
     /* Marker Clusterer */
     public addMarkerClusterer(config: MarkerClustererConfig): any {
         return new MarkerClusterer(this.map, [], {
-            'minimumClusterSize': config.clusterMinSize,
-            'maxZoom': config.clusterMaxZoom,
-            'zoomOnClick': config.clusterZoomOnClick
+            minimumClusterSize: config.clusterMinSize,
+            maxZoom: config.clusterMaxZoom,
+            zoomOnClick: config.clusterZoomOnClick
         });
     }
 
@@ -348,7 +346,7 @@ export default class GoogleMaps implements IMapFunctions {
     }
 
     public addMarkerOnClusterer(marker: any, markerClusterer: any): void {
-        if (markerClusterer.getMarkers().indexOf(marker) == -1) {
+        if (markerClusterer.getMarkers().indexOf(marker) === -1) {
             markerClusterer.addMarker(marker, true);
         }
     }
@@ -440,18 +438,20 @@ export default class GoogleMaps implements IMapFunctions {
         return polygon.map !== null;
     }
 
-    public addPolygonEvent(polygons: any, event: PolygonEventType, eventFunction: any): void {
+    public addPolygonEvent(polygons: any, eventType: PolygonEventType, eventFunction: any): void {
         polygons.forEach((polygon: any) => {
-            switch (event) {
+            switch (eventType) {
                 case PolygonEventType.Move:
                     this.google.maps.event.addListener(polygon.getPath(), 'set_at', (event: any) => {
-                        const param = new EventReturn([polygon.getPath().getAt(event).lat(), polygon.getPath().getAt(event).lng()]);
+                        const param = new EventReturn([polygon.getPath()
+                            .getAt(event).lat(), polygon.getPath().getAt(event).lng()]);
                         eventFunction(param, polygon.getPath().getArray().map((x: any) => [x.lat(), x.lng()]));
                     });
                     break;
                 case PolygonEventType.InsertAt:
                     this.google.maps.event.addListener(polygon.getPath(), 'insert_at', (event: any) => {
-                        const param = new EventReturn([polygon.getPath().getAt(event).lat(), polygon.getPath().getAt(event).lng()]);
+                        const param = new EventReturn([polygon.getPath()
+                            .getAt(event).lat(), polygon.getPath().getAt(event).lng()]);
                         eventFunction(param, polygon.getPath().getArray().map((x: any) => [x.lat(), x.lng()]));
                     });
                     break;
@@ -527,7 +527,7 @@ export default class GoogleMaps implements IMapFunctions {
             const latlng = options.center && options.center.length > 0 ?
                 { lat: options.center[0], lng: options.center[1] } : circle.getCenter();
 
-            let newOptions = {
+            const newOptions = {
                 center: latlng,
                 radius: options.radius ? options.radius : circle.radius,
                 fillColor: options.fillColor ? options.fillColor : circle.fillColor,
@@ -555,9 +555,9 @@ export default class GoogleMaps implements IMapFunctions {
         return [center.lat(), center.lng()];
     }
 
-    public addCircleEvent(circles: any, event: CircleEventType, eventFunction: any): void {
+    public addCircleEvent(circles: any, eventType: CircleEventType, eventFunction: any): void {
         circles.forEach((circle: any) => {
-            switch (event) {
+            switch (eventType) {
                 case CircleEventType.Click:
                     this.google.maps.event.addListener(circle, 'click', (event: any) => {
                         const param = new EventReturn([event.latLng.lat(), event.latLng.lng()]);
@@ -598,7 +598,7 @@ export default class GoogleMaps implements IMapFunctions {
     /* Polylines */
     public drawPolyline(options: PolylineOptions, eventClick: any) {
         const self = this;
-        let newOptions = {
+        const newOptions = {
             draggable: options.draggable,
             editable: options.editable,
             infowindows: options.infowindows,
@@ -767,24 +767,27 @@ export default class GoogleMaps implements IMapFunctions {
         }
     }
 
-    public addPolylineEvent(polylines: any, event: PolylineEventType, eventFunction: any) {
+    public addPolylineEvent(polylines: any, eventType: PolylineEventType, eventFunction: any) {
         polylines.forEach((polyline: any) => {
-            switch (event) {
+            switch (eventType) {
                 case PolylineEventType.Move:
                     this.google.maps.event.addListener(polyline.getPath(), 'set_at', (event: any) => {
-                        const param = new EventReturn([polyline.getPath().getAt(event).lat(), polyline.getPath().getAt(event).lng()]);
+                        const param = new EventReturn([polyline.getPath()
+                            .getAt(event).lat(), polyline.getPath().getAt(event).lng()]);
                         eventFunction(param);
                     });
                     break;
                 case PolylineEventType.InsertAt:
                     this.google.maps.event.addListener(polyline.getPath(), 'insert_at', (event: any) => {
-                        const param = new EventReturn([polyline.getPath().getAt(event).lat(), polyline.getPath().getAt(event).lng()]);
+                        const param = new EventReturn([polyline.getPath()
+                            .getAt(event).lat(), polyline.getPath().getAt(event).lng()]);
                         eventFunction(param);
                     });
                     break;
                 case PolylineEventType.RemoveAt:
                     this.google.maps.event.addListener(polyline.getPath(), 'remove_at', (event: any) => {
-                        const param = new EventReturn([polyline.getPath().getAt(event).lat(), polyline.getPath().getAt(event).lng()]);
+                        const param = new EventReturn([polyline.getPath()
+                            .getAt(event).lat(), polyline.getPath().getAt(event).lng()]);
                         eventFunction(param);
                     });
                     break;
@@ -822,7 +825,7 @@ export default class GoogleMaps implements IMapFunctions {
         this.selectedPolyline = polyline;
 
         this.google.maps.event.clearListeners(document, 'keyup');
-        this.google.maps.event.addDomListener(document, 'keyup', this.onKeyUp.bind(self));
+        this.google.maps.event.addDomListener(document, 'keyup', this.onKeyUp.bind(this));
     }
 
     /* Info Windows */
@@ -1023,7 +1026,8 @@ export default class GoogleMaps implements IMapFunctions {
         const self = this;
         const polyline = self.selectedPolyline;
 
-        if ((!self.navigateByPoint || self.directionForward) && polyline.finalIdx < polyline.getPath().getArray().length - 1) {
+        if ((!self.navigateByPoint || self.directionForward) &&
+            polyline.finalIdx < polyline.getPath().getArray().length - 1) {
             self.navigateForward(multiSelection, polyline);
         }
         self.directionForward = true;
@@ -1231,7 +1235,7 @@ export default class GoogleMaps implements IMapFunctions {
             i: 0,
             deltaLat: (position.lat - marker.getPosition().lat()) / numDeltas,
             deltaLng: (position.lng - marker.getPosition().lng()) / numDeltas
-        }
+        };
 
         this.moveMarker(marker, referencia, numDeltas);
     }

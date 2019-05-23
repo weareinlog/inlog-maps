@@ -53,8 +53,7 @@ export default class Leaflet implements IMapFunctions {
             new this.leaflet.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', mapOptions)
                 .addTo(this.map);
             return this;
-        }
-        catch (err) {
+        } catch (err) {
             return err;
         }
     }
@@ -86,7 +85,7 @@ export default class Leaflet implements IMapFunctions {
 
     /* Markers */
     public drawMarker(options: MarkerOptions, eventClick: any) {
-        let newOptions: any = {
+        const newOptions: any = {
             draggable: options.draggable
         };
 
@@ -158,8 +157,7 @@ export default class Leaflet implements IMapFunctions {
             if (markerClusterer) {
                 if (show) {
                     self.addMarkerOnClusterer(marker, markerClusterer);
-                }
-                else {
+                } else {
                     self.removeMarkerFromClusterer(marker, markerClusterer);
                 }
             } else {
@@ -222,9 +220,9 @@ export default class Leaflet implements IMapFunctions {
         this.map.panTo(marker.getLatLng());
     }
 
-    public addMarkerEvent(markers: any, event: MarkerEventType, eventFunction: any) {
+    public addMarkerEvent(markers: any, eventType: MarkerEventType, eventFunction: any) {
         markers.forEach((marker: any) => {
-            switch (event) {
+            switch (eventType) {
                 case MarkerEventType.Click:
                     marker.on('click', (event: any) => {
                         const param = new EventReturn([event.latlng.lat, event.latlng.lng]);
@@ -370,9 +368,9 @@ export default class Leaflet implements IMapFunctions {
         return this.map.hasLayer(polygon);
     }
 
-    public addPolygonEvent(polygons: any, event: PolygonEventType, eventFunction: any): void {
+    public addPolygonEvent(polygons: any, eventType: PolygonEventType, eventFunction: any): void {
         polygons.forEach((polygon: any) => {
-            switch (event) {
+            switch (eventType) {
                 case PolygonEventType.Move:
                     polygon.on('dragend', (event: any) => {
                         const param = new EventReturn([event.target.getCenter().lat, event.target.getCenter().lng]);
@@ -483,9 +481,9 @@ export default class Leaflet implements IMapFunctions {
         return [center.lat, center.lng];
     }
 
-    public addCircleEvent(circles: any, event: CircleEventType, eventFunction: any): void {
+    public addCircleEvent(circles: any, eventType: CircleEventType, eventFunction: any): void {
         circles.forEach((circle: any) => {
-            switch (event) {
+            switch (eventType) {
                 case CircleEventType.Click:
                     circle.on('click', (event: any) => {
                         const param = new EventReturn([event.latlng.lat, event.latlng.lng]);
@@ -525,8 +523,7 @@ export default class Leaflet implements IMapFunctions {
     /* Polylines */
     public drawPolyline(options: PolylineOptions, eventClick: any) {
         const self = this;
-
-        let newOptions = {
+        const newOptions = {
             color: options.color || '#000000',
             draggable: options.draggable,
             editable: options.editable,
@@ -573,10 +570,10 @@ export default class Leaflet implements IMapFunctions {
                 patterns: [{
                     offset: '20%',
                     repeat: '90px',
-                    symbol: self.leaflet.Symbol.arrowHead({ pixelSize: 20, pathOptions: pathOptions })
+                    symbol: self.leaflet.Symbol.arrowHead({ pixelSize: 20, pathOptions })
                 },
-                { offset: '0%', symbol: self.leaflet.Symbol.arrowHead({ pixelSize: 20, pathOptions: pathOptions }) },
-                { offset: '100%', symbol: self.leaflet.Symbol.arrowHead({ pixelSize: 20, pathOptions: pathOptions }) }]
+                { offset: '0%', symbol: self.leaflet.Symbol.arrowHead({ pathOptions, pixelSize: 20 }) },
+                { offset: '100%', symbol: self.leaflet.Symbol.arrowHead({ pixelSize: 20, pathOptions }) }]
             }).addTo(self.map);
         }
 
@@ -624,33 +621,31 @@ export default class Leaflet implements IMapFunctions {
                 zIndex: options.zIndex ? options.zIndex : polyline.options.zIndex
             };
 
-            if (options.style !== null) {
-                switch (options.style) {
-                    case PolylineType.Dotted:
-                        console.warn('PolylineType.Dotted is deprecated, instead use PolylineType.Dashed.');
-                    case PolylineType.Dashed:
-                        // style.opacity = .7;
-                        style.dashArray = '20,15';
-                        break;
-                    case PolylineType.Arrow:
-                        const pathOptions = { fillOpacity: 1, weight: 0, color: polyline.options.color };
+            switch (options.style) {
+                case PolylineType.Dotted:
+                    console.warn('PolylineType.Dotted is deprecated, instead use PolylineType.Dashed.');
+                case PolylineType.Dashed:
+                    style.dashArray = '20,15';
+                    break;
+                case PolylineType.Arrow:
+                    const pathOptions = { fillOpacity: 1, weight: 0, color: polyline.options.color };
 
-                        polyline.decorator = self.leaflet.polylineDecorator(polyline, {
-                            patterns: [{
-                                offset: '20%',
-                                repeat: '90px',
-                                symbol: self.leaflet.Symbol.arrowHead({ pixelSize: 20, pathOptions: pathOptions })
-                            },
-                            { offset: '0%', symbol: self.leaflet.Symbol.arrowHead({ pixelSize: 20, pathOptions: pathOptions }) },
-                            { offset: '100%', symbol: self.leaflet.Symbol.arrowHead({ pixelSize: 20, pathOptions: pathOptions }) }]
-                        }).addTo(self.map);
-                        break;
-                }
-            } else {
-                if (polyline.decorator) {
-                    self.map.removeLayer(polyline.decorator);
-                    polyline.decorator = null;
-                }
+                    polyline.decorator = self.leaflet.polylineDecorator(polyline, {
+                        patterns: [{
+                            offset: '20%',
+                            repeat: '90px',
+                            symbol: self.leaflet.Symbol.arrowHead({ pixelSize: 20, pathOptions })
+                        },
+                        { offset: '0%', symbol: self.leaflet.Symbol.arrowHead({ pixelSize: 20, pathOptions }) },
+                        { offset: '100%', symbol: self.leaflet.Symbol.arrowHead({ pixelSize: 20, pathOptions }) }]
+                    }).addTo(self.map);
+                    break;
+                default:
+                    if (polyline.decorator) {
+                        self.map.removeLayer(polyline.decorator);
+                        polyline.decorator = null;
+                    }
+                    break;
             }
 
             polyline.setStyle(style);
@@ -697,9 +692,9 @@ export default class Leaflet implements IMapFunctions {
         document.onkeyup = null;
     }
 
-    public addPolylineEvent(polylines: any, event: PolylineEventType, eventFunction: any) {
+    public addPolylineEvent(polylines: any, eventType: PolylineEventType, eventFunction: any) {
         polylines.forEach((polyline: any) => {
-            switch (event) {
+            switch (eventType) {
                 case PolylineEventType.Move:
                     polyline.on('editable:vertex:dragstart', (event: any) => {
                         const param = new EventReturn([event.vertex.latlng.lat, event.vertex.latlng.lng]);
@@ -888,7 +883,7 @@ export default class Leaflet implements IMapFunctions {
     /* Overlay */
     public drawOverlay(options: OverlayOptions, polygons: any) {
         const html: string = options.divElement.outerHTML;
-        const myIcon = new this.leaflet.DivIcon({ html: html });
+        const myIcon = new this.leaflet.DivIcon({ html });
 
         const position = polygons && polygons.length > 0 ?
             this.getBoundsPolygons(polygons).getCenter() : options.position;
@@ -910,7 +905,7 @@ export default class Leaflet implements IMapFunctions {
 
     /* Private Methods */
     private mapTimeout(ms: number) {
-        return new Promise(resolve => setTimeout(resolve, ms));
+        return new Promise((resolve) => setTimeout(resolve, ms));
     }
 
     private loadDependencies(params: any) {
@@ -1164,7 +1159,7 @@ export default class Leaflet implements IMapFunctions {
             i: 0,
             deltaLat: (position[0] - marker.getLatLng().lat) / numDeltas,
             deltaLng: (position[1] - marker.getLatLng().lng) / numDeltas
-        }
+        };
 
         this.moveMarker(marker, referencia, numDeltas);
     }
@@ -1197,7 +1192,7 @@ export default class Leaflet implements IMapFunctions {
 
     private drawPopupOnMarker(marker: any, options: PopupOptions) {
         marker.bindPopup(options.content);
-        let popup = marker.getPopup();
+        const popup = marker.getPopup();
 
         marker.openPopup();
         return popup;
