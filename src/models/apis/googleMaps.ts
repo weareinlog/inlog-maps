@@ -55,6 +55,8 @@ export default class GoogleMaps implements IMapFunctions {
 
                 if (params.gestureHandling) {
                     options.gestureHandling = 'cooperative';
+                } else {
+                    options.gestureHandling = 'greedy';
                 }
 
                 this.map = new this.google.maps.Map(document.getElementById(elementId), options);
@@ -429,9 +431,12 @@ export default class GoogleMaps implements IMapFunctions {
         });
     }
 
-    public fitBoundsPolygons(polygons) {
-        const self = this;
-        self.map.fitBounds(self.getPolygonsBounds(polygons));
+    public fitBoundsPolygons(polygons: any): void {
+        this.map.fitBounds(this.getPolygonsBounds(polygons));
+    }
+
+    public setCenterPolygons(polygons: any): void {
+        this.map.setCenter(this.getPolygonsBounds(polygons).getCenter());
     }
 
     public isPolygonOnMap(polygon: any): boolean {
@@ -672,12 +677,12 @@ export default class GoogleMaps implements IMapFunctions {
         return polyline;
     }
 
-    public drawPolylineWithNavigation(options: PolylineOptions) {
-        const self = this;
-        const polyline = self.drawPolyline(options, null);
+    public drawPolylineWithNavigation(options: PolylineOptions, eventClick?: any) {
+        const polyline = this.drawPolyline(options, null);
 
         this.navigationOptions = options.navigateOptions;
-        self.addNavigation(polyline);
+        this.addNavigation(polyline);
+        polyline.navigationHandlerClick = eventClick;
         return polyline;
     }
 
@@ -1002,6 +1007,10 @@ export default class GoogleMaps implements IMapFunctions {
 
         this.google.maps.event.clearListeners(document, 'keyup');
         this.google.maps.event.addDomListener(document, 'keyup', this.onKeyUp.bind(this));
+
+        if (polyline.navigationHandlerClick) {
+            polyline.navigationHandlerClick();
+        }
     }
 
     private onKeyUp(event: any) {
