@@ -379,6 +379,20 @@ export default class Map {
     }
 
     /**
+     * Set center on polygon bounds
+     * @param {string} type
+     * @param {any} condition fit polygon bounds with the condition [nullable]
+     */
+    public setCenterPolygons(type: string, condition?: any): void {
+        const polygons = this.getPolygons(type, condition)
+            .filter((polygon: any) => this.map.isPolygonOnMap(polygon));
+
+        if (polygons && polygons.length) {
+            this.map.setCenterPolygons(polygons);
+        }
+    }
+
+    /**
      * This functions returns if polygon exists
      * @param type 
      * @param condition [nullable]
@@ -571,8 +585,8 @@ export default class Map {
      * @param {string} type
      * @param {InlogMaps.PolylineOptions} options
      */
-    public drawPolylineWithNavigation(type: string, options: PolylineOptions): void {
-        const polyline = this.map.drawPolylineWithNavigation(options);
+    public drawPolylineWithNavigation(type: string, options: PolylineOptions, eventClick?: any): void {
+        const polyline = this.map.drawPolylineWithNavigation(options, eventClick);
 
         if (!this.polylinesList[type]) {
             this.polylinesList[type] = [];

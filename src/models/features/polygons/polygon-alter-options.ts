@@ -6,11 +6,13 @@ export default class PolygonAlterOptions {
     public fillOpacity?: number;
     public addToMap: boolean;
 
-    constructor(addToMap: boolean, color?: string, opacity?: number, fillColor?: string, fillOpacity?: number) {
+    constructor(addToMap: boolean, color?: string, opacity?: number, fillColor?: string, fillOpacity?: number,
+        weight?: number) {
         this.addToMap = addToMap;
         this.color = color;
         this.opacity = opacity;
         this.fillColor = fillColor;
         this.fillOpacity = fillOpacity;
+        this.weight = weight;
     }
 }

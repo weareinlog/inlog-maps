@@ -1,4 +1,4 @@
-# [@inlog/inlog-maps](https://github.com/weareinlog/inlog-maps#readme) *4.1.3*
+# [@inlog/inlog-maps](https://github.com/weareinlog/inlog-maps#readme) *4.2.0*
 
 > A library for using generic layer maps 
 
@@ -551,6 +551,30 @@ Use this function to alter polygons options/style
 #### Map.fitBoundsPolygons(type, condition) 
 
 Use this function to fit bounds of a polygon
+
+
+
+
+##### Parameters
+
+| Name | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| type | `string`  |  | &nbsp; |
+| condition | `any`  | fit polygon bounds with the condition [nullable] | &nbsp; |
+
+
+
+
+##### Returns
+
+
+- `Void`
+
+
+
+#### Map.setCenterPolygons(type, condition) 
+
+Set center on polygon bounds
 
 
 

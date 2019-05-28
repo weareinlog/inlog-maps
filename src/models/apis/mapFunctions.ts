@@ -45,6 +45,7 @@ export default interface IMapFunctions {
     togglePolygons(polygons: any[], show: boolean): void;
     alterPolygonOptions(polygons: any[], options: PolygonAlterOptions): void;
     fitBoundsPolygons(polygons: any): void;
+    setCenterPolygons(polygons: any): void;
     isPolygonOnMap(polygon: any): boolean;
     addPolygonEvent(polygons: any, event: PolygonEventType, eventFunction: any): void;
     removePolygonEvent(polygons: any, event: PolygonEventType): void;
@@ -61,7 +62,7 @@ export default interface IMapFunctions {
 
     /* Polylines */
     drawPolyline(options: PolylineOptions, eventClick: any): any;
-    drawPolylineWithNavigation(options: PolylineOptions): any;
+    drawPolylineWithNavigation(options: PolylineOptions, eventClick?: any): any;
     togglePolylines(polylines: any, show: boolean): void;
     alterPolylineOptions(polylines: any, options: PolylineOptions): void;
     fitBoundsPolylines(polylines: any): void;
