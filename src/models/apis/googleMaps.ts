@@ -302,6 +302,12 @@ export default class GoogleMaps implements IMapFunctions {
                         eventFunction(marker, param, marker.object);
                     });
                     break;
+                case MarkerEventType.MouseOut:
+                    this.google.maps.event.addListener(marker, 'mouseout', (event: any) => {
+                        const param = new EventReturn([event.latLng.lat(), event.latLng.lng()]);
+                        eventFunction(marker, param, marker.object);
+                    });
+                    break;
                 default:
                     break;
             }
@@ -771,10 +777,11 @@ export default class GoogleMaps implements IMapFunctions {
         polylines.forEach((polyline: any) => {
             switch (eventType) {
                 case PolylineEventType.Move:
-                    this.google.maps.event.addListener(polyline.getPath(), 'set_at', (event: any) => {
-                        const param = new EventReturn([polyline.getPath()
-                            .getAt(event).lat(), polyline.getPath().getAt(event).lng()]);
-                        eventFunction(param);
+                    this.google.maps.event.addListener(polyline.getPath(), 'set_at', (newEvent: any, lastEvent: any) => {
+                        const newPosition = new EventReturn([polyline.getPath()
+                            .getAt(newEvent).lat(), polyline.getPath().getAt(newEvent).lng()]);
+                        const lastPosition = new EventReturn([lastEvent.lat(), lastEvent.lng()]);
+                        eventFunction(newPosition, lastPosition);
                     });
                     break;
                 case PolylineEventType.InsertAt:
