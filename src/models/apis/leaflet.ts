@@ -554,6 +554,7 @@ export default class Leaflet implements IMapFunctions {
         }
 
         const polyline = new this.leaflet.Polyline(options.path || [], newOptions);
+        polyline.on('editable:vertex:rawclick', (e) => e.cancel() );
 
         if (eventClick) {
             polyline.on('click', (event: any) => {
