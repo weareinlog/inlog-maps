@@ -18,7 +18,8 @@ export default class PolylineOptions {
 
     constructor(path?: number[][], addToMap?: boolean, fitBounds?: boolean,
         editable?: boolean, draggable?: boolean, color?: string, weight?: number,
-        object?: object, infowindows?: string[], navigateOptions?: NavigationOptions, style?: PolylineType, opacity?: number, zIndex?: number) {
+        object?: object, infowindows?: string[], navigateOptions?: NavigationOptions, style?: PolylineType,
+        opacity?: number, zIndex?: number) {
 
         this.path = path;
         this.addToMap = addToMap;

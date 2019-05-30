@@ -311,12 +311,12 @@ export default class Leaflet implements IMapFunctions {
     public drawPolygon(options: PolygonOptions, eventClick: any) {
         const self = this;
         const newOptions = {
-            color: options.color,
+            color: options.color || '#000',
             draggable: options.draggable,
-            fillColor: options.fillColor,
-            fillOpacity: options.fillOpacity,
-            opacity: options.opacity,
-            weight: options.weight
+            fillColor: options.fillColor || '#fff',
+            fillOpacity: options.fillOpacity || 1,
+            opacity: options.opacity || 1,
+            weight: options.weight || 2
         };
         const polygon = new this.leaflet.Polygon(options.path, newOptions);
 
@@ -365,9 +365,12 @@ export default class Leaflet implements IMapFunctions {
         });
     }
 
-    public fitBoundsPolygons(polygons) {
-        const self = this;
-        self.map.fitBounds(self.getBoundsPolygons(polygons));
+    public fitBoundsPolygons(polygons: any): void {
+        this.map.fitBounds(this.getBoundsPolygons(polygons));
+    }
+
+    public setCenterPolygons(polygons: any): void {
+        this.map.panTo(this.getBoundsPolygons(polygons).getCenter());
     }
 
     public isPolygonOnMap(polygon: any): boolean {
@@ -595,11 +598,12 @@ export default class Leaflet implements IMapFunctions {
         return polyline;
     }
 
-    public drawPolylineWithNavigation(options: PolylineOptions) {
+    public drawPolylineWithNavigation(options: PolylineOptions, eventClick?: any) {
         const polyline = this.drawPolyline(options, null);
 
         this.navigationOptions = options.navigateOptions;
         this.addNavigation(polyline);
+        polyline.navigationHandlerClick = eventClick;
         return polyline;
     }
 
@@ -956,6 +960,10 @@ export default class Leaflet implements IMapFunctions {
         this.selectedPolyline = polyline;
 
         document.onkeyup = this.onKeyUp.bind(this);
+
+        if (polyline.navigationHandlerClick) {
+            polyline.navigationHandlerClick();
+        }
     }
 
     private onKeyUp(event: any) {

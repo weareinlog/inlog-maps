@@ -572,6 +572,30 @@ Use this function to fit bounds of a polygon
 
 
 
+#### Map.setCenterPolygons(type, condition) 
+
+Set center on polygon bounds
+
+
+
+
+##### Parameters
+
+| Name | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| type | `string`  |  | &nbsp; |
+| condition | `any`  | fit polygon bounds with the condition [nullable] | &nbsp; |
+
+
+
+
+##### Returns
+
+
+- `Void`
+
+
+
 #### Map.polygonExists(type, condition) 
 
 This functions returns if polygon exists
