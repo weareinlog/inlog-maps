@@ -775,7 +775,7 @@ export default class Map {
         }
 
         if (popups) {
-            this.map.alterPopupContent(popups, options, markers[0]);
+            this.map.alterPopupContent(popups, options, markers ? markers[0] : null);
         }
     }
 

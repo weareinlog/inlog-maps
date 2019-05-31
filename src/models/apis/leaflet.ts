@@ -569,13 +569,6 @@ export default class Leaflet implements IMapFunctions {
             });
         }
 
-        if (options.addToMap) {
-            polyline.addTo(self.map);
-            if (options.editable) {
-                polyline.enableEdit();
-            }
-        }
-
         if (options.style && options.style === PolylineType.Arrow) {
             const pathOptions = { fillOpacity: 1, weight: 0, color: polyline.options.color };
 
@@ -587,7 +580,15 @@ export default class Leaflet implements IMapFunctions {
                 },
                 { offset: '0%', symbol: self.leaflet.Symbol.arrowHead({ pathOptions, pixelSize: 20 }) },
                 { offset: '100%', symbol: self.leaflet.Symbol.arrowHead({ pixelSize: 20, pathOptions }) }]
-            }).addTo(self.map);
+            });
+        }
+
+        if (options.addToMap) {
+            polyline.addTo(self.map);
+            polyline.decorator.addTo(self.map);
+            if (options.editable) {
+                polyline.enableEdit();
+            }
         }
 
         if (options.object) {
@@ -642,7 +643,11 @@ export default class Leaflet implements IMapFunctions {
                     style.dashArray = '20,15';
                     break;
                 case PolylineType.Arrow:
-                    const pathOptions = { fillOpacity: 1, weight: 0, color: polyline.options.color };
+                    const pathOptions = { fillOpacity: 1, weight: 0, color: style.color };
+
+                    if (polyline.decorator) {
+                        self.map.removeLayer(polyline.decorator);
+                    }
 
                     polyline.decorator = self.leaflet.polylineDecorator(polyline, {
                         patterns: [{
@@ -652,7 +657,11 @@ export default class Leaflet implements IMapFunctions {
                         },
                         { offset: '0%', symbol: self.leaflet.Symbol.arrowHead({ pixelSize: 20, pathOptions }) },
                         { offset: '100%', symbol: self.leaflet.Symbol.arrowHead({ pixelSize: 20, pathOptions }) }]
-                    }).addTo(self.map);
+                    });
+
+                    if (self.map.hasLayer(polyline)) {
+                        polyline.decorator.addTo(self.map);
+                    }
                     break;
                 default:
                     if (polyline.decorator) {
