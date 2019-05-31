@@ -6,7 +6,8 @@ export default class OverlayOptions {
     public polygon: string;
     public conditionPolygon: any;
 
-    constructor(divElement: HTMLDivElement, addToMap: boolean, position?: number[], object?: any, polygon?: string, conditionPolygon?: any) {
+    constructor(divElement: HTMLDivElement, addToMap: boolean, position?: number[], object?: any,
+        polygon?: string, conditionPolygon?: any) {
         this.position = position;
         this.divElement = divElement;
         this.addToMap = addToMap;
