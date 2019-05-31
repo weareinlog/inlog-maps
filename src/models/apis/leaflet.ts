@@ -265,6 +265,9 @@ export default class Leaflet implements IMapFunctions {
                 case MarkerEventType.MouseOver:
                     marker.off('mouseover');
                     break;
+                case MarkerEventType.MouseOut:
+                    marker.off('mouseout');
+                    break;
                 default:
                     break;
             }
@@ -737,9 +740,10 @@ export default class Leaflet implements IMapFunctions {
         polylines.forEach((polyline: any) => {
             switch (event) {
                 case PolylineEventType.Move:
-                    polyline.off('editable:vertex:dragstart');
+                    polyline.off('editable:vertex:dragend');
                     break;
                 case PolylineEventType.InsertAt:
+                    polyline.off('editable:vertex:new');
                     polyline.off('editable:vertex:dragend');
                     break;
                 case PolylineEventType.RemoveAt:

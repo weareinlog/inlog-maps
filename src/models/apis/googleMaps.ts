@@ -328,6 +328,9 @@ export default class GoogleMaps implements IMapFunctions {
                 case MarkerEventType.MouseOver:
                     this.google.maps.event.clearListeners(marker, 'mouseover');
                     break;
+                case MarkerEventType.MouseOut:
+                    this.google.maps.event.clearListeners(marker, 'mouseout');
+                    break;
                 default:
                     break;
             }
