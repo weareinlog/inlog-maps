@@ -241,6 +241,12 @@ export default class Leaflet implements IMapFunctions {
                         eventFunction(marker, param, marker.object);
                     });
                     break;
+                case MarkerEventType.MouseOut:
+                    marker.on('mouseout', (event: any) => {
+                        const param = new EventReturn([event.latlng.lat, event.latlng.lng]);
+                        eventFunction(marker, param, marker.object);
+                    });
+                    break;
                 default:
                     break;
             }
@@ -258,6 +264,9 @@ export default class Leaflet implements IMapFunctions {
                     break;
                 case MarkerEventType.MouseOver:
                     marker.off('mouseover');
+                    break;
+                case MarkerEventType.MouseOut:
+                    marker.off('mouseout');
                     break;
                 default:
                     break;
@@ -551,6 +560,7 @@ export default class Leaflet implements IMapFunctions {
         }
 
         const polyline = new this.leaflet.Polyline(options.path || [], newOptions);
+        polyline.on('editable:vertex:rawclick', (e) => e.cancel() );
 
         if (eventClick) {
             polyline.on('click', (event: any) => {
@@ -700,15 +710,18 @@ export default class Leaflet implements IMapFunctions {
         polylines.forEach((polyline: any) => {
             switch (eventType) {
                 case PolylineEventType.Move:
-                    polyline.on('editable:vertex:dragstart', (event: any) => {
-                        const param = new EventReturn([event.vertex.latlng.lat, event.vertex.latlng.lng]);
-                        eventFunction(param);
+                    polyline.on('editable:vertex:dragend', (event: any) => {
+                        const newPosition = new EventReturn([event.vertex.latlng.lat, event.vertex.latlng.lng]);
+                        const lastPosition = new EventReturn([event.vertex.latlngs[0].lat, event.vertex.latlngs[0].lng]);
+                        eventFunction(newPosition, lastPosition);
                     });
                     break;
                 case PolylineEventType.InsertAt:
-                    polyline.on('editable:vertex:dragend', (event: any) => {
-                        const param = new EventReturn([event.vertex.latlng.lat, event.vertex.latlng.lng]);
-                        eventFunction(param);
+                    polyline.on('editable:vertex:new', () => {
+                        polyline.on('editable:vertex:dragend', (event: any) => {
+                            const param = new EventReturn([event.vertex.latlng.lat, event.vertex.latlng.lng]);
+                            eventFunction(param);
+                        });
                     });
                     break;
                 case PolylineEventType.RemoveAt:
@@ -727,9 +740,10 @@ export default class Leaflet implements IMapFunctions {
         polylines.forEach((polyline: any) => {
             switch (event) {
                 case PolylineEventType.Move:
-                    polyline.off('editable:vertex:dragstart');
+                    polyline.off('editable:vertex:dragend');
                     break;
                 case PolylineEventType.InsertAt:
+                    polyline.off('editable:vertex:new');
                     polyline.off('editable:vertex:dragend');
                     break;
                 case PolylineEventType.RemoveAt:
