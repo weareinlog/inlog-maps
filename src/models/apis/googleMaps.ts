@@ -301,13 +301,13 @@ export default class GoogleMaps implements IMapFunctions {
                 case MarkerEventType.MouseOver:
                     this.google.maps.event.addListener(marker, 'mouseover', (event: any) => {
                         const param = new EventReturn([event.latLng.lat(), event.latLng.lng()]);
-                        eventFunction(marker, param, marker.object);
+                        eventFunction(param, marker.object);
                     });
                     break;
                 case MarkerEventType.MouseOut:
                     this.google.maps.event.addListener(marker, 'mouseout', (event: any) => {
                         const param = new EventReturn([event.latLng.lat(), event.latLng.lng()]);
-                        eventFunction(marker, param, marker.object);
+                        eventFunction(param, marker.object);
                     });
                     break;
                 default:
@@ -396,7 +396,8 @@ export default class GoogleMaps implements IMapFunctions {
             strokeColor: options.color,
             strokeOpacity: options.opacity,
             strokeWeight: options.weight,
-            suppressUndo: true
+            suppressUndo: true,
+            zIndex: options.zIndex
         };
 
         const polygon = new this.google.maps.Polygon(newOptions);
@@ -469,6 +470,12 @@ export default class GoogleMaps implements IMapFunctions {
                         eventFunction(param, polygon.getPath().getArray().map((x: any) => [x.lat(), x.lng()]));
                     });
                     break;
+                case PolygonEventType.Click:
+                    this.google.maps.event.addListener(polygon, 'click', (event: any) => {
+                        const param = new EventReturn([event.latLng.lat(), event.latLng.lng()]);
+                        eventFunction(param, polygon.object);
+                    });
+                    break;
                 default:
                     break;
             }
@@ -483,6 +490,9 @@ export default class GoogleMaps implements IMapFunctions {
                     break;
                 case PolygonEventType.InsertAt:
                     this.google.maps.event.clearListeners(polygon.getPath(), 'insert_at');
+                    break;
+                case PolygonEventType.Click:
+                    this.google.maps.event.clearListeners(polygon, 'click');
                     break;
                 default:
                     break;
@@ -622,7 +632,8 @@ export default class GoogleMaps implements IMapFunctions {
             strokeWeight: options.weight,
             suppressUndo: true,
             icons: null,
-            strokeOpacity: options.opacity || 1
+            strokeOpacity: options.opacity || 1,
+            zIndex: options.zIndex
         };
 
         if (options.style !== null) {
@@ -648,8 +659,8 @@ export default class GoogleMaps implements IMapFunctions {
                             scaledSize: new google.maps.Size(20, 20),
                             path: google.maps.SymbolPath.FORWARD_OPEN_ARROW
                         },
-                        offset: '90%',
-                        repeat: '20%'
+                        offset: '100%',
+                        repeat: '100px'
                     },
                     { icon: { path: google.maps.SymbolPath.FORWARD_OPEN_ARROW }, offset: '0%' },
                     { icon: { path: google.maps.SymbolPath.FORWARD_OPEN_ARROW }, offset: '100%' }]
