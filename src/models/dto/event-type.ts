@@ -18,7 +18,8 @@ export enum CircleEventType {
 
 export enum PolygonEventType {
     InsertAt,
-    Move
+    Move,
+    Click
 }
 
 export enum PolylineEventType {

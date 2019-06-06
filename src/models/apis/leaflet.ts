@@ -325,6 +325,7 @@ export default class Leaflet implements IMapFunctions {
 
         if (eventClick) {
             polygon.on('click', (event: any) => {
+                self.leaflet.DomEvent.stopPropagation(event);
                 const param = new EventReturn([event.latlng.lat, event.latlng.lng]);
                 eventClick(param, event.target.object);
             });
@@ -381,6 +382,7 @@ export default class Leaflet implements IMapFunctions {
     }
 
     public addPolygonEvent(polygons: any, eventType: PolygonEventType, eventFunction: any): void {
+        const self = this;
         polygons.forEach((polygon: any) => {
             switch (eventType) {
                 case PolygonEventType.Move:
@@ -395,6 +397,13 @@ export default class Leaflet implements IMapFunctions {
                         eventFunction(param, event.vertex.latlngs.map((x: any) => [x.lat, x.lng]));
                     });
                     break;
+                case PolygonEventType.Click:
+                    polygon.on('click', (event: any) => {
+                        self.leaflet.DomEvent.stopPropagation(event);
+                        const param = new EventReturn([event.latlng.lat, event.latlng.lng]);
+                        eventFunction(param, event.target.object);
+                    });
+                    break;
             }
         });
     }
@@ -407,6 +416,9 @@ export default class Leaflet implements IMapFunctions {
                     break;
                 case PolygonEventType.InsertAt:
                     polygon.off('editable:vertex:dragend');
+                    break;
+                case PolygonEventType.Click:
+                    polygon.off('click');
                     break;
             }
         });
@@ -560,7 +572,7 @@ export default class Leaflet implements IMapFunctions {
         }
 
         const polyline = new this.leaflet.Polyline(options.path || [], newOptions);
-        polyline.on('editable:vertex:rawclick', (e) => e.cancel() );
+        polyline.on('editable:vertex:rawclick', (e) => e.cancel());
 
         if (eventClick) {
             polyline.on('click', (event: any) => {
@@ -585,10 +597,8 @@ export default class Leaflet implements IMapFunctions {
 
         if (options.addToMap) {
             polyline.addTo(self.map);
-            polyline.decorator.addTo(self.map);
-            if (options.editable) {
-                polyline.enableEdit();
-            }
+            if (polyline.decorator) { polyline.decorator.addTo(self.map); }
+            if (options.editable) { polyline.enableEdit(); }
         }
 
         if (options.object) {

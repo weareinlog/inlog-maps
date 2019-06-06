@@ -10,6 +10,7 @@ export default class PolygonOptions {
     public editable?: boolean;
     public fitBounds?: boolean;
     public object?: object;
+    public zIndex: number;
 
     constructor(path: number[][], weight: number, addToMap?: boolean, color?: string, opacity?: number,
         fillColor?: string, fillOpacity?: number, draggable?: boolean, editable?: boolean, fitBounds?: boolean,
