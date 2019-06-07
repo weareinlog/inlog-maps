@@ -7,7 +7,7 @@ export default class MarkerOptions {
     public icon?: MarkerIcon;
     public fitBounds?: boolean;
     public object?: object;
-    public addClusterer: boolean;
+    public addClusterer?: boolean;
 
     constructor(latlng: number[], addToMap: boolean = false, draggable: boolean = false, icon?: MarkerIcon,
         fitBounds: boolean = false, object?: object, addClusterer = false) {

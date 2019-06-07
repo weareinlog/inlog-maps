@@ -59,8 +59,15 @@ export default class GoogleMaps implements IMapFunctions {
                     options.gestureHandling = 'greedy';
                 }
 
-                this.map = new this.google.maps.Map(document.getElementById(elementId), options);
+                if (params.options) {
+                    for (const key in params.options) {
+                        if (params.options.hasOwnProperty(key)) {
+                            options[key] = params.options[key];
+                        }
+                    }
+                }
 
+                this.map = new this.google.maps.Map(document.getElementById(elementId), options);
                 OverlayGoogle.prototype = new this.google.maps.OverlayView();
 
                 function OverlayGoogle(bounds, div, map) {

@@ -1,6 +1,10 @@
 const googleMapsLibParams = {
     libraries: ['drawing', 'places'],
-    apiKey: '<your-api-key-here>'
+    apiKey: '<your-api-key-here>',
+    options: {
+        mapTypeControl: false,
+        zoomControl: false
+    }
 };
 
 const leafletLibParams = {
@@ -18,7 +22,8 @@ const leafletLibParams = {
 const inlogMaps = window.InlogMaps;
 const currentMap = new inlogMaps.Map;
 
-currentMap.initialize(inlogMaps.MapType.Leaflet, leafletLibParams).then(() => this.isMapInitialized = true);
+currentMap.initialize(inlogMaps.MapType.Leaflet, leafletLibParams)
+    .then(() => console.log('map initialized!'));
 
 let simpleMarkerShow = null;
 let customMarkerShow = null;
