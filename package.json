@@ -1,6 +1,6 @@
 {
   "name": "@inlog/inlog-maps",
-  "version": "4.2.4",
+  "version": "4.2.5",
   "description": "A library for using generic layer maps ",
   "main": "index.js",
   "types": "dist/index.d.ts",
@@ -28,7 +28,7 @@
   "devDependencies": {
     "@types/leaflet-editable": "^0.7.34",
     "chai": "^4.2.0",
-    "doxdox": "^2.0.3",
+    "doxdox": "git+https://git@github.com/weareinlog/doxdox.git",
     "mocha": "^5.2.0",
     "ts-loader": "^5.3.0",
     "typescript": "^3.1.6"
