@@ -576,6 +576,7 @@ export default class Leaflet implements IMapFunctions {
 
         if (eventClick) {
             polyline.on('click', (event: any) => {
+                self.leaflet.DomEvent.stopPropagation(event);
                 const param = new EventReturn([event.latlng.lat, event.latlng.lng]);
                 eventClick(param, event.target.object);
             });
