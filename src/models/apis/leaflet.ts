@@ -17,6 +17,7 @@ import PolylineOptions from '../features/polyline/polyline-options';
 import PopupOptions from '../features/popup/popup-options';
 import IMapFunctions from './mapFunctions';
 import MarkerClustererConfig from '../features/marker-clusterer/marker-clusterer-config';
+import OverlayAlterOptions from "../features/overlay/overlay-alter-options";
 
 export default class Leaflet implements IMapFunctions {
     private map = null;
@@ -939,6 +940,16 @@ export default class Leaflet implements IMapFunctions {
     public toggleOverlay(overlays: any[], show: boolean) {
         const self = this;
         overlays.forEach((overlay) => show ? self.map.addLayer(overlay) : self.map.removeLayer(overlay));
+    }
+
+    public alterOverlayOptions(overlays: any[], options: OverlayAlterOptions, polygons: any) {
+        return overlays.map(() => {
+            const html: string = options.divElement.outerHTML;
+            const myIcon = new this.leaflet.DivIcon({ html });
+            const overlay = new this.leaflet.Marker(this.getBoundsPolygons(polygons).getCenter(), { icon: myIcon });
+            overlay.addTo(this.map);
+            return overlay;
+        });
     }
 
     /* Private Methods */

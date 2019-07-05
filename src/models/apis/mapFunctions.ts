@@ -92,4 +92,5 @@ export default interface IMapFunctions {
     /* Overlay */
     drawOverlay(options: OverlayOptions, polygons?: any): any;
     toggleOverlay(overlays: any[], show: boolean): void;
+    alterOverlayOptions(overlays: any[], options: OverlayOptions, polygons?: any): any;
 }

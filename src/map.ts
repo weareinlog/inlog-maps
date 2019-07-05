@@ -30,8 +30,8 @@ export default class Map {
 
     /**
      * Use this to initialize map
-     * @param {InlogMaps.MapType} mapType  
-     * @param {any} options 
+     * @param {InlogMaps.MapType} mapType
+     * @param {any} options
      * @param {string} elementId default: 'inlog-map' [nullable]
      * @returns {Promisse<any>}
      */
@@ -199,7 +199,7 @@ export default class Map {
 
     /**
      * This functions returns if marker exists
-     * @param type 
+     * @param type
      * @param condition [nullable]
      * @returns {boolean}
      */
@@ -210,9 +210,9 @@ export default class Map {
 
     /**
      * Use this function to count markers by type
-     * @param {string} type 
+     * @param {string} type
      * @param {boolean} onlyOnMap exclude hidden markers, default true
-     * @param {any} condition 
+     * @param {any} condition
      * @returns {number}
      */
     public countMarkers(type: string, onlyOnMap: boolean = true, condition?: any): number {
@@ -230,9 +230,9 @@ export default class Map {
 
     /**
      * This function add new events on marker
-     * @param {string} type 
-     * @param {InlogMaps.MarkerEventType} event 
-     * @param {any} eventFunction 
+     * @param {string} type
+     * @param {InlogMaps.MarkerEventType} event
+     * @param {any} eventFunction
      * @param {any} condition [nullable]
      */
     public addMarkerEvent(type: string, event: MarkerEventType, eventFunction: any, condition?: any): void {
@@ -243,8 +243,8 @@ export default class Map {
 
     /**
      * This function remove events of marker
-     * @param {string} type 
-     * @param {InlogMaps.MarkerEventType} event 
+     * @param {string} type
+     * @param {InlogMaps.MarkerEventType} event
      * @param {any} condition [nullable]
      */
     public removeMarkerEvent(type: string, event: MarkerEventType, condition?: any): void {
@@ -257,7 +257,7 @@ export default class Map {
     /**
      * Use this function to add MarkerClusterer on the map
      * @param {string} type same type of markers
-     * @param {InlogMaps.MarkerClusterConfig} config 
+     * @param {InlogMaps.MarkerClusterConfig} config
      */
     public addMarkerClusterer(type: string, config: MarkerClustererConfig): void {
         this.markerClusterer[type] = this.map.addMarkerClusterer(config);
@@ -266,7 +266,7 @@ export default class Map {
     /**
      * Use this function to alter clusterer options
      * @param type same type of markers
-     * @param {InlogMaps.MarkerClusterConfig} config 
+     * @param {InlogMaps.MarkerClusterConfig} config
      */
     public alterMarkerClustererConfig(type: string, config: MarkerClustererConfig): void {
         if (this.markerClusterer[type]) {
@@ -394,7 +394,7 @@ export default class Map {
 
     /**
      * This functions returns if polygon exists
-     * @param type 
+     * @param type
      * @param condition [nullable]
      * @returns {boolean}
      */
@@ -405,9 +405,9 @@ export default class Map {
 
     /**
      * This function add new events on polygon
-     * @param {string} type 
-     * @param {InlogMaps.PolygonEventType} event 
-     * @param {any} eventFunction 
+     * @param {string} type
+     * @param {InlogMaps.PolygonEventType} event
+     * @param {any} eventFunction
      * @param {any} condition [nullable]
      */
     public addPolygonEvent(type: string, event: PolygonEventType, eventFunction: any, condition?: any): void {
@@ -418,8 +418,8 @@ export default class Map {
 
     /**
      * This function remove events of polygon
-     * @param {string} type 
-     * @param {InlogMaps.PolygonEventType} event 
+     * @param {string} type
+     * @param {InlogMaps.PolygonEventType} event
      * @param {any} condition [nullable]
      */
     public removePolygonEvent(type: string, event: PolygonEventType, condition?: any): void {
@@ -514,7 +514,7 @@ export default class Map {
 
     /**
      * This functions returns if circle exists
-     * @param {string} type 
+     * @param {string} type
      * @param {any} condition [nullable]
      * @returns {boolean}
      */
@@ -525,7 +525,7 @@ export default class Map {
 
     /**
      * This function return circle center
-     * @param {string} type 
+     * @param {string} type
      * @param {any} condition [nullable]
      * @returns {number[]}
      */
@@ -541,9 +541,9 @@ export default class Map {
 
     /**
      * This function add new events on circle
-     * @param {string} type 
-     * @param {InlogMaps.CircleEventType} event 
-     * @param {any} eventFunction 
+     * @param {string} type
+     * @param {InlogMaps.CircleEventType} event
+     * @param {any} eventFunction
      * @param {any} condition [nullable]
      */
     public addCircleEvent(type: string, event: CircleEventType, eventFunction: any, condition?: any): void {
@@ -554,8 +554,8 @@ export default class Map {
 
     /**
      * This function remove events of circle
-     * @param {string} type 
-     * @param {InlogMaps.CircleEventType} event 
+     * @param {string} type
+     * @param {InlogMaps.CircleEventType} event
      * @param {any} condition [nullable]
      */
     public removeCircleEvent(type: string, event: CircleEventType, condition?: any): void {
@@ -610,7 +610,7 @@ export default class Map {
 
     /**
      * Use this function to remove polylines
-     * @param {string} type 
+     * @param {string} type
      * @param {any} condition remove polyline with the condition [nullable]
      */
     public removePolylines(type: string, condition?: any): void {
@@ -637,7 +637,7 @@ export default class Map {
     /**
      * Use this function to alter polyline options
      * @param {string} type
-     * @param {InlogMaps.PolylineOptions} options 
+     * @param {InlogMaps.PolylineOptions} options
      * @param {any} condition alter polyline with the condition [nullable]
      */
     public alterPolylineOptions(type: string, options: PolylineOptions, condition?: any): void {
@@ -701,9 +701,9 @@ export default class Map {
 
     /**
      * Use this function to add listeners on polyline
-     * @param {string} type 
-     * @param {InlogMaps.PolylineEventType} event 
-     * @param {any} eventFunction 
+     * @param {string} type
+     * @param {InlogMaps.PolylineEventType} event
+     * @param {any} eventFunction
      * @param {any} condition [nullable]
      */
     public addPolylineEvent(type: string, event: PolylineEventType, eventFunction: any, condition?: any): void {
@@ -714,8 +714,8 @@ export default class Map {
 
     /**
      * Use this function to remove listeners of polyline
-     * @param {string} type 
-     * @param {InlogMaps.PolylineEventType} event 
+     * @param {string} type
+     * @param {InlogMaps.PolylineEventType} event
      * @param {any} condition [nullable]
      */
     public removePolylineEvent(type: string, event: PolylineEventType, condition?: any): void {
@@ -726,8 +726,8 @@ export default class Map {
 
     /**
      * Use this function to set position of polyline highlight
-     * @param {string} type 
-     * @param {number} initialIndex 
+     * @param {string} type
+     * @param {number} initialIndex
      * @param {any} condition [nullable]
      */
     public setIndexPolylineHighlight(type: string, initialIndex: number, condition?: any) {
@@ -780,8 +780,8 @@ export default class Map {
     }
 
     /**
-     * 
-     * @param {string} type 
+     *
+     * @param {string} type
      * @returns {object}
      */
     public getObjectOpenPopup(type: string): object {
@@ -867,8 +867,8 @@ export default class Map {
 
     /**
      * Returns the coordinates from pixels
-     * @param {number} offsetx 
-     * @param {number} offsety 
+     * @param {number} offsetx
+     * @param {number} offsety
      * @returns {number[]}
      */
     public pixelsToLatLng(offsetx: number, offsety: number): number[] {
@@ -877,7 +877,7 @@ export default class Map {
 
     /* Overlay */
     /**
-     * Use this function to dray overlays on the current map
+     * Use this function to draw overlays on the current map
      * @param {string} type
      * @param {InlogMaps.OverlayOptions} options
      */
@@ -915,6 +915,22 @@ export default class Map {
             this.map.toggleOverlay(overlays, show);
         }
     }
+
+    /**
+     * Use this function to alter overlay options/style
+     * @param {string} type
+     * @param {InlogMaps.OverlayAlterOptions} options
+     * @param {any} condition [nullable]
+     */
+    public alterOverlayOptions(type: string, options: OverlayOptions, condition?: any): void {
+        const overlays = this.getOverlays(type, condition);
+
+        if (overlays && overlays.length) {
+            const polygons = this.getPolygons(options.polygon, options.conditionPolygon);
+            this.map.toggleOverlay(overlays, false);
+            this.overlayList[type] = this.map.alterOverlayOptions(overlays, options, polygons);
+        }
+    };
 
     /**
      * Remove overlays from the map and from internal list

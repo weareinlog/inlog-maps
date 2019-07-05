@@ -10,6 +10,7 @@ import CircleMarkerOptions from '../features/marker/circle-marker-options';
 import MarkerAlterOptions from '../features/marker/marker-alter-options';
 import MarkerOptions from '../features/marker/marker-options';
 import OverlayOptions from '../features/overlay/overlay-options';
+import OverlayAlterOptions from '../features/overlay/overlay-alter-options';
 import PolygonAlterOptions from '../features/polygons/polygon-alter-options';
 import PolygonOptions from '../features/polygons/polygon-options';
 import NavigationOptions from '../features/polyline/navigations-options';
@@ -1013,6 +1014,14 @@ export default class GoogleMaps implements IMapFunctions {
     public toggleOverlay(overlays: any[], show: boolean) {
         const self = this;
         overlays.forEach((overlay) => overlay.setMap(show ? self.map : null));
+    }
+
+    public alterOverlayOptions(overlays: any[], options: OverlayAlterOptions, polygons: any) {
+        return overlays.map(() => {
+            const overlay = new this.OverlayGoogle(this.getPolygonsBounds(polygons), options.divElement);
+            overlay.setMap(this.map);
+            return overlay;
+        });
     }
 
     /* Private Methods */

@@ -437,6 +437,21 @@ function addPolygon() {
     }
 }
 
+function changeOverlay() {
+    const div = document.createElement('div');
+    div.style.fontSize = '13px';
+    div.style.position = 'absolute';
+    div.style.minWidth = '90px';
+
+    const span = document.createElement('span');
+    span.textContent = String(Math.random());
+    div.appendChild(span);
+
+    const overlayOptions = new inlogMaps.OverlayOptions(div, true);
+    overlayOptions.polygon = 'polygon';
+    currentMap.alterOverlayOptions('ocupacao', overlayOptions);
+}
+
 function changePolygonColor() {
     if (polygonShow === null) {
         alert('The polygon was not created yet!');

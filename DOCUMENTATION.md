@@ -1,4 +1,4 @@
-# [@inlog/inlog-maps](https://github.com/weareinlog/inlog-maps#readme) *4.2.7*
+# [@inlog/inlog-maps](https://github.com/weareinlog/inlog-maps#readme) *4.2.8*
 
 > A library for using generic layer maps 
 
@@ -1465,7 +1465,7 @@ Returns the coordinates from pixels
 
 #### Map.drawOverlay(type, options) 
 
-Use this function to dray overlays on the current map
+Use this function to draw overlays on the current map
 
 
 
@@ -1500,6 +1500,31 @@ Use this function to show or hide overlay
 | ---- | ---- | ----------- | -------- |
 | show | `boolean`  |  | &nbsp; |
 | type | `string`  |  | &nbsp; |
+| condition | `any`  | [nullable] | &nbsp; |
+
+
+
+
+##### Returns
+
+
+- `Void`
+
+
+
+#### Map.alterOverlayOptions(type, options, condition) 
+
+Use this function to alter overlay options/style
+
+
+
+
+##### Parameters
+
+| Name | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| type | `string`  |  | &nbsp; |
+| options | `InlogMaps.OverlayAlterOptions`  |  | &nbsp; |
 | condition | `any`  | [nullable] | &nbsp; |
 
 
