@@ -861,6 +861,10 @@ export default class GoogleMaps implements IMapFunctions {
         this.google.maps.event.addDomListener(document, 'keyup', this.onKeyUp.bind(this));
     }
 
+    public getObjectPolyline(polyline: any): object {
+        return polyline.object;
+    }
+
     /* Info Windows */
     public drawPopup(options: PopupOptions, marker?: any) {
         const self = this;
@@ -1029,7 +1033,7 @@ export default class GoogleMaps implements IMapFunctions {
         polyline.initialIdx = index;
         polyline.finalIdx = index + 1;
 
-        this.navigateByPoint = this.navigationOptions.navigateByPoint;
+        this.navigateByPoint = this.navigationOptions ? this.navigationOptions.navigateByPoint : true;
         this.moveSelectedPath(polyline, this.navigationOptions);
         this.selectedPolyline = polyline;
 
@@ -1122,6 +1126,7 @@ export default class GoogleMaps implements IMapFunctions {
                 map: this.map,
                 path: pathSelected,
                 strokeColor: options && options.color || '#FF0000',
+                strokeOpacity: options && options.opacity || 1,
                 strokeWeight: options && options.weight || 10,
                 zIndex: 9999
             };

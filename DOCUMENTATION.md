@@ -1,4 +1,4 @@
-# [@inlog/inlog-maps](https://github.com/weareinlog/inlog-maps#readme) *4.2.7*
+# [@inlog/inlog-maps](https://github.com/weareinlog/inlog-maps#readme) *4.3.0*
 
 > A library for using generic layer maps 
 
@@ -1178,6 +1178,30 @@ Use this function to set position of polyline highlight
 
 
 - `Void`
+
+
+
+#### Map.getObjectPolyline(type, condition) 
+
+
+
+
+
+
+##### Parameters
+
+| Name | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| type | `string`  |  | &nbsp; |
+| condition | `any`  |  | &nbsp; |
+
+
+
+
+##### Returns
+
+
+- `object`  
 
 
 

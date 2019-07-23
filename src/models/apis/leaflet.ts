@@ -42,6 +42,7 @@ export default class Leaflet implements IMapFunctions {
             const mapOptions: any = {
                 center: new this.leaflet.LatLng(-14, -54),
                 editable: true,
+                keyboard: false,
                 maxZoom: 19,
                 minZoom: 4,
                 zoom: 4
@@ -709,6 +710,11 @@ export default class Leaflet implements IMapFunctions {
 
             path.push(new this.leaflet.LatLng(position[0], position[1]));
             polyline.setLatLngs(path);
+
+            if (polyline.editEnabled && polyline.editEnabled()) {
+                polyline.disableEdit();
+                polyline.enableEdit();
+            }
         });
     }
 
@@ -783,6 +789,10 @@ export default class Leaflet implements IMapFunctions {
         this.selectedPolyline = polyline;
 
         document.onkeyup = this.onKeyUp.bind(this);
+    }
+
+    public getObjectPolyline(polyline: any): object {
+        return polyline.object;
     }
 
     /* Popups */
@@ -979,7 +989,7 @@ export default class Leaflet implements IMapFunctions {
         polyline.initialIdx = index;
         polyline.finalIdx = index + 1;
 
-        this.navigateByPoint = this.navigationOptions.navigateByPoint;
+        this.navigateByPoint = this.navigationOptions ? this.navigationOptions.navigateByPoint : true;
         this.moveSelectedPath(polyline, this.navigationOptions);
         this.selectedPolyline = polyline;
 
@@ -993,7 +1003,9 @@ export default class Leaflet implements IMapFunctions {
     private onKeyUp(event: any) {
         const self = this;
 
-        if (self.selectedPath && event.ctrlKey) {
+        if (self.selectedPath) {
+            console.warn('CTRL is not needed in navigation anymore');
+
             switch (event.which ? event.which : event.keyCode) {
                 // seta para cima ou seta para direita ou W ou D
                 case 38:
@@ -1066,6 +1078,7 @@ export default class Leaflet implements IMapFunctions {
         } else {
             const newOptions = {
                 color: options && options.color || '#FF0000',
+                opacity: options && options.opacity || 1,
                 weight: options && options.weight || 10,
                 zIndex: 9999
             };
