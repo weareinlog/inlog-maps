@@ -38,14 +38,14 @@ export default class Leaflet implements IMapFunctions {
             const api = await this.mapsApiLoader.loadApi(mapType, params);
             this.leaflet = api;
             this.loadDependencies(params);
-            await this.mapTimeout(200);
+            await this.mapTimeout(500);
             const mapOptions: any = {
                 center: new this.leaflet.LatLng(-14, -54),
-                editable: true,
                 keyboard: false,
                 maxZoom: 19,
                 minZoom: 4,
-                zoom: 4
+                zoom: 4,
+                editable: true
             };
             if (params.gestureHandling) {
                 mapOptions.gestureHandling = true;
@@ -1004,7 +1004,9 @@ export default class Leaflet implements IMapFunctions {
         const self = this;
 
         if (self.selectedPath) {
-            console.warn('CTRL is not needed in navigation anymore');
+            if (event.ctrlKey) {
+                console.warn('Deprecated: CTRL is not needed in navigation anymore');
+            }
 
             switch (event.which ? event.which : event.keyCode) {
                 // seta para cima ou seta para direita ou W ou D
@@ -1076,24 +1078,27 @@ export default class Leaflet implements IMapFunctions {
         if (self.selectedPath) {
             self.selectedPath.setLatLngs(pathSelected);
         } else {
-            const newOptions = {
-                color: options && options.color || '#FF0000',
-                opacity: options && options.opacity || 1,
-                weight: options && options.weight || 10,
-                zIndex: 9999
-            };
+            this.addNewSelectedPath(pathSelected, options);
+            this.selectedPath.addTo(this.map);
+        }
 
-            self.selectedPath = new this.leaflet.Polyline(pathSelected, newOptions);
-            self.selectedPath.addTo(self.map);
+        if (this.selectedPath.decorator) {
+            this.map.removeLayer(this.selectedPath.decorator);
+            this.setArrowSelectedPath();
+        }
+
+        if ((options && options.editable) ||
+            (this.selectedPath.editEnabled && this.selectedPath.editEnabled())) {
+            this.selectedPath.disableEdit();
+            this.selectedPath.enableEdit();
         }
 
         let idx = self.directionForward ? polyline.finalIdx : polyline.initialIdx;
-
         if (!this.navigateByPoint) {
             idx = polyline.finalIdx > polyline.initialIdx ? polyline.finalIdx : polyline.initialIdx;
         }
-        const infowindow = polyline.options.infowindows ? polyline.options.infowindows[idx] : null;
 
+        const infowindow = polyline.options.infowindows ? polyline.options.infowindows[idx] : null;
         if (infowindow) {
             const point = polyline.getLatLngs()[idx];
 
@@ -1108,6 +1113,45 @@ export default class Leaflet implements IMapFunctions {
                     latlng: [point.lat, point.lng]
                 });
             }
+        }
+    }
+
+    private setArrowSelectedPath() {
+        const pathOptions = { fillOpacity: 1, weight: 0, color: this.selectedPath.options.color };
+        this.selectedPath.decorator = this.leaflet.polylineDecorator(this.selectedPath, {
+            patterns: [{ offset: '100%', symbol: this.leaflet.Symbol.arrowHead({ pixelSize: 20, pathOptions }) }]
+        });
+
+        this.selectedPath.decorator.addTo(this.map);
+    }
+
+    private addNewSelectedPath(pathSelected, options) {
+        const newOptions: any = {
+            color: options && options.color || '#FF0000',
+            editable: options.editable,
+            opacity: options && options.opacity || 1,
+            weight: options && options.weight || 10,
+            zIndex: 9999
+        };
+
+        if (options.style !== null) {
+            switch (options.style) {
+                case PolylineType.Dotted:
+                    console.warn('PolylineType.Dotted is deprecated, instead use PolylineType.Dashed.');
+                case PolylineType.Dashed:
+                    newOptions.opacity = .7;
+                    newOptions.dashArray = '20,15';
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        this.selectedPath = new this.leaflet.Polyline(pathSelected, newOptions);
+        this.selectedPath.on('editable:vertex:rawclick', (e: any) => e.cancel());
+
+        if (options.style && options.style === PolylineType.Arrow) {
+            this.setArrowSelectedPath();
         }
     }
 

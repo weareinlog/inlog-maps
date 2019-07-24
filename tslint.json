@@ -12,14 +12,13 @@
         "align": [
             true,
             "statements",
-            "members",
-            "elements"
+            "members"
         ],
         "trailing-comma": false,
         "no-console": [
             true,
             "warning"
-        ]
+        ],
     },
     "rulesDirectory": []
 }
