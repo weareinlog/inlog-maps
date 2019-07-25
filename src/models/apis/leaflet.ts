@@ -722,9 +722,14 @@ export default class Leaflet implements IMapFunctions {
         const self = this;
 
         if (self.selectedPath) {
+            if (this.selectedPath.decorator) {
+                this.map.removeLayer(this.selectedPath.decorator);
+            }
+
             this.map.removeLayer(self.selectedPath);
             self.selectedPath = null;
         }
+
         if (self.navigateInfoWindow) {
             self.navigateInfoWindow.remove();
         }
