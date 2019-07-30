@@ -693,6 +693,20 @@ export default class Map {
     }
 
     /**
+     * Use this function to get the path of some polyline
+     * @param {string} type
+     * @param {any} condition
+     * @returns {number[]}
+     */
+    public getPolylinePath(type: string, condition?: any): number[] {
+        const polyline = this.getPolylines(type, condition);
+
+        if (polyline && polyline.length) {
+            return this.map.getPolylinePath(polyline[0]);
+        }
+    }
+
+    /**
      * Use this function to clear polyline selected from the currentMap
      */
     public removePolylineHighlight(): void {
@@ -752,6 +766,15 @@ export default class Map {
         } else {
             return null;
         }
+    }
+
+    /**
+     * Use this function to add events on polyline highligth / selected polyline
+     * @param {InlogMaps.PolylineEventType} event
+     * @param {any} eventFunction
+     */
+    public addPolylineHighlightEvent(event: PolylineEventType, eventFunction: any) {
+        this.map.addPolylineHighlightEvent(event, eventFunction);
     }
 
     /* Info Windows */

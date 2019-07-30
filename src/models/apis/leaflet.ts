@@ -648,6 +648,10 @@ export default class Leaflet implements IMapFunctions {
                 zIndex: options.zIndex ? options.zIndex : polyline.options.zIndex
             };
 
+            if (options.path) {
+                polyline.setLatLngs(options.path);
+            }
+
             switch (options.style) {
                 case PolylineType.Dotted:
                     console.warn('PolylineType.Dotted is deprecated, instead use PolylineType.Dashed.');
@@ -718,6 +722,10 @@ export default class Leaflet implements IMapFunctions {
         });
     }
 
+    public getPolylinePath(polyline: any): number[] {
+        return polyline.getLatLngs().map((x: any) => [x.lat, x.lng]);
+    }
+
     public removePolylineHighlight() {
         const self = this;
 
@@ -738,20 +746,33 @@ export default class Leaflet implements IMapFunctions {
     }
 
     public addPolylineEvent(polylines: any, eventType: PolylineEventType, eventFunction: any) {
+        const self = this;
+
         polylines.forEach((polyline: any) => {
             switch (eventType) {
                 case PolylineEventType.Move:
-                    polyline.on('editable:vertex:dragend', (event: any) => {
-                        const newPosition = new EventReturn([event.vertex.latlng.lat, event.vertex.latlng.lng]);
-                        const lastPosition = new EventReturn([event.vertex.latlngs[0].lat, event.vertex.latlngs[0].lng]);
-                        eventFunction(newPosition, lastPosition);
+                    polyline.off('editable:vertex:dragstart');
+                    polyline.on('editable:vertex:dragstart', (eventStart: any) => {
+                        polyline.off('editable:vertex:dragend');
+                        const lastPosition = new EventReturn([eventStart.vertex.latlng.lat, eventStart.vertex.latlng.lng]);
+
+                        polyline.on('editable:vertex:dragend', (eventEnd: any) => {
+                            if (polyline.highlight && polyline.decorator) {
+                                self.map.removeLayer(polyline.decorator);
+                                self.setArrowSelectedPath();
+                            }
+
+                            const newPosition = new EventReturn([eventEnd.vertex.latlng.lat, eventEnd.vertex.latlng.lng]);
+                            eventFunction(newPosition, lastPosition, polyline.initialIdx, polyline.finalIdx);
+                        });
                     });
                     break;
                 case PolylineEventType.InsertAt:
                     polyline.on('editable:vertex:new', () => {
+                        polyline.off('editable:vertex:dragend');
                         polyline.on('editable:vertex:dragend', (event: any) => {
                             const param = new EventReturn([event.vertex.latlng.lat, event.vertex.latlng.lng]);
-                            eventFunction(param);
+                            eventFunction(param, polyline.initialIdx, polyline.finalIdx);
                         });
                     });
                     break;
@@ -798,6 +819,12 @@ export default class Leaflet implements IMapFunctions {
 
     public getObjectPolyline(polyline: any): object {
         return polyline.object;
+    }
+
+    public addPolylineHighlightEvent(eventType: PolylineEventType, eventFunction: any) {
+        if (this.selectedPolyline) {
+            this.addPolylineEvent([this.selectedPath], eventType, eventFunction);
+        }
     }
 
     /* Popups */
@@ -1078,7 +1105,7 @@ export default class Leaflet implements IMapFunctions {
 
     private moveSelectedPath(polyline: any, options: NavigationOptions) {
         const self = this;
-        const pathSelected = polyline.getLatLngs().slice(polyline.initialIdx, polyline.finalIdx + 1);
+        const pathSelected = polyline.getLatLngs().map((x: any) => [x.lat, x.lng]).slice(polyline.initialIdx, polyline.finalIdx + 1);
 
         if (self.selectedPath) {
             self.selectedPath.setLatLngs(pathSelected);
@@ -1097,6 +1124,9 @@ export default class Leaflet implements IMapFunctions {
             this.selectedPath.disableEdit();
             this.selectedPath.enableEdit();
         }
+
+        this.selectedPath.initialIdx = polyline.initialIdx;
+        this.selectedPath.finalIdx = polyline.finalIdx;
 
         let idx = self.directionForward ? polyline.finalIdx : polyline.initialIdx;
         if (!this.navigateByPoint) {
@@ -1133,6 +1163,7 @@ export default class Leaflet implements IMapFunctions {
     private addNewSelectedPath(pathSelected, options) {
         const newOptions: any = {
             color: options && options.color || '#FF0000',
+            draggable: false,
             editable: options.editable,
             opacity: options && options.opacity || 1,
             weight: options && options.weight || 10,
@@ -1158,6 +1189,8 @@ export default class Leaflet implements IMapFunctions {
         if (options.style && options.style === PolylineType.Arrow) {
             this.setArrowSelectedPath();
         }
+
+        this.selectedPath.highlight = true;
     }
 
     private checkIdx(polyline: any, point: any) {

@@ -1089,6 +1089,30 @@ Use this function to add more paths to a polyline
 
 
 
+#### Map.getPolylinePath(type, condition) 
+
+Use this function to get the path of some polyline
+
+
+
+
+##### Parameters
+
+| Name | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| type | `string`  |  | &nbsp; |
+| condition | `any`  |  | &nbsp; |
+
+
+
+
+##### Returns
+
+
+- `Array.&lt;number&gt;`  
+
+
+
 #### Map.removePolylineHighlight() 
 
 Use this function to clear polyline selected from the currentMap
@@ -1202,6 +1226,30 @@ Use this function to set position of polyline highlight
 
 
 - `object`  
+
+
+
+#### Map.addPolylineHighlightEvent(event, eventFunction) 
+
+Use this function to add events on polyline highligth / selected polyline
+
+
+
+
+##### Parameters
+
+| Name | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| event | `InlogMaps.PolylineEventType`  |  | &nbsp; |
+| eventFunction | `any`  |  | &nbsp; |
+
+
+
+
+##### Returns
+
+
+- `Void`
 
 
 
