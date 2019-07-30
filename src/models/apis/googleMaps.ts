@@ -24,8 +24,6 @@ import GoogleOverlays from './google/google-overlay';
 import GoogleGeoJson from './google/google-geojson';
 
 export default class GoogleMaps implements IMapFunctions {
-    private map = null;
-    private google = null;
     private googleMarkers: GoogleMarkers;
     private googlePolygons: GooglePolygons;
     private googleCircles: GoogleCircles;
@@ -42,9 +40,9 @@ export default class GoogleMaps implements IMapFunctions {
     public async initialize(mapType: MapType, params: any, elementId: string): Promise<any> {
         try {
             const api = await this.mapsApiLoader.loadApi(mapType, params);
-            this.google = api;
+            const google = api;
             const options: any = {
-                center: new this.google.maps.LatLng(-14, -54),
+                center: new google.maps.LatLng(-14, -54),
                 fullscreenControl: false,
                 keyboardShortcuts: false,
                 mapTypeControl: true,
@@ -70,15 +68,15 @@ export default class GoogleMaps implements IMapFunctions {
                 }
             }
 
-            this.map = new this.google.maps.Map(document.getElementById(elementId), options);
-            this.googleMarkers = new GoogleMarkers(this.map, this.google);
-            this.googlePolygons = new GooglePolygons(this.map, this.google);
-            this.googleCircles = new GoogleCircles(this.map, this.google);
-            this.googlePopups = new GooglePopups(this.map, this.google);
-            this.googlePolylines = new GooglePolylines(this.map, this.google, this.googlePopups);
-            this.googleMap = new GoogleMap(this.map, this.google);
-            this.googleOverlays = new GoogleOverlays(this.map, this.google, this.googlePolygons);
-            this.googleGeoJson = new GoogleGeoJson(this.map, this.google);
+            const map = new google.maps.Map(document.getElementById(elementId), options);
+            this.googleMarkers = new GoogleMarkers(map, google);
+            this.googlePolygons = new GooglePolygons(map, google);
+            this.googleCircles = new GoogleCircles(map, google);
+            this.googlePopups = new GooglePopups(map, google);
+            this.googlePolylines = new GooglePolylines(map, google, this.googlePopups);
+            this.googleMap = new GoogleMap(map, google);
+            this.googleOverlays = new GoogleOverlays(map, google, this.googlePolygons);
+            this.googleGeoJson = new GoogleGeoJson(map, google);
             return this;
         }
         catch (err) {
