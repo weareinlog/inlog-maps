@@ -423,20 +423,24 @@ export default class GooglePolylines {
 
     private addPolylineEventMove(polyline: any, eventFunction: any) {
         polyline.moveListener = (newEvent: any, lastEvent: any) => {
-            const newPosition = new EventReturn([polyline.getPath().getAt(newEvent).lat(),
-            polyline.getPath().getAt(newEvent).lng()]);
+            const path = polyline.getPath().getAt(newEvent);
+            const newPosition = new EventReturn([path.lat(), path.lng()]);
             const lastPosition = new EventReturn([lastEvent.lat(), lastEvent.lng()]);
 
-            eventFunction(newPosition, lastPosition, polyline.initialIdx, polyline.finalIdx);
+            eventFunction(newPosition, lastPosition);
         };
         this.google.maps.event.addListener(polyline.getPath(), 'set_at', polyline.moveListener);
     }
 
     private addPolylineEventInsertAt(polyline: any, eventFunction: any) {
         polyline.insertAtListener = (event: any) => {
-            const param = new EventReturn([polyline.getPath().getAt(event).lat(),
-            polyline.getPath().getAt(event).lng()]);
-            eventFunction(param, polyline.initialIdx, polyline.finalIdx);
+            const path = polyline.getPath();
+            const newPath = path.getAt(event);
+            const newPoint = new EventReturn([newPath.lat(), newPath.lng()]);
+
+            const previousPath = path.getAt(event - 1);
+            const previousPoint = new EventReturn([previousPath.lat(), previousPath.lng()]);
+            eventFunction(newPoint, previousPoint);
         };
         this.google.maps.event.addListener(polyline.getPath(), 'insert_at', polyline.insertAtListener);
     }

@@ -225,41 +225,16 @@ export default class LeafletPolylines {
     }
 
     public addPolylineEvent(polylines: any, eventType: PolylineEventType, eventFunction: any) {
-        const self = this;
-
         polylines.forEach((polyline: any) => {
             switch (eventType) {
                 case PolylineEventType.Move:
-                    polyline.off('editable:vertex:dragstart');
-                    polyline.on('editable:vertex:dragstart', (eventStart: any) => {
-                        polyline.off('editable:vertex:dragend');
-                        const lastPosition = new EventReturn([eventStart.vertex.latlng.lat, eventStart.vertex.latlng.lng]);
-
-                        polyline.on('editable:vertex:dragend', (eventEnd: any) => {
-                            if (polyline.highlight && polyline.decorator) {
-                                self.map.removeLayer(polyline.decorator);
-                                self.setArrowSelectedPath();
-                            }
-
-                            const newPosition = new EventReturn([eventEnd.vertex.latlng.lat, eventEnd.vertex.latlng.lng]);
-                            eventFunction(newPosition, lastPosition, polyline.initialIdx, polyline.finalIdx);
-                        });
-                    });
+                    this.addPolylineEventMove(polyline, eventFunction);
                     break;
                 case PolylineEventType.InsertAt:
-                    polyline.on('editable:vertex:new', () => {
-                        polyline.off('editable:vertex:dragend');
-                        polyline.on('editable:vertex:dragend', (event: any) => {
-                            const param = new EventReturn([event.vertex.latlng.lat, event.vertex.latlng.lng]);
-                            eventFunction(param, polyline.initialIdx, polyline.finalIdx);
-                        });
-                    });
+                    this.addPolylineEventInsertAt(polyline, eventFunction);
                     break;
                 case PolylineEventType.RemoveAt:
-                    polyline.on('editable:vertex:deleted', (event: any) => {
-                        const param = new EventReturn([event.vertex.latlng.lat, event.vertex.latlng.lng]);
-                        eventFunction(param);
-                    });
+                    this.addPolylineEventRemoveAt(polyline, eventFunction);
                     break;
                 default:
                     break;
@@ -549,5 +524,50 @@ export default class LeafletPolylines {
     private getBoundsPolylines(polylines: any) {
         const group = new this.leaflet.FeatureGroup(polylines);
         return group.getBounds();
+    }
+
+    private addPolylineEventMove(polyline: any, eventFunction: any) {
+        const self = this;
+        polyline.on('editable:vertex:dragstart', (eventStart: any) => {
+            const lastPosition = new EventReturn([eventStart.vertex.latlng.lat, eventStart.vertex.latlng.lng]);
+
+            polyline.on('editable:vertex:dragend', (eventEnd: any) => {
+                if (polyline.highlight && polyline.decorator) {
+                    self.map.removeLayer(polyline.decorator);
+                    self.setArrowSelectedPath();
+                }
+
+                const newPosition = new EventReturn([eventEnd.vertex.latlng.lat, eventEnd.vertex.latlng.lng]);
+                eventFunction(newPosition, lastPosition);
+                polyline.off('editable:vertex:dragend');
+            });
+        });
+    }
+
+    private addPolylineEventInsertAt(polyline: any, eventFunction: any) {
+        const self = this;
+        polyline.on('editable:vertex:new', (eventNew: any) => {
+            const latlngs = eventNew.vertex.latlngs;
+            const previous = latlngs[latlngs.findIndex((x: any) => x === eventNew.vertex.latlng) - 1];
+            const previousPoint = new EventReturn([previous.lat, previous.lng]);
+
+            polyline.on('editable:vertex:dragend', (event: any) => {
+                if (polyline.highlight && polyline.decorator) {
+                    self.map.removeLayer(polyline.decorator);
+                    self.setArrowSelectedPath();
+                }
+
+                const newPoint = new EventReturn([event.vertex.latlng.lat, event.vertex.latlng.lng]);
+                eventFunction(newPoint, previousPoint);
+                polyline.off('editable:vertex:dragend');
+            });
+        });
+    }
+
+    private addPolylineEventRemoveAt(polyline: any, eventFunction: any) {
+        polyline.on('editable:vertex:deleted', (event: any) => {
+            const param = new EventReturn([event.vertex.latlng.lat, event.vertex.latlng.lng]);
+            eventFunction(param);
+        });
     }
 }

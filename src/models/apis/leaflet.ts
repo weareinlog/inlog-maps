@@ -42,7 +42,8 @@ export default class Leaflet implements IMapFunctions {
             const api = await this.mapsApiLoader.loadApi(mapType, params);
             const leaflet = api;
             this.loadDependencies(params);
-            await this.mapTimeout(500);
+            await this.mapTimeout(1000);
+
             const mapOptions: any = {
                 center: new leaflet.LatLng(-14, -54),
                 keyboard: false,
@@ -51,9 +52,12 @@ export default class Leaflet implements IMapFunctions {
                 zoom: 4,
                 editable: true
             };
+
             if (params.gestureHandling) {
                 mapOptions.gestureHandling = true;
             }
+
+            await this.mapTimeout(200);
             const map = new leaflet.Map(elementId, mapOptions);
             new leaflet.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', mapOptions)
                 .addTo(map);
@@ -68,6 +72,7 @@ export default class Leaflet implements IMapFunctions {
             this.leafletGeoJson = new LeafletGeoJson(map, leaflet);
             return this;
         } catch (err) {
+            console.error(err);
             return err;
         }
     }
