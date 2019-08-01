@@ -1,5 +1,5 @@
-import { MapEventType } from "../../dto/event-type";
-import EventReturn from "../../features/events/event-return";
+import { MapEventType } from '../../dto/event-type';
+import EventReturn from '../../features/events/event-return';
 
 export default class LeafletMap {
     private map = null;

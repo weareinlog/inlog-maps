@@ -1,7 +1,7 @@
-import PolygonOptions from "../../features/polygons/polygon-options";
-import EventReturn from "../../features/events/event-return";
-import PolygonAlterOptions from "../../features/polygons/polygon-alter-options";
-import { PolygonEventType } from "../../dto/event-type";
+import { PolygonEventType } from '../../dto/event-type';
+import EventReturn from '../../features/events/event-return';
+import PolygonAlterOptions from '../../features/polygons/polygon-alter-options';
+import PolygonOptions from '../../features/polygons/polygon-options';
 
 export default class GooglePolygons {
     private map = null;

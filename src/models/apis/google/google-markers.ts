@@ -1,9 +1,9 @@
-import MarkerOptions from '../../features/marker/marker-options';
+import { MarkerEventType } from '../../dto/event-type';
 import EventReturn from '../../features/events/event-return';
+import MarkerClustererConfig from '../../features/marker-clusterer/marker-clusterer-config';
 import CircleMarkerOptions from '../../features/marker/circle-marker-options';
 import MarkerAlterOptions from '../../features/marker/marker-alter-options';
-import { MarkerEventType } from '../../dto/event-type';
-import MarkerClustererConfig from '../../features/marker-clusterer/marker-clusterer-config';
+import MarkerOptions from '../../features/marker/marker-options';
 const MarkerClusterer = require('@google/markerclustererplus');
 
 export default class GoogleMarkers {
@@ -240,8 +240,8 @@ export default class GoogleMarkers {
     /* Marker Clusterer */
     public addMarkerClusterer(config: MarkerClustererConfig): any {
         return new MarkerClusterer(this.map, [], {
-            minimumClusterSize: config.clusterMinSize,
             maxZoom: config.clusterMaxZoom,
+            minimumClusterSize: config.clusterMinSize,
             zoomOnClick: config.clusterZoomOnClick
         });
     }
@@ -276,23 +276,23 @@ export default class GoogleMarkers {
 
     private moveTransitionMarker(position: any, marker: any) {
         const numDeltas = 5;
-        const referencia = {
-            position: [marker.getPosition().lat(), marker.getPosition().lng()],
-            i: 0,
+        const reference = {
             deltaLat: (position.lat - marker.getPosition().lat()) / numDeltas,
-            deltaLng: (position.lng - marker.getPosition().lng()) / numDeltas
+            deltaLng: (position.lng - marker.getPosition().lng()) / numDeltas,
+            i: 0,
+            position: [marker.getPosition().lat(), marker.getPosition().lng()],
         };
 
-        this.moveMarker(marker, referencia, numDeltas);
+        this.moveMarker(marker, reference, numDeltas);
     }
 
-    private moveMarker(marker: any, referencia: any, numDeltas: number) {
-        referencia.position[0] += referencia.deltaLat;
-        referencia.position[1] += referencia.deltaLng;
-        marker.setPosition(new google.maps.LatLng(referencia.position[0], referencia.position[1]));
-        if (referencia.i <= numDeltas) {
-            referencia.i++;
-            setTimeout(() => this.moveMarker(marker, referencia, numDeltas), 20);
+    private moveMarker(marker: any, reference: any, numDeltas: number) {
+        reference.position[0] += reference.deltaLat;
+        reference.position[1] += reference.deltaLng;
+        marker.setPosition(new google.maps.LatLng(reference.position[0], reference.position[1]));
+        if (reference.i <= numDeltas) {
+            reference.i++;
+            setTimeout(() => this.moveMarker(marker, reference, numDeltas), 20);
         }
     }
 }

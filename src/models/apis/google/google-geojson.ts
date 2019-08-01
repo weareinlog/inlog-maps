@@ -1,5 +1,5 @@
-import GeoJsonOptions from "../../features/geojson/geojson-options";
-import EventReturn from "../../features/events/event-return";
+import EventReturn from '../../features/events/event-return';
+import GeoJsonOptions from '../../features/geojson/geojson-options';
 
 export default class GoogleGeoJson {
     private map = null;

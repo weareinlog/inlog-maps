@@ -1,5 +1,5 @@
-import OverlayOptions from "../../features/overlay/overlay-options";
-import GooglePolygons from "./google-polygons";
+import OverlayOptions from '../../features/overlay/overlay-options';
+import GooglePolygons from './google-polygons';
 
 export default class GoogleOverlays {
     private map = null;
@@ -14,23 +14,23 @@ export default class GoogleOverlays {
 
         OverlayGoogle.prototype = new this.google.maps.OverlayView();
 
-        function OverlayGoogle(bounds, div, map) {
+        function OverlayGoogle(bounds: any, div: any) {
             this.bounds_ = bounds;
             this.div_ = div;
             this.setMap(map);
         }
 
-        OverlayGoogle.prototype.onAdd = function () {
+        OverlayGoogle.prototype.onAdd = function() {
             const panes = this.getPanes();
             panes.overlayLayer.appendChild(this.div_);
             panes.overlayMouseTarget.appendChild(this.div_);
 
-            google.maps.event.addDomListener(this.div_, 'click', function () {
+            google.maps.event.addDomListener(this.div_, 'click', function() {
                 google.maps.event.trigger(this.div_, 'click');
             });
         };
 
-        OverlayGoogle.prototype.draw = function () {
+        OverlayGoogle.prototype.draw = function() {
             const overlayProjection = this.getProjection();
             const center = overlayProjection.fromLatLngToDivPixel(this.bounds_.getCenter());
             const div = this.div_;
@@ -39,7 +39,7 @@ export default class GoogleOverlays {
             div.style.top = center.y + 'px';
         };
 
-        OverlayGoogle.prototype.onRemove = function () {
+        OverlayGoogle.prototype.onRemove = function() {
             this.div_.parentNode.removeChild(this.div_);
         };
 

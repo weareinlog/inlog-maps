@@ -1,7 +1,7 @@
-import CircleOptions from "../../features/circle/circle-options";
-import EventReturn from "../../features/events/event-return";
-import CircleAlterOptions from "../../features/circle/circle-alter-options";
-import { CircleEventType } from "../../dto/event-type";
+import { CircleEventType } from '../../dto/event-type';
+import CircleAlterOptions from '../../features/circle/circle-alter-options';
+import CircleOptions from '../../features/circle/circle-options';
+import EventReturn from '../../features/events/event-return';
 
 export default class GoogleCircles {
     private map = null;
@@ -24,12 +24,12 @@ export default class GoogleCircles {
             editable: options.editable,
             fillColor: options.fillColor,
             fillOpacity: options.fillOpacity,
+            object: options.object,
             radius: options.radius,
             strokeColor: options.color,
             strokeOpacity: options.opacity,
             strokeWeight: options.weight,
-            suppressUndo: true,
-            object: options.object
+            suppressUndo: true
         };
 
         const circle = new this.google.maps.Circle(newOptions);
@@ -64,9 +64,9 @@ export default class GoogleCircles {
 
             const newOptions = {
                 center: latlng,
-                radius: options.radius ? options.radius : circle.radius,
                 fillColor: options.fillColor ? options.fillColor : circle.fillColor,
                 fillOpacity: options.fillOpacity ? options.fillOpacity : circle.fillOpacity,
+                radius: options.radius ? options.radius : circle.radius,
                 strokeColor: options.color ? options.color : circle.strokeColor,
                 strokeOpacity: options.opacity ? options.opacity : circle.strokeOpacity,
                 strokeWeight: options.weight ? options.weight : circle.strokeWeight

@@ -1,9 +1,9 @@
-import PolylineOptions from "../../features/polyline/polyline-options";
-import { PolylineType } from "../../dto/polyline-type";
-import EventReturn from "../../features/events/event-return";
-import { PolylineEventType } from "../../dto/event-type";
-import NavigationOptions from "../../features/polyline/navigations-options";
-import GooglePopups from "./google-popup";
+import { PolylineEventType } from '../../dto/event-type';
+import { PolylineType } from '../../dto/polyline-type';
+import EventReturn from '../../features/events/event-return';
+import NavigationOptions from '../../features/polyline/navigations-options';
+import PolylineOptions from '../../features/polyline/polyline-options';
+import GooglePopups from './google-popup';
 
 export default class GooglePolylines {
     private map = null;
@@ -30,14 +30,14 @@ export default class GooglePolylines {
         const newOptions = {
             draggable: options.draggable,
             editable: options.editable,
+            icons: null,
             infowindows: options.infowindows,
             object: options.object,
             path: null,
             strokeColor: options.color,
+            strokeOpacity: options.opacity || 1,
             strokeWeight: options.weight,
             suppressUndo: true,
-            icons: null,
-            strokeOpacity: options.opacity || 1,
             zIndex: options.zIndex
         };
 
@@ -50,8 +50,8 @@ export default class GooglePolylines {
                     newOptions.icons = [{
                         icon: {
                             path: 'M 0,-1 0,1',
-                            strokeOpacity: 1,
-                            scale: 2
+                            scale: 2,
+                            strokeOpacity: 1
                         },
                         offset: '0',
                         repeat: '10px'
@@ -60,15 +60,15 @@ export default class GooglePolylines {
                 case PolylineType.Arrow:
                     newOptions.icons = [{
                         icon: {
-                            size: new google.maps.Size(20, 20),
+                            path: google.maps.SymbolPath.FORWARD_OPEN_ARROW,
                             scaledSize: new google.maps.Size(20, 20),
-                            path: google.maps.SymbolPath.FORWARD_OPEN_ARROW
+                            size: new google.maps.Size(20, 20)
                         },
                         offset: '100%',
                         repeat: '100px'
                     },
                     { icon: { path: google.maps.SymbolPath.FORWARD_OPEN_ARROW }, offset: '0%' },
-                    { icon: { path: google.maps.SymbolPath.FORWARD_OPEN_ARROW }, offset: '100%' }]
+                    { icon: { path: google.maps.SymbolPath.FORWARD_OPEN_ARROW }, offset: '100%' }];
                     break;
                 default:
                     break;
@@ -126,9 +126,9 @@ export default class GooglePolylines {
                 infowindows: options.infowindows ? options.infowindows : polyline.infowindows,
                 object: options.object ? options.object : polyline.object,
                 strokeColor: options.color ? options.color : polyline.strokeColor,
-                strokeWeight: options.weight ? options.weight : polyline.strokeWeight,
                 strokeOpacity: options.opacity ? options.opacity : polyline.strokeOpacity,
-                zIndex: options.zIndex ? options.zIndex : polyline.zIndex,
+                strokeWeight: options.weight ? options.weight : polyline.strokeWeight,
+                zIndex: options.zIndex ? options.zIndex : polyline.zIndex
             };
 
             if (options.path) {
@@ -143,8 +143,8 @@ export default class GooglePolylines {
                     newOptions.icons = [{
                         icon: {
                             path: 'M 0,-1 0,1',
-                            strokeOpacity: 1,
-                            scale: 2
+                            scale: 2,
+                            strokeOpacity: 1
                         },
                         offset: '0',
                         repeat: '10px'
@@ -153,15 +153,15 @@ export default class GooglePolylines {
                 case PolylineType.Arrow:
                     newOptions.icons = [{
                         icon: {
-                            size: new google.maps.Size(20, 20),
+                            path: google.maps.SymbolPath.FORWARD_OPEN_ARROW,
                             scaledSize: new google.maps.Size(20, 20),
-                            path: google.maps.SymbolPath.FORWARD_OPEN_ARROW
+                            size: new google.maps.Size(20, 20)
                         },
                         offset: '90%',
                         repeat: '20%'
                     },
                     { icon: { path: google.maps.SymbolPath.FORWARD_OPEN_ARROW }, offset: '0%' },
-                    { icon: { path: google.maps.SymbolPath.FORWARD_OPEN_ARROW }, offset: '100%' }]
+                    { icon: { path: google.maps.SymbolPath.FORWARD_OPEN_ARROW }, offset: '100%' }];
                     break;
                 default:
                     newOptions.icons = null;
@@ -294,13 +294,12 @@ export default class GooglePolylines {
 
         if (self.selectedPath) {
             switch (event.which ? event.which : event.keyCode) {
-                // seta para cima ou seta para direita ou W ou D
-                case 38:
-                case 39:
+                case 38: case 39:
+                    // up arrow or right arrow
                     self.moveForwards(event.shiftKey);
-                    break; // seta para esquerda ou seta para baixo ou S ou A
-                case 37:
-                case 40:
+                    break;
+                case 37: case 40:
+                    // left arrow or down arrow
                     self.moveBackwards(event.shiftKey);
                     break;
             }
@@ -368,14 +367,14 @@ export default class GooglePolylines {
             this.updateSelectedPathListeners();
         } else {
             const newOptions: any = {
+                editable: options.editable,
                 keyboardShortcuts: false,
                 map: this.map,
                 path: pathSelected,
                 strokeColor: options && options.color || '#FF0000',
                 strokeOpacity: options && options.opacity || 1,
                 strokeWeight: options && options.weight || 10,
-                zIndex: 9999,
-                editable: options.editable
+                zIndex: 9999
             };
 
             if (options.style !== null) {
@@ -387,8 +386,8 @@ export default class GooglePolylines {
                         newOptions.icons = [{
                             icon: {
                                 path: 'M 0,-1 0,1',
-                                strokeOpacity: 1,
-                                scale: 2
+                                scale: 2,
+                                strokeOpacity: 1
                             },
                             offset: '0',
                             repeat: '10px'
@@ -397,15 +396,16 @@ export default class GooglePolylines {
                     case PolylineType.Arrow:
                         newOptions.icons = [{
                             icon: {
-                                scale: 4,
-                                strokeWeight: 5,
-                                fillOpacity: 0.7,
-                                strokeColor: "#000",
-                                fillColor: "#000",
                                 anchor: new google.maps.Point(0, 2),
-                                path: google.maps.SymbolPath.FORWARD_OPEN_ARROW
-                            }, offset: '100%'
-                        }]
+                                fillColor: '#000',
+                                fillOpacity: 0.7,
+                                path: google.maps.SymbolPath.FORWARD_OPEN_ARROW,
+                                scale: 4,
+                                strokeColor: '#000',
+                                strokeWeight: 5,
+                            },
+                            offset: '100%'
+                        }];
                         break;
                     default:
                         break;
@@ -462,12 +462,14 @@ export default class GooglePolylines {
 
         if (this.selectedPath.insertAtListener) {
             this.google.maps.event.clearListeners(this.selectedPath.getPath(), 'insert_at');
-            this.google.maps.event.addListener(this.selectedPath.getPath(), 'insert_at', this.selectedPath.insertAtListener);
+            this.google.maps.event.addListener(this.selectedPath.getPath(), 'insert_at',
+                this.selectedPath.insertAtListener);
         }
 
         if (this.selectedPath.removeAtListener) {
             this.google.maps.event.clearListeners(this.selectedPath.getPath(), 'remove_at');
-            this.google.maps.event.addListener(this.selectedPath.getPath(), 'remove_at', this.selectedPath.removeAtListener);
+            this.google.maps.event.addListener(this.selectedPath.getPath(), 'remove_at',
+                this.selectedPath.removeAtListener);
         }
     }
 
@@ -529,14 +531,14 @@ export default class GooglePolylines {
             incIntersect = -1;
         }
 
-        // A interseção ocorre fora do segmento de reta, 'antes' do pt1.
+        // The intersection occurs outside the line segment, 'before' pt1.
         if (incIntersect < 0) {
             return self.kmTo(pt, pt1);
         } else if (incIntersect > 1) {
             return self.kmTo(pt, pt2);
         }
 
-        // Cálculo do ponto de interseção.
+        // Intersection point calculation.
         const intersect = new this.google.maps
             .LatLng(pt1.lat() + incIntersect * deltaY, pt1.lng() + incIntersect * deltaX);
 

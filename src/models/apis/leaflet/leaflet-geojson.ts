@@ -1,5 +1,5 @@
-import GeoJsonOptions from "../../features/geojson/geojson-options";
-import EventReturn from "../../features/events/event-return";
+import EventReturn from '../../features/events/event-return';
+import GeoJsonOptions from '../../features/geojson/geojson-options';
 
 export default class LeafletGeoJson {
     private map = null;
@@ -69,7 +69,7 @@ export default class LeafletGeoJson {
                 parsedCoordinates = geometry.coordinates.map((elem) => elem.reverse());
                 return new this.leaflet.Polyline(parsedCoordinates, objectOptions);
             default:
-                throw new Error('Forma de objeto desconhecida.');
+                throw new Error('Unknown object shape.');
         }
     }
 }

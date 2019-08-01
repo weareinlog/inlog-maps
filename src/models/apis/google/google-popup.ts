@@ -1,4 +1,4 @@
-import PopupOptions from "../../features/popup/popup-options";
+import PopupOptions from '../../features/popup/popup-options';
 
 export default class GooglePopups {
     private map = null;

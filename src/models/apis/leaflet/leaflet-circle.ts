@@ -1,7 +1,7 @@
-import CircleOptions from "../../features/circle/circle-options";
-import EventReturn from "../../features/events/event-return";
-import CircleAlterOptions from "../../features/circle/circle-alter-options";
-import { CircleEventType } from "../../dto/event-type";
+import { CircleEventType } from '../../dto/event-type';
+import CircleAlterOptions from '../../features/circle/circle-alter-options';
+import CircleOptions from '../../features/circle/circle-options';
+import EventReturn from '../../features/events/event-return';
 
 export default class LeafletCircles {
     private map = null;

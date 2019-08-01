@@ -1,9 +1,9 @@
-import MarkerClustererConfig from "../../features/marker-clusterer/marker-clusterer-config";
-import { MarkerEventType } from "../../dto/event-type";
-import EventReturn from "../../features/events/event-return";
-import MarkerAlterOptions from "../../features/marker/marker-alter-options";
-import CircleMarkerOptions from "../../features/marker/circle-marker-options";
-import MarkerOptions from "../../features/marker/marker-options";
+import { MarkerEventType } from '../../dto/event-type';
+import EventReturn from '../../features/events/event-return';
+import MarkerClustererConfig from '../../features/marker-clusterer/marker-clusterer-config';
+import CircleMarkerOptions from '../../features/marker/circle-marker-options';
+import MarkerAlterOptions from '../../features/marker/marker-alter-options';
+import MarkerOptions from '../../features/marker/marker-options';
 
 export default class LeafletMarkers {
     private map = null;
@@ -208,9 +208,9 @@ export default class LeafletMarkers {
     /* Marker Clusterer */
     public addMarkerClusterer(config: MarkerClustererConfig): any {
         const layer = this.leaflet.markerClusterGroup({
+            maxClusterRadius: 50,
             showCoverageOnHover: false,
-            zoomToBoundsOnClick: config.clusterZoomOnClick,
-            maxClusterRadius: 50
+            zoomToBoundsOnClick: config.clusterZoomOnClick
         });
 
         this.map.addLayer(layer);
@@ -243,23 +243,23 @@ export default class LeafletMarkers {
 
     private moveTransitionMarker(position: any, marker: any) {
         const numDeltas = 5;
-        const referencia = {
-            position: [marker.getLatLng().lat, marker.getLatLng().lng],
-            i: 0,
+        const reference = {
             deltaLat: (position[0] - marker.getLatLng().lat) / numDeltas,
-            deltaLng: (position[1] - marker.getLatLng().lng) / numDeltas
+            deltaLng: (position[1] - marker.getLatLng().lng) / numDeltas,
+            i: 0,
+            position: [marker.getLatLng().lat, marker.getLatLng().lng]
         };
 
-        this.moveMarker(marker, referencia, numDeltas);
+        this.moveMarker(marker, reference, numDeltas);
     }
 
-    private moveMarker(marker: any, referencia: any, numDeltas: number) {
-        referencia.position[0] += referencia.deltaLat;
-        referencia.position[1] += referencia.deltaLng;
-        marker.setLatLng(referencia.position);
-        if (referencia.i <= numDeltas) {
-            referencia.i++;
-            setTimeout(() => this.moveMarker(marker, referencia, numDeltas), 20);
+    private moveMarker(marker: any, reference: any, numDeltas: number) {
+        reference.position[0] += reference.deltaLat;
+        reference.position[1] += reference.deltaLng;
+        marker.setLatLng(reference.position);
+        if (reference.i <= numDeltas) {
+            reference.i++;
+            setTimeout(() => this.moveMarker(marker, reference, numDeltas), 20);
         }
     }
 }

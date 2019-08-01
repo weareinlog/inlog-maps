@@ -1,9 +1,9 @@
-import PolylineOptions from "../../features/polyline/polyline-options";
-import EventReturn from "../../features/events/event-return";
-import { PolylineType } from "../../dto/polyline-type";
-import { PolylineEventType } from "../../dto/event-type";
-import NavigationOptions from "../../features/polyline/navigations-options";
-import LeafletPopup from "./leaflet-popup";
+import { PolylineEventType } from '../../dto/event-type';
+import { PolylineType } from '../../dto/polyline-type';
+import EventReturn from '../../features/events/event-return';
+import NavigationOptions from '../../features/polyline/navigations-options';
+import PolylineOptions from '../../features/polyline/polyline-options';
+import LeafletPopup from './leaflet-popup';
 
 export default class LeafletPolylines {
     private map = null;
@@ -29,13 +29,13 @@ export default class LeafletPolylines {
         const self = this;
         const newOptions = {
             color: options.color || '#000000',
+            dashArray: null,
             draggable: options.draggable,
             editable: options.editable,
             infowindows: options.infowindows,
-            weight: options.weight || 3,
             opacity: options.opacity || 1,
-            zIndex: options.zIndex,
-            dashArray: null
+            weight: options.weight || 3,
+            zIndex: options.zIndex
         };
 
         if (options.style !== null) {
@@ -122,8 +122,8 @@ export default class LeafletPolylines {
             const style: any = {
                 color: options.color ? options.color : polyline.options.color,
                 draggable: options.draggable ? options.draggable : polyline.options.draggable,
-                weight: options.weight ? options.weight : polyline.options.weight,
                 opacity: options.opacity ? options.opacity : polyline.options.opacity,
+                weight: options.weight ? options.weight : polyline.options.weight,
                 zIndex: options.zIndex ? options.zIndex : polyline.options.zIndex
             };
 
@@ -312,13 +312,12 @@ export default class LeafletPolylines {
             }
 
             switch (event.which ? event.which : event.keyCode) {
-                // seta para cima ou seta para direita ou W ou D
-                case 38:
-                case 39:
+                case 38: case 39:
+                    // up arrow or right arrow
                     self.moveFowards(event.shiftKey);
-                    break; // seta para esquerda ou seta para baixo ou S ou A
-                case 37:
-                case 40:
+                    break;
+                case 37: case 40:
+                    // left arrow or down arrow
                     self.moveBackwards(event.shiftKey);
                     break;
             }
@@ -376,7 +375,8 @@ export default class LeafletPolylines {
 
     private moveSelectedPath(polyline: any, options: NavigationOptions) {
         const self = this;
-        const pathSelected = polyline.getLatLngs().map((x: any) => [x.lat, x.lng]).slice(polyline.initialIdx, polyline.finalIdx + 1);
+        const pathSelected = polyline.getLatLngs().map((x: any) => [x.lat, x.lng])
+            .slice(polyline.initialIdx, polyline.finalIdx + 1);
 
         if (self.selectedPath) {
             self.selectedPath.setLatLngs(pathSelected);
@@ -496,14 +496,14 @@ export default class LeafletPolylines {
             incIntersect = -1;
         }
 
-        // A interseção ocorre fora do segmento de reta, "antes" do pt1.
+        // The intersection occurs outside the line segment, 'before' pt1.
         if (incIntersect < 0) {
             return self.kmTo(pt, pt1);
         } else if (incIntersect > 1) {
             return self.kmTo(pt, pt2);
         }
 
-        // Cálculo do ponto de interseção.
+        // Intersection point calculation.
         const intersect = new this.leaflet.LatLng(pt1.lat + incIntersect * deltaY, pt1.lng + incIntersect * deltaX);
 
         return self.kmTo(pt, intersect);

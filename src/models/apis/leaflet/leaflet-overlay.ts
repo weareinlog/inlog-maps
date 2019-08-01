@@ -1,5 +1,5 @@
-import OverlayOptions from "../../features/overlay/overlay-options";
-import LeafletPolygons from "./leaflet-polygons";
+import OverlayOptions from '../../features/overlay/overlay-options';
+import LeafletPolygons from './leaflet-polygons';
 
 export default class LeafletOverlay {
     private map = null;
