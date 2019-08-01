@@ -68,10 +68,13 @@ export default interface IMapFunctions {
     fitBoundsPolylines(polylines: any): void;
     isPolylineOnMap(polyline: any): boolean;
     addPolylinePath(polylines: any, position: number[]): void;
+    getPolylinePath(polyline: any): number[];
     removePolylineHighlight(): void;
     addPolylineEvent(polyline: any, event: PolylineEventType, eventFunction: any): any;
     removePolylineEvent(polyline: any, event: PolylineEventType): void;
     setIndexPolylineHighlight(polyline: any, index: number): void;
+    getObjectPolyline(polyline: any): object;
+    addPolylineHighlightEvent(event: PolylineEventType, eventFunction: any): void;
 
     /* Info Windows */
     drawPopup(options: PopupOptions, marker?: any): any;

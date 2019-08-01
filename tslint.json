@@ -5,9 +5,20 @@
     ],
     "jsRules": {},
     "rules": {
-        "quotemark": [true, "single"],
-        "align": [true, "statements", "members", "elements"],
-        "trailing-comma": false
+        "quotemark": [
+            true,
+            "single"
+        ],
+        "align": [
+            true,
+            "statements",
+            "members"
+        ],
+        "trailing-comma": false,
+        "no-console": [
+            true,
+            "warning"
+        ]
     },
     "rulesDirectory": []
 }

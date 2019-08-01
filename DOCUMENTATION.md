@@ -1,4 +1,4 @@
-# [@inlog/inlog-maps](https://github.com/weareinlog/inlog-maps#readme) *4.2.7*
+# [@inlog/inlog-maps](https://github.com/weareinlog/inlog-maps#readme) *4.3.0*
 
 > A library for using generic layer maps 
 
@@ -1089,6 +1089,30 @@ Use this function to add more paths to a polyline
 
 
 
+#### Map.getPolylinePath(type, condition) 
+
+Use this function to get the path of some polyline
+
+
+
+
+##### Parameters
+
+| Name | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| type | `string`  |  | &nbsp; |
+| condition | `any`  |  | &nbsp; |
+
+
+
+
+##### Returns
+
+
+- `Array.&lt;number&gt;`  
+
+
+
 #### Map.removePolylineHighlight() 
 
 Use this function to clear polyline selected from the currentMap
@@ -1170,6 +1194,54 @@ Use this function to set position of polyline highlight
 | type | `string`  |  | &nbsp; |
 | initialIndex | `number`  |  | &nbsp; |
 | condition | `any`  | [nullable] | &nbsp; |
+
+
+
+
+##### Returns
+
+
+- `Void`
+
+
+
+#### Map.getObjectPolyline(type, condition) 
+
+
+
+
+
+
+##### Parameters
+
+| Name | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| type | `string`  |  | &nbsp; |
+| condition | `any`  |  | &nbsp; |
+
+
+
+
+##### Returns
+
+
+- `object`  
+
+
+
+#### Map.addPolylineHighlightEvent(event, eventFunction) 
+
+Use this function to add events on polyline highligth / selected polyline
+
+
+
+
+##### Parameters
+
+| Name | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| event | `InlogMaps.PolylineEventType`  |  | &nbsp; |
+| eventFunction | `any`  |  | &nbsp; |
 
 
 
