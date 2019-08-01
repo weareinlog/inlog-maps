@@ -1,9 +1,10 @@
 import { MapsApiLoaderService } from '../../utils/maps-api-loader.service';
-import { MarkerEventType, CircleEventType, PolygonEventType, PolylineEventType, MapEventType } from '../dto/event-type';
+import { CircleEventType, MapEventType, MarkerEventType, PolygonEventType, PolylineEventType } from '../dto/event-type';
 import { MapType } from '../dto/map-type';
 import CircleAlterOptions from '../features/circle/circle-alter-options';
 import CircleOptions from '../features/circle/circle-options';
 import GeoJsonOptions from '../features/geojson/geojson-options';
+import MarkerClustererConfig from '../features/marker-clusterer/marker-clusterer-config';
 import CircleMarkerOptions from '../features/marker/circle-marker-options';
 import MarkerAlterOptions from '../features/marker/marker-alter-options';
 import MarkerOptions from '../features/marker/marker-options';
@@ -12,16 +13,15 @@ import PolygonAlterOptions from '../features/polygons/polygon-alter-options';
 import PolygonOptions from '../features/polygons/polygon-options';
 import PolylineOptions from '../features/polyline/polyline-options';
 import PopupOptions from '../features/popup/popup-options';
-import IMapFunctions from './mapFunctions';
-import MarkerClustererConfig from '../features/marker-clusterer/marker-clusterer-config';
-import GoogleMarkers from './google/google-markers';
-import GooglePolygons from './google/google-polygons';
 import GoogleCircles from './google/google-circles';
+import GoogleGeoJson from './google/google-geojson';
+import GoogleMap from './google/google-map';
+import GoogleMarkers from './google/google-markers';
+import GoogleOverlays from './google/google-overlay';
+import GooglePolygons from './google/google-polygons';
 import GooglePolylines from './google/google-polylines';
 import GooglePopups from './google/google-popup';
-import GoogleMap from './google/google-map';
-import GoogleOverlays from './google/google-overlay';
-import GoogleGeoJson from './google/google-geojson';
+import IMapFunctions from './mapFunctions';
 
 export default class GoogleMaps implements IMapFunctions {
     private googleMarkers: GoogleMarkers;
@@ -35,7 +35,7 @@ export default class GoogleMaps implements IMapFunctions {
 
     private mapsApiLoader: MapsApiLoaderService = new MapsApiLoaderService();
 
-    constructor() { }
+    constructor() { /* */ }
 
     public async initialize(mapType: MapType, params: any, elementId: string): Promise<any> {
         try {
@@ -68,6 +68,39 @@ export default class GoogleMaps implements IMapFunctions {
                 }
             }
 
+            const imageMapTypes = [];
+            if (params.mapTiles) {
+                const ids = [google.maps.MapTypeId.ROADMAP, google.maps.MapTypeId.SATELLITE];
+
+                params.mapTiles.forEach((tile: any) => {
+                    ids.push(tile.name);
+
+                    const mapTypeOptions = {
+                        getTileUrl: (coord: any, zoom: any) =>
+                            `https://tile.openstreetmap.org/${zoom}/${coord.x}/${coord.y}.png`,
+                        isPng: true,
+                        maxZoom: 19,
+                        minZoom: 0,
+                        name: 'OpenStreetMap',
+                        tileSize: new google.maps.Size(256, 256),
+                    };
+
+                    for (const key in tile) {
+                        if (tile.hasOwnProperty(key)) {
+                            mapTypeOptions[key] = tile[key];
+                        }
+                    }
+
+                    const imageMapType = new google.maps.ImageMapType(mapTypeOptions);
+                    imageMapTypes.push({ id: tile.name, tile: imageMapType });
+                });
+
+                options.mapTypeControlOptions = {
+                    mapTypeIds: ids,
+                    style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR
+                };
+            }
+
             const map = new google.maps.Map(document.getElementById(elementId), options);
             this.googleMarkers = new GoogleMarkers(map, google);
             this.googlePolygons = new GooglePolygons(map, google);
@@ -77,9 +110,15 @@ export default class GoogleMaps implements IMapFunctions {
             this.googleMap = new GoogleMap(map, google);
             this.googleOverlays = new GoogleOverlays(map, google, this.googlePolygons);
             this.googleGeoJson = new GoogleGeoJson(map, google);
+
+            if (imageMapTypes && imageMapTypes.length) {
+                imageMapTypes.forEach((image: any) => {
+                    map.mapTypes.set(image.id, image.tile);
+                });
+            }
+
             return this;
-        }
-        catch (err) {
+        } catch (err) {
             return err;
         }
     }
@@ -317,7 +356,7 @@ export default class GoogleMaps implements IMapFunctions {
     }
 
     public setZoom(zoom: number): void {
-        this.googleMap.setZoom(zoom)
+        this.googleMap.setZoom(zoom);
     }
 
     public getCenter(): number[] {

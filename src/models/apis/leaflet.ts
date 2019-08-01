@@ -1,10 +1,11 @@
 import { OverlayOptions } from '../..';
 import { MapsApiLoaderService } from '../../utils/maps-api-loader.service';
-import { MapEventType, MarkerEventType, CircleEventType, PolygonEventType, PolylineEventType } from '../dto/event-type';
+import { CircleEventType, MapEventType, MarkerEventType, PolygonEventType, PolylineEventType } from '../dto/event-type';
 import { MapType } from '../dto/map-type';
 import CircleAlterOptions from '../features/circle/circle-alter-options';
 import CircleOptions from '../features/circle/circle-options';
 import GeoJsonOptions from '../features/geojson/geojson-options';
+import MarkerClustererConfig from '../features/marker-clusterer/marker-clusterer-config';
 import CircleMarkerOptions from '../features/marker/circle-marker-options';
 import MarkerAlterOptions from '../features/marker/marker-alter-options';
 import MarkerOptions from '../features/marker/marker-options';
@@ -12,16 +13,15 @@ import PolygonAlterOptions from '../features/polygons/polygon-alter-options';
 import PolygonOptions from '../features/polygons/polygon-options';
 import PolylineOptions from '../features/polyline/polyline-options';
 import PopupOptions from '../features/popup/popup-options';
-import IMapFunctions from './mapFunctions';
-import MarkerClustererConfig from '../features/marker-clusterer/marker-clusterer-config';
-import LeafletMarkers from './leaflet/leaflet-markers';
-import LeafletPolygons from './leaflet/leaflet-polygons';
 import LeafletCircles from './leaflet/leaflet-circle';
+import LeafletGeoJson from './leaflet/leaflet-geojson';
+import LeafletMap from './leaflet/leaflet-map';
+import LeafletMarkers from './leaflet/leaflet-markers';
+import LeafletOverlays from './leaflet/leaflet-overlay';
+import LeafletPolygons from './leaflet/leaflet-polygons';
 import LeafletPolylines from './leaflet/leaflet-polylines';
 import LeafletPopups from './leaflet/leaflet-popup';
-import LeafletMap from './leaflet/leaflet-map';
-import LeafletOverlays from './leaflet/leaflet-overlay';
-import LeafletGeoJson from './leaflet/leaflet-geojson';
+import IMapFunctions from './mapFunctions';
 
 export default class Leaflet implements IMapFunctions {
     private leafletMarkers: LeafletMarkers;
@@ -46,11 +46,12 @@ export default class Leaflet implements IMapFunctions {
 
             const mapOptions: any = {
                 center: new leaflet.LatLng(-14, -54),
+                editable: true,
                 keyboard: false,
-                maxZoom: 19,
+                maxZoom: params.wikimedia ? 18 : 19,
                 minZoom: 4,
                 zoom: 4,
-                editable: true
+                zoomControl: false
             };
 
             if (params.gestureHandling) {
@@ -58,9 +59,35 @@ export default class Leaflet implements IMapFunctions {
             }
 
             await this.mapTimeout(200);
+            const osm = new leaflet.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', mapOptions);
+            const wikimedia = new leaflet.tileLayer('https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}{r}.png', {
+                attribution: '<a href="https://wikimediafoundation.org/wiki/Maps_Terms_of_Use">Wikimedia</a>'
+            });
+
+            const satelliteURL = 'https://server.arcgisonline.com/ArcGIS/rest/services/' +
+                'World_Imagery/MapServer/tile/{z}/{y}/{x}';
+            const satellite = L.tileLayer(satelliteURL, {
+                attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye,' +
+                    ' Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
+                maxZoom: 18
+            });
+            mapOptions.layers = [params.wikimedia ? wikimedia : osm];
+
             const map = new leaflet.Map(elementId, mapOptions);
-            new leaflet.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', mapOptions)
-                .addTo(map);
+            const baseLayers = {
+                Map: params.wikimedia ? wikimedia : osm,
+                Satellite: satellite
+            };
+
+            if (params.mapTiles && params.mapTiles.length) {
+                params.mapTiles.forEach((tile: any) => {
+                    const layer = new leaflet.tileLayer(tile.url, tile.options);
+                    baseLayers[tile.name] = layer;
+                });
+            }
+
+            leaflet.control.layers(baseLayers, null, { position: 'topleft' }).addTo(map);
+            leaflet.control.zoom({ position: 'bottomright' }).addTo(map);
 
             this.leafletMarkers = new LeafletMarkers(map, leaflet);
             this.leafletPolygons = new LeafletPolygons(map, leaflet);
