@@ -16,6 +16,7 @@ const leafletLibParams = {
     cssDependencies: [
         '../node_modules/leaflet-gesture-handling/dist/leaflet-gesture-handling.css'
     ],
+    wikimedia: true
     // gestureHandling: true
 };
 
