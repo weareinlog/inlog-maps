@@ -321,6 +321,10 @@ export default class GoogleMaps implements IMapFunctions {
         this.googlePolylines.addPolylineHighlightEvent(eventType, eventFunction);
     }
 
+    public getPolylineHighlightIndex(): number[] {
+        return this.googlePolylines.getPolylineHighlightIndex();
+    }
+
     /* Info Windows */
     public drawPopup(options: PopupOptions, marker?: any): any {
         return this.googlePopups.drawPopup(options, marker);

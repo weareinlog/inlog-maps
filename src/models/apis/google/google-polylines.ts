@@ -264,6 +264,11 @@ export default class GooglePolylines {
         }
     }
 
+    public getPolylineHighlightIndex() {
+        return [this.selectedPath.initialIdx, this.selectedPath.finalIdx];
+    }
+
+    /* Private methods */
     private addNavigation(polyline: any) {
         const self = this;
 

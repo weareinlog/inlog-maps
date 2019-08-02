@@ -302,6 +302,10 @@ export default class Leaflet implements IMapFunctions {
         this.leafletPolylines.addPolylineHighlightEvent(eventType, eventFunction);
     }
 
+    public getPolylineHighlightIndex(): number[] {
+        return this.leafletPolylines.getPolylineHighlightIndex();
+    }
+
     /* Popups */
     public drawPopup(options: PopupOptions, marker?: any): any {
         return this.leafletPopups.drawPopup(options, marker);

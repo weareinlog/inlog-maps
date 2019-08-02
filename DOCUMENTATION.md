@@ -1,4 +1,4 @@
-# [@inlog/inlog-maps](https://github.com/weareinlog/inlog-maps#readme) *4.4.0*
+# [@inlog/inlog-maps](https://github.com/weareinlog/inlog-maps#readme) *4.5.0*
 
 > A library for using generic layer maps 
 
@@ -1231,7 +1231,7 @@ Use this function to set position of polyline highlight
 
 #### Map.addPolylineHighlightEvent(event, eventFunction) 
 
-Use this function to add events on polyline highligth / selected polyline
+Use this function to add events on polyline highligtht / selected polyline
 
 
 
@@ -1250,6 +1250,22 @@ Use this function to add events on polyline highligth / selected polyline
 
 
 - `Void`
+
+
+
+#### Map.getPolylineHighlightIndex() 
+
+Use this function to get initial and final index of the polyline highlight
+
+
+
+
+
+
+##### Returns
+
+
+- `Array.&lt;number&gt;`  returns an array with initial index and final index
 
 
 
