@@ -281,6 +281,11 @@ export default class LeafletPolylines {
         }
     }
 
+    public getPolylineHighlightIndex() {
+        return [this.selectedPath.initialIdx, this.selectedPath.finalIdx];
+    }
+
+    /* Private methods */
     private addNavigation(polyline: any) {
         polyline.clearAllEventListeners();
         polyline.on('click', this.onClickPolyline.bind(this, polyline));

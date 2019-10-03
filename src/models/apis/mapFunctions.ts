@@ -75,6 +75,7 @@ export default interface IMapFunctions {
     setIndexPolylineHighlight(polyline: any, index: number): void;
     getObjectPolyline(polyline: any): object;
     addPolylineHighlightEvent(event: PolylineEventType, eventFunction: any): void;
+    getPolylineHighlightIndex(): number[];
 
     /* Info Windows */
     drawPopup(options: PopupOptions, marker?: any): any;

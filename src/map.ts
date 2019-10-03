@@ -769,12 +769,20 @@ export default class Map {
     }
 
     /**
-     * Use this function to add events on polyline highligth / selected polyline
+     * Use this function to add events on polyline highligtht / selected polyline
      * @param {InlogMaps.PolylineEventType} event
      * @param {any} eventFunction
      */
     public addPolylineHighlightEvent(event: PolylineEventType, eventFunction: any) {
         this.map.addPolylineHighlightEvent(event, eventFunction);
+    }
+
+    /**
+     * Use this function to get initial and final index of the polyline highlight
+     * @returns {number[]} returns an array with initial index and final index
+     */
+    public getPolylineHighlightIndex(): number[] {
+        return this.map.getPolylineHighlightIndex();
     }
 
     /* Info Windows */
