@@ -6,6 +6,7 @@ export class MapsApiLoaderService {
         const script = document.createElement('script');
 
         script.type = 'text/javascript';
+        script.setAttribute('data-google-inlogmaps', 'true');
 
         script.src = urlBuilder({
             apiKey: params.apiKey,
@@ -16,7 +17,9 @@ export class MapsApiLoaderService {
             libraries: params.libraries || []
         });
 
-        document.querySelector('head').appendChild(script);
+        var has_script = document.querySelector('script').hasAttribute('data-google-inlogmaps');
+
+        if (!has_script) document.querySelector('head').appendChild(script);
     }
 
     public static loadLeafletAPI(params) {
