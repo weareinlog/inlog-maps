@@ -331,7 +331,7 @@ export default class GoogleMaps implements IMapFunctions {
     }
 
     public alterPopup(popup: any, options: PopupOptions, marker?: any): any {
-        return this.googlePopups.alterPopup(popup, options);
+        return this.googlePopups.alterPopup(popup, options, marker);
     }
 
     public alterPopupContent(popup: any, options: PopupOptions, marker?: any): void {
