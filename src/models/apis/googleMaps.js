@@ -320,9 +320,9 @@ var GoogleMaps = /** @class */ (function () {
         var self = this;
         polyline.setMap(show ? self.map : null);
     };
-    GoogleMaps.prototype.drawPolylineWithNavigation = function (options) {
+    GoogleMaps.prototype.drawPolylineWithNavigation = function (options, eventClick) {
         var self = this;
-        var polyline = self.drawPolyline(options, null);
+        var polyline = self.drawPolyline(options, eventClick);
         self.addNavigation(polyline, options.navigateOptions);
         return polyline;
     };

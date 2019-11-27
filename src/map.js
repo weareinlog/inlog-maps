@@ -191,8 +191,8 @@ var Map = /** @class */ (function () {
      * @param {string} type
      * @param {inlogMaps.PolylineOptions} options
      */
-    Map.prototype.drawPolylineWithNavigation = function (type, options) {
-        var polyline = this.map.drawPolylineWithNavigation(options);
+    Map.prototype.drawPolylineWithNavigation = function (type, options, eventClick) {
+        var polyline = this.map.drawPolylineWithNavigation(options, eventClick);
         this.polylinesList[type] = polyline;
     };
     /**

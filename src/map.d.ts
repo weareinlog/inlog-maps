@@ -115,8 +115,9 @@ export default class Map {
      * Use this function to draw polylines with navigation on the currentMap
      * @param {string} type
      * @param {inlogMaps.PolylineOptions} options
+     * @param {any} eventClick
      */
-    drawPolylineWithNavigation(type: string, options: PolylineOptions): void;
+    drawPolylineWithNavigation(type: string, options: PolylineOptions, eventClick?: any): void;
     /**
      * Use this function to add more paths to a polyline
      * @param {string} type
