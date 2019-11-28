@@ -23,7 +23,7 @@ export default interface IMapFunctions {
     alterPolygonOptions(polygons: any[], options: PolygonAlterOptions): any;
     drawPolyline(options: PolylineOptions, eventClick: any): any;
     togglePolyline(polyline: any, show: boolean): any;
-    drawPolylineWithNavigation(options: PolylineOptions): any;
+    drawPolylineWithNavigation(options: PolylineOptions, eventClick: any): any;
     clearListenersPolyline(polyline: any): any;
     addPolylinePath(polyline: any, position: number[]): any;
     removePolylineHighlight(): any;

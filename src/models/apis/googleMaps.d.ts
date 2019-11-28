@@ -37,7 +37,7 @@ export default class GoogleMaps implements IMapFunctions {
     alterCircleOptions(circles: any[], options: CircleAlterOptions): void;
     drawPolyline(options: PolylineOptions, eventClick: any): any;
     togglePolyline(polyline: any, show: boolean): void;
-    drawPolylineWithNavigation(options: PolylineOptions): any;
+    drawPolylineWithNavigation(options: PolylineOptions, eventClick: any): any;
     clearListenersPolyline(polyline: any): void;
     addPolylinePath(polyline: any, position: number[]): void;
     removePolylineHighlight(): void;

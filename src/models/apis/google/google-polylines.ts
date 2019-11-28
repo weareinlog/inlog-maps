@@ -105,9 +105,10 @@ export default class GooglePolylines {
     public drawPolylineWithNavigation(options: PolylineOptions, eventClick?: any) {
         const polyline = this.drawPolyline(options, null);
 
+        polyline.navigationHandlerClick = eventClick;
         this.navigationOptions = options.navigateOptions;
         this.addNavigation(polyline);
-        polyline.navigationHandlerClick = eventClick;
+
         return polyline;
     }
 
@@ -290,7 +291,8 @@ export default class GooglePolylines {
         this.google.maps.event.addDomListener(document, 'keyup', this.onKeyUp.bind(this));
 
         if (polyline.navigationHandlerClick) {
-            polyline.navigationHandlerClick();
+          const param = new EventReturn([event.latLng.lat(), event.latLng.lng()]);
+          polyline.navigationHandlerClick(param, polyline.object);
         }
     }
 

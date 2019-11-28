@@ -283,7 +283,7 @@ var Leaflet = /** @class */ (function () {
             self.map.removeLayer(polyline);
         }
     };
-    Leaflet.prototype.drawPolylineWithNavigation = function (options) {
+    Leaflet.prototype.drawPolylineWithNavigation = function (options, eventClick) {
         var polyline = this.drawPolyline(options, null);
         this.addNavigation(polyline, options.navigateOptions);
         return polyline;
