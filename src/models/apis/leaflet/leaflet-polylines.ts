@@ -298,7 +298,6 @@ export default class LeafletPolylines {
         polyline.initialIdx = index;
         polyline.finalIdx = index + 1;
 
-        this.navigateByPoint = this.navigationOptions ? this.navigationOptions.navigateByPoint : true;
         this.moveSelectedPath(polyline, this.navigationOptions);
         this.selectedPolyline = polyline;
 
