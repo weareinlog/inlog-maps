@@ -317,7 +317,7 @@ export default class GooglePolylines {
         const self = this;
         const polyline = self.selectedPolyline;
 
-        if ((!self.navigateByPoint || self.directionForward) &&
+        if ((!this.navigationOptions.navigateByPoint || self.directionForward) &&
             polyline.finalIdx < polyline.getPath().getArray().length - 1) {
             self.navigateForward(multiSelection, polyline);
         }
@@ -344,7 +344,7 @@ export default class GooglePolylines {
         const self = this;
         const polyline = self.selectedPolyline;
 
-        if ((!self.navigateByPoint || !self.directionForward) && polyline.initialIdx > 0) {
+        if ((!this.navigationOptions.navigateByPoint || !self.directionForward) && polyline.initialIdx > 0) {
             self.navigateBackward(multiSelection, polyline);
         }
         self.directionForward = false;
@@ -483,12 +483,11 @@ export default class GooglePolylines {
     private drawPopupNavigation(polyline: any) {
         const self = this;
         let idx = self.directionForward ? polyline.finalIdx : polyline.initialIdx;
-        if (!self.navigateByPoint) {
+        if (!this.navigationOptions.navigateByPoint) {
             idx = polyline.finalIdx > polyline.initialIdx ? polyline.finalIdx : polyline.initialIdx;
         }
 
         const infowindow = polyline.infowindows ? polyline.infowindows[idx] : null;
-
         if (infowindow) {
             const point = polyline.getPath().getArray()[idx];
 
