@@ -98,6 +98,7 @@ export default class LeafletPolylines {
 
         polyline.navigationHandlerClick = eventClick;
         this.navigationOptions = options.navigateOptions;
+        this.navigateByPoint = this.navigationOptions ? this.navigationOptions.navigateByPoint : true;
         this.addNavigation(polyline);
         return polyline;
     }
