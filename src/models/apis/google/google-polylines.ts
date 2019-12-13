@@ -246,6 +246,7 @@ export default class GooglePolylines {
     }
 
     public setIndexPolylineHighlight(polyline: any, index: number) {
+        this.directionForward = false;
         polyline.initialIdx = index;
         polyline.finalIdx = index + 1;
 
