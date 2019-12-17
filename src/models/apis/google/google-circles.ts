@@ -81,7 +81,7 @@ export default class GoogleCircles {
     }
 
     public isCircleOnMap(circle: any): boolean {
-        return circle.map !== null;
+        return !!circle.map;
     }
 
     public getCircleCenter(circle: any): number[] {

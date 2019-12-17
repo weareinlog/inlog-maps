@@ -922,6 +922,24 @@ export default class Map {
         return this.map.pixelsToLatLng(offsetx, offsety);
     }
 
+    /**
+     * Use this functions to fit bounds on elements with same type and condition
+     * @param {string} type
+     * @param {any} condition [nullable]
+     */
+    public fitBoundsElements(type: string, condition?: any): void {
+        const markers = this.getMarkers(type, condition)
+            .filter((marker: any) => this.map.isMarkerOnMap(marker));
+
+        const circles = this.getCircles(type, condition)
+            .filter((circle: any) => this.map.isCircleOnMap(circle));
+
+        const polygons = this.getPolygons(type, condition)
+            .filter((polygon: any) => this.map.isPolygonOnMap(polygon));
+
+        this.map.fitBoundsElements(markers, circles, polygons);
+    }
+
     /* Overlay */
     /**
      * Use this function to dray overlays on the current map

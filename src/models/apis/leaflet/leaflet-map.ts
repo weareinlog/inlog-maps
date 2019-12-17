@@ -72,4 +72,25 @@ export default class LeafletMap {
         const latlng = this.map.unproject(worldCoordinateNewCenter);
         return [latlng.lat, latlng.lng];
     }
+
+    public fitBoundsElements(markers: any, circles: any, polygons: any): void {
+        const group = [];
+
+        if (markers && markers.length) {
+            markers.forEach((marker: any) => group.push(marker));
+        }
+
+        if (circles && circles.length) {
+            circles.forEach((circle: any) => group.push(circle));
+        }
+
+        if (polygons && polygons.length) {
+            polygons.forEach((polygon: any) => group.push(polygon));
+        }
+
+        if (group && group.length) {
+            const bounds = this.leaflet.featureGroup(group).getBounds();
+            this.map.fitBounds(bounds);
+        }
+    }
 }
