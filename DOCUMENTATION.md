@@ -1,4 +1,4 @@
-# [@inlog/inlog-maps](https://github.com/weareinlog/inlog-maps#readme) *4.5.3*
+# [@inlog/inlog-maps](https://github.com/weareinlog/inlog-maps#readme) *4.5.4*
 
 > A library for using generic layer maps 
 
@@ -1548,6 +1548,30 @@ Returns the coordinates from pixels
 
 
 - `Array.&lt;number&gt;`  
+
+
+
+#### Map.fitBoundsElements(type, condition) 
+
+Use this functions to fit bounds on elements with same type and condition
+
+
+
+
+##### Parameters
+
+| Name | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| type | `string`  |  | &nbsp; |
+| condition | `any`  | [nullable] | &nbsp; |
+
+
+
+
+##### Returns
+
+
+- `Void`
 
 
 

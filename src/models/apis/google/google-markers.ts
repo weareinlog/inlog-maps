@@ -176,7 +176,7 @@ export default class GoogleMarkers {
     }
 
     public isMarkerOnMap(marker: any): boolean {
-        return marker.map !== null;
+        return !!marker.map;
     }
 
     public setCenterMarker(marker: any) {

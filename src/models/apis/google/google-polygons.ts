@@ -87,7 +87,7 @@ export default class GooglePolygons {
     }
 
     public isPolygonOnMap(polygon: any): boolean {
-        return polygon.map !== null;
+        return !!polygon.map;
     }
 
     public addPolygonEvent(polygons: any, eventType: PolygonEventType, eventFunction: any): void {

@@ -92,6 +92,7 @@ export default interface IMapFunctions {
     getCenter(): number[];
     setCenter(position: number[]): void;
     pixelsToLatLng(offsetx: number, offsety: number): number[];
+    fitBoundsElements(markers: any, circles: any, polygons: any): void;
 
     /* Overlay */
     drawOverlay(options: OverlayOptions, polygons?: any): any;

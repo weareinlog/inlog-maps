@@ -180,7 +180,7 @@ export default class GooglePolylines {
     }
 
     public isPolylineOnMap(polyline: any): boolean {
-        return polyline.map !== null;
+        return !!polyline.map;
     }
 
     public addPolylinePath(polylines: any, position: number[]) {

@@ -77,4 +77,28 @@ export default class GoogleMap {
         const latlng = this.map.getProjection().fromPointToLatLng(worldCoordinateNewCenter);
         return [latlng.lat(), latlng.lng()];
     }
+
+    public fitBoundsElements(markers: any, circles: any, polygons: any) {
+        const bounds = new google.maps.LatLngBounds();
+
+        if (markers && markers.length) {
+            markers.forEach((marker: any) => bounds.extend(marker.getPosition()));
+
+            this.map.fitBounds(bounds);
+        }
+
+        if (circles && circles.length) {
+            circles.forEach((circle: any) => bounds.union(circle.getBounds()));
+
+            this.map.fitBounds(bounds);
+        }
+
+        if (polygons && polygons.length) {
+            polygons.forEach((polygon: any) => polygon.getPaths()
+                .forEach((path: any) => path.getArray()
+                    .forEach((ponto: any) => bounds.extend(ponto))));
+
+            this.map.fitBounds(bounds);
+        }
+    }
 }
