@@ -133,6 +133,17 @@ export default class Map {
     }
 
     /**
+     * Remove all markers from the map and from the internal list
+     */
+    public removeAllMarkers(): void {
+        for (const type in this.markersList) {
+            if (this.markersList.hasOwnProperty(type)) {
+                this.removeMarkers(type);
+            }
+        }
+    }
+
+    /**
      * Use this function to alter marker style
      * @param {string} type
      * @param {InlogMaps.MarkerAlterOptions} options
@@ -351,6 +362,17 @@ export default class Map {
     }
 
     /**
+     * Remove all polygons from the map and from the internal list
+     */
+    public removeAllPolygons(): void {
+        for (const type in this.polygonsList) {
+            if (this.polygonsList.hasOwnProperty(type)) {
+                this.removePolylines(type);
+            }
+        }
+    }
+
+    /**
      * Use this function to alter polygons options/style
      * @param {string} type
      * @param {InlogMaps.PolygonAlterOptions} options
@@ -481,6 +503,17 @@ export default class Map {
 
         if (this.circlesList[type].length === 0) {
             delete this.circlesList[type];
+        }
+    }
+
+    /**
+     * Remove all circles from the map and from the internal list
+     */
+    public removeAllCircles(): void {
+        for (const type in this.circlesList) {
+            if (this.circlesList.hasOwnProperty(type)) {
+                this.removeCircles(type);
+            }
         }
     }
 
@@ -631,6 +664,17 @@ export default class Map {
 
         if (this.polylinesList[type].length === 0) {
             delete this.polylinesList[type];
+        }
+    }
+
+    /**
+     * Remove all polylines from the map and from the internal list
+     */
+    public removeAllPolylines(): void {
+        for (const type in this.polylinesList) {
+            if (this.polylinesList.hasOwnProperty(type)) {
+                this.removePolylines(type);
+            }
         }
     }
 
@@ -850,8 +894,10 @@ export default class Map {
      * @param {string} type
      */
     public closeAllPopups(): void {
-        for (let type in this.infoWindowList) {
-            this.closePopup(type);
+        for (const type in this.infoWindowList) {
+            if (this.infoWindowList.hasOwnProperty(type)) {
+                this.closePopup(type);
+            }
         }
     }
 
@@ -1004,6 +1050,17 @@ export default class Map {
 
         if (this.overlayList[type].length === 0) {
             delete this.overlayList[type];
+        }
+    }
+
+    /**
+     * Remove all overlays from the map and from the internal list
+     */
+    public removeAllOverlays(): void {
+        for (const type in this.overlayList) {
+            if (this.overlayList.hasOwnProperty(type)) {
+                this.removeOverlays(type);
+            }
         }
     }
 
