@@ -132,6 +132,9 @@ export default class Map {
         }
     }
 
+    /**
+     * Remove all markers from the map and from the internal list
+     */
     public removeAllMarkers(): void {
         for (const type in this.markersList) {
             if (this.markersList.hasOwnProperty(type)) {
@@ -358,6 +361,9 @@ export default class Map {
         }
     }
 
+    /**
+     * Remove all polygons from the map and from the internal list
+     */
     public removeAllPolygons(): void {
         for (const type in this.polygonsList) {
             if (this.polygonsList.hasOwnProperty(type)) {
@@ -500,6 +506,9 @@ export default class Map {
         }
     }
 
+    /**
+     * Remove all circles from the map and from the internal list
+     */
     public removeAllCircles(): void {
         for (const type in this.circlesList) {
             if (this.circlesList.hasOwnProperty(type)) {
@@ -658,6 +667,9 @@ export default class Map {
         }
     }
 
+    /**
+     * Remove all polylines from the map and from the internal list
+     */
     public removeAllPolylines(): void {
         for (const type in this.polylinesList) {
             if (this.polylinesList.hasOwnProperty(type)) {
@@ -1041,6 +1053,9 @@ export default class Map {
         }
     }
 
+    /**
+     * Remove all overlays from the map and from the internal list
+     */
     public removeAllOverlays(): void {
         for (const type in this.overlayList) {
             if (this.overlayList.hasOwnProperty(type)) {
