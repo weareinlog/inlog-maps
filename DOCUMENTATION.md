@@ -1,4 +1,4 @@
-# [@inlog/inlog-maps](https://github.com/weareinlog/inlog-maps#readme) *4.6.0*
+# [@inlog/inlog-maps](https://github.com/weareinlog/inlog-maps#readme) *4.6.1*
 
 > A library for using generic layer maps 
 
@@ -144,22 +144,6 @@ Remove markers from the map and from internal list
 | ---- | ---- | ----------- | -------- |
 | type | `string`  |  | &nbsp; |
 | condition | `any`  | remove markers with the condition [nullable] | &nbsp; |
-
-
-
-
-##### Returns
-
-
-- `Void`
-
-
-
-#### Map.removeAllMarkers() 
-
-Remove all markers from the map and from the internal list
-
-
 
 
 
@@ -539,22 +523,6 @@ Remove polygons from the map and from internal list
 
 
 
-#### Map.removeAllPolygons() 
-
-Remove all polygons from the map and from the internal list
-
-
-
-
-
-
-##### Returns
-
-
-- `Void`
-
-
-
 #### Map.alterPolygonOptions(type, options, condition) 
 
 Use this function to alter polygons options/style
@@ -766,22 +734,6 @@ Remove circles from the map and from internal list
 | ---- | ---- | ----------- | -------- |
 | type | `string`  |  | &nbsp; |
 | condition | `any`  | remove circles with the condition [nullable] | &nbsp; |
-
-
-
-
-##### Returns
-
-
-- `Void`
-
-
-
-#### Map.removeAllCircles() 
-
-Remove all circles from the map and from the internal list
-
-
 
 
 
@@ -1028,22 +980,6 @@ Use this function to remove polylines
 | ---- | ---- | ----------- | -------- |
 | type | `string`  |  | &nbsp; |
 | condition | `any`  | remove polyline with the condition [nullable] | &nbsp; |
-
-
-
-
-##### Returns
-
-
-- `Void`
-
-
-
-#### Map.removeAllPolylines() 
-
-Remove all polylines from the map and from the internal list
-
-
 
 
 
@@ -1701,22 +1637,6 @@ Remove overlays from the map and from internal list
 | ---- | ---- | ----------- | -------- |
 | type | `string`  |  | &nbsp; |
 | condition | `any`  | remove overlays with the condition [nullable] | &nbsp; |
-
-
-
-
-##### Returns
-
-
-- `Void`
-
-
-
-#### Map.removeAllOverlays() 
-
-Remove all overlays from the map and from the internal list
-
-
 
 
 
