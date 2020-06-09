@@ -116,10 +116,15 @@ export default class LeafletMarkers {
             }
 
             if (options.icon) {
-                marker.setIcon(new this.leaflet.icon({
-                    iconSize: options.icon.size,
-                    iconUrl: options.icon.url
-                }));
+                const icon = new this.leaflet.icon({ iconUrl: options.icon.url });
+                const size = options.icon.size;
+
+                if (size) {
+                    icon.iconSize = size;
+                    icon.iconAnchor = [size[0] / 2, size[1]];
+                }
+
+                marker.setIcon(icon);
             }
 
             if (options.latlng) {
