@@ -120,8 +120,8 @@ export default class LeafletMarkers {
                 const size = options.icon.size;
 
                 if (size) {
-                    icon.iconSize = size;
-                    icon.iconAnchor = [size[0] / 2, size[1]];
+                    icon.options.iconSize = size;
+                    icon.options.iconAnchor = [size[0] / 2, size[1]];
                 }
 
                 marker.setIcon(icon);
