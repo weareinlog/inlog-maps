@@ -127,6 +127,10 @@ export default class GoogleMarkers {
 
         if (options.icon) {
             icon = options.icon;
+
+            if (options.icon.size) {
+                icon.size = new this.google.maps.Size(options.icon.size[0], options.icon.size[1]);
+            }
         }
 
         markers.forEach((marker) => {
