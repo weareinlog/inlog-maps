@@ -69,7 +69,7 @@ export default class Map {
 
         if (options.addClusterer) {
             if (!this.markerClusterer[type]) {
-                this.markerClusterer[type] = this.addMarkerClusterer(type, new MarkerClustererConfig(true, 1, 10));
+                this.addMarkerClusterer(type, new MarkerClustererConfig(true, 1, 10));
             }
 
             this.map.addMarkerOnClusterer(marker, this.markerClusterer[type]);
