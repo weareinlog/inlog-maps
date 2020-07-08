@@ -116,7 +116,7 @@ export default class Map {
             const markers = this.getMarkers(type, condition);
 
             // Hide markers with the condition
-            this.map.toggleMarkers(markers, false);
+            this.map.toggleMarkers(markers, false, this.markerClusterer[type]);
 
             // Keep markers that doesn't have the condition
             this.markersList[type] = this.markersList[type].filter((marker: any) => !condition(marker.object));
