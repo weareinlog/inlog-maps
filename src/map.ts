@@ -122,7 +122,7 @@ export default class Map {
             this.markersList[type] = this.markersList[type].filter((marker: any) => !condition(marker.object));
         } else {
             if (this.markersList[type]) {
-                this.map.toggleMarkers(this.markersList[type], false);
+                this.map.toggleMarkers(this.markersList[type], false, this.markerClusterer[type]);
             }
             this.markersList[type] = [];
         }
