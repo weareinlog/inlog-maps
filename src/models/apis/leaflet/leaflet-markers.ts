@@ -174,13 +174,13 @@ export default class LeafletMarkers {
                 case MarkerEventType.MouseOver:
                     marker.on('mouseover', (event: any) => {
                         const param = new EventReturn([event.latlng.lat, event.latlng.lng]);
-                        eventFunction(marker, param, marker.object);
+                        eventFunction(param, marker.object);
                     });
                     break;
                 case MarkerEventType.MouseOut:
                     marker.on('mouseout', (event: any) => {
                         const param = new EventReturn([event.latlng.lat, event.latlng.lng]);
-                        eventFunction(marker, param, marker.object);
+                        eventFunction(param, marker.object);
                     });
                     break;
                 default:
