@@ -75,6 +75,10 @@ export default class LeafletPolygons {
                     polygon.disableEdit();
                 }
             }
+
+            if (options.object !== null && options.editable !== undefined) {
+                polygon.object = options.object;
+            }
         });
     }
 

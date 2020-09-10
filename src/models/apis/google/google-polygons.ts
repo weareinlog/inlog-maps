@@ -77,6 +77,10 @@ export default class GooglePolygons {
             };
 
             polygon.setOptions(newOptions);
+
+            if (options.object) {
+                polygon.object = options.object;
+            }
         });
     }
 
