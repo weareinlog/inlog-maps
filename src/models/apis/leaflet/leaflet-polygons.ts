@@ -67,6 +67,14 @@ export default class LeafletPolygons {
             };
 
             polygon.setStyle(style);
+
+            if (options.editable !== null && options.editable !== undefined) {
+                if (options.editable) {
+                    polygon.enableEdit();
+                } else {
+                    polygon.disableEdit();
+                }
+            }
         });
     }
 

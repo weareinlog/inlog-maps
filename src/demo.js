@@ -36,6 +36,7 @@ let polylineShow = null;
 let circleShow = null;
 let drawing = false;
 let zoomChanged = false;
+let isPolygonEditable = false;
 
 /* GEOJson */
 function onClick(event) {
@@ -448,9 +449,10 @@ function addPolygon() {
         ];
         let options = new inlogMaps.PolygonOptions(path, 1, true, '#000000', 1, '#FFFFFF', 0.8);
 
+        isPolygonEditable = false;
         options.fitBounds = true;
         options.draggable = true;
-        options.editable = true;
+        options.editable = isPolygonEditable;
         currentMap.drawPolygon('polygon', options, onClickPolygon);
         polygonShow = true;
 
@@ -479,6 +481,18 @@ function changePolygonColor() {
         let options = new inlogMaps.PolygonAlterOptions();
 
         options.fillColor = '#FFFF00';
+        currentMap.alterPolygonOptions('polygon', options);
+    }
+}
+
+function changePolygonEditable() {
+    if (polygonShow === null) {
+        alert('The polygon was not created yet!');
+    } else {
+        let options = new inlogMaps.PolygonAlterOptions();
+
+        isPolygonEditable = !isPolygonEditable
+        options.editable = isPolygonEditable;
         currentMap.alterPolygonOptions('polygon', options);
     }
 }
