@@ -4,7 +4,7 @@ import MarkerClustererConfig from '../../features/marker-clusterer/marker-cluste
 import CircleMarkerOptions from '../../features/marker/circle-marker-options';
 import MarkerAlterOptions from '../../features/marker/marker-alter-options';
 import MarkerOptions from '../../features/marker/marker-options';
-const MarkerClusterer = require('@google/markerclustererplus');
+const MarkerClusterer = require('../../../../node_modules/@google/markerclustererplus');
 
 export default class GoogleMarkers {
     private map = null;
@@ -127,6 +127,10 @@ export default class GoogleMarkers {
 
         if (options.icon) {
             icon = options.icon;
+
+            if (options.icon.size) {
+                icon.size = new this.google.maps.Size(options.icon.size[0], options.icon.size[1]);
+            }
         }
 
         markers.forEach((marker) => {

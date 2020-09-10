@@ -116,10 +116,15 @@ export default class LeafletMarkers {
             }
 
             if (options.icon) {
-                marker.setIcon(new this.leaflet.icon({
-                    iconSize: options.icon.size,
-                    iconUrl: options.icon.url
-                }));
+                const icon = new this.leaflet.icon({ iconUrl: options.icon.url });
+                const size = options.icon.size;
+
+                if (size) {
+                    icon.options.iconSize = size;
+                    icon.options.iconAnchor = [size[0] / 2, size[1]];
+                }
+
+                marker.setIcon(icon);
             }
 
             if (options.latlng) {
@@ -169,13 +174,13 @@ export default class LeafletMarkers {
                 case MarkerEventType.MouseOver:
                     marker.on('mouseover', (event: any) => {
                         const param = new EventReturn([event.latlng.lat, event.latlng.lng]);
-                        eventFunction(marker, param, marker.object);
+                        eventFunction(param, marker.object);
                     });
                     break;
                 case MarkerEventType.MouseOut:
                     marker.on('mouseout', (event: any) => {
                         const param = new EventReturn([event.latlng.lat, event.latlng.lng]);
-                        eventFunction(marker, param, marker.object);
+                        eventFunction(param, marker.object);
                     });
                     break;
                 default:

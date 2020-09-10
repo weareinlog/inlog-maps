@@ -11,10 +11,12 @@ const leafletLibParams = {
     scriptsDependencies: [
         '../node_modules/leaflet-editable/src/Leaflet.Editable.js',
         '../node_modules/leaflet.path.drag/src/Path.Drag.js',
-        '../node_modules/leaflet-gesture-handling/dist/leaflet-gesture-handling.js'
+        '../node_modules/leaflet-gesture-handling/dist/leaflet-gesture-handling.js',
+        '../node_modules/leaflet.markercluster/dist/leaflet.markercluster.js'
     ],
     cssDependencies: [
-        '../node_modules/leaflet-gesture-handling/dist/leaflet-gesture-handling.css'
+        '../node_modules/leaflet-gesture-handling/dist/leaflet-gesture-handling.css',
+        '../node_modules/leaflet.markercluster/dist/MarkerCluster.Default.css'
     ],
     wikimedia: true
     // gestureHandling: true
@@ -34,6 +36,7 @@ let polylineShow = null;
 let circleShow = null;
 let drawing = false;
 let zoomChanged = false;
+let isPolygonEditable = false;
 
 /* GEOJson */
 function onClick(event) {
@@ -261,6 +264,38 @@ function changeCircleMarkerColor() {
     }
 }
 
+function addMarkerClusterer() {
+    const path = [
+        [-23.026949270121056, -43.48603893506065],
+        [-23.024657518124023, -43.48285071469786],
+        [-23.02484265813435, -43.48359100438597],
+        [-23.025441015571875, -43.48343945957663],
+        [-23.02518922621311, -43.48251677967551],
+        [-23.02535214879308, -43.482527508511566],
+        [-23.025524945253615, -43.48268307663443],
+        [-23.025618748953754, -43.483053221478485],
+        [-23.025692804460373, -43.48372377373221],
+        [-23.025762332433345, -43.484101627160385],
+        [-23.025828982320164, -43.484316203881576],
+        [-23.025944178594504, -43.484607520870725],
+        [-23.025988611796098, -43.48474163132147],
+        [-23.026284415679036, -43.485281467437744],
+        [-23.026438676263012, -43.485623602168175],
+        [-23.025967191451137, -43.48567456413946],
+        [-23.025775881698536, -43.48496646095953],
+        [-23.025542347567463, -43.48405234610573],
+        [-23.02516960068853, -43.484262899513396],
+        [-23.024949270121056, -43.48403893506065]
+    ];
+
+    currentMap.addMarkerClusterer('marker', new inlogMaps.MarkerClustererConfig(true, 13, 30));
+    path.forEach(p => {
+        let options = new inlogMaps.MarkerOptions(p, true, true, null, true);
+        options.addClusterer = true;
+        currentMap.drawMarker('marker', options);
+    });
+}
+
 function onZoomChanged() {
     console.log(currentMap.getZoom());
 }
@@ -414,9 +449,10 @@ function addPolygon() {
         ];
         let options = new inlogMaps.PolygonOptions(path, 1, true, '#000000', 1, '#FFFFFF', 0.8);
 
+        isPolygonEditable = false;
         options.fitBounds = true;
         options.draggable = true;
-        options.editable = true;
+        options.editable = isPolygonEditable;
         currentMap.drawPolygon('polygon', options, onClickPolygon);
         polygonShow = true;
 
@@ -445,6 +481,18 @@ function changePolygonColor() {
         let options = new inlogMaps.PolygonAlterOptions();
 
         options.fillColor = '#FFFF00';
+        currentMap.alterPolygonOptions('polygon', options);
+    }
+}
+
+function changePolygonEditable() {
+    if (polygonShow === null) {
+        alert('The polygon was not created yet!');
+    } else {
+        let options = new inlogMaps.PolygonAlterOptions();
+
+        isPolygonEditable = !isPolygonEditable
+        options.editable = isPolygonEditable;
         currentMap.alterPolygonOptions('polygon', options);
     }
 }

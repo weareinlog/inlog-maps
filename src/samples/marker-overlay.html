@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Demo</title>
+    <style type="text/css">
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            height: 50px;
+            font-family: 'Nunito Sans', sans-serif;
+            text-align: center;
+            display: grid;
+            padding: 20px;
+        }
+
+        .header .title {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .header .description {
+            font-size: 12px;
+        }
+
+        .map {
+            height: calc(100% - 90px);
+            width: 100%
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <span class="title">Sample: Marker as Overlay</span>
+        <span class="description">This sample contains a overlay that looks like a marker, but contains a close button
+            with action and can be dragabble</span>
+    </div>
+    <div class="map" id="inlog-map"></div>
+    <script src="../../_bundles/inlog-maps.js"></script>
+    <script type="text/javascript">
+        const googleMapsLibParams = {
+            libraries: ['drawing', 'places'],
+            apiKey: '',
+            options: {
+                mapTypeControl: false,
+                zoomControl: false
+            }
+        };
+
+        const leafletLibParams = {
+            scriptsDependencies: [
+                '../../node_modules/leaflet-editable/src/Leaflet.Editable.js',
+                '../../node_modules/leaflet.path.drag/src/Path.Drag.js',
+                '../../node_modules/leaflet-gesture-handling/dist/leaflet-gesture-handling.js',
+                '../../node_modules/leaflet.markercluster/dist/leaflet.markercluster.js'
+            ],
+            cssDependencies: [
+                '../../node_modules/leaflet-gesture-handling/dist/leaflet-gesture-handling.css',
+                '../../node_modules/leaflet.markercluster/dist/MarkerCluster.Default.css'
+            ],
+            wikimedia: true
+        };
+
+        const inlogMaps = window.InlogMaps;
+        const currentMap = new inlogMaps.Map;
+
+        currentMap.initialize(inlogMaps.MapType.Google, googleMapsLibParams)
+            .then(() => putOverlayOnMap());
+
+        function putOverlayOnMap() {
+            const div = createOverlayDiv();
+            const position = [52.5498783, 13.425209099999961];
+            const object = {
+                id: 1,
+                lat: position[0],
+                lng: position[1]
+            }
+
+            const options = new inlogMaps.OverlayOptions(div, true, position, object);
+            options.draggable = true;
+            options.afterEventDragHandler = (evt, obj) => console.log(evt, obj);
+
+            currentMap.setCenter(position);
+            currentMap.drawOverlay('overlay-draggable', options);
+
+            setTimeout(() => document.getElementById(`close-overlay-test`)
+                .addEventListener('click', (event) => {
+                    event.stopPropagation();
+                    currentMap.removeOverlays('overlay-draggable', (item) => object.id === item.id);
+                }), 500);
+        }
+
+        function createOverlayDiv() {
+            const div = document.createElement('div');
+            div.style.position = 'absolute';
+
+            const img = document.createElement('img');
+            img.src = 'https://upload.wikimedia.org/wikipedia/commons/a/aa/Google_Maps_icon_%282020%29.svg';
+            img.style.position = 'absolute';
+            img.style.top = '-7px';
+            img.style.left = '-7px';
+            img.style.width = '22px';
+            div.appendChild(img);
+
+            const imgClose = document.createElement('img');
+            imgClose.src = `https://upload.wikimedia.org/wikipedia/commons/c/c1/High-contrast-dialog-close.svg`;
+            imgClose.setAttribute("id", `close-overlay-test`);
+            imgClose.style.position = 'absolute';
+            imgClose.style.top = '-10px';
+            imgClose.style.left = '12px';
+            imgClose.style.width = '13px';
+            div.appendChild(imgClose);
+
+            return div;
+        }
+
+    </script>
+</body>
+
+</html>
