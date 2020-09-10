@@ -67,6 +67,8 @@ export default class GooglePolygons {
 
         polygons.forEach((polygon) => {
             newOptions = {
+                editable: options.editable !== null && options.editable !== undefined ?
+                    options.editable : polygon.editable,
                 fillColor: options.fillColor ? options.fillColor : polygon.fillColor,
                 fillOpacity: options.fillOpacity ? options.fillOpacity : polygon.fillOpacity,
                 strokeColor: options.color ? options.color : polygon.strokeColor,
