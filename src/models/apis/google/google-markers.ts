@@ -4,7 +4,7 @@ import MarkerClustererConfig from '../../features/marker-clusterer/marker-cluste
 import CircleMarkerOptions from '../../features/marker/circle-marker-options';
 import MarkerAlterOptions from '../../features/marker/marker-alter-options';
 import MarkerOptions from '../../features/marker/marker-options';
-const MarkerClusterer = require('../../../../node_modules/@google/markerclustererplus');
+const MarkerClusterer = require('@google/markerclustererplus');
 
 export default class GoogleMarkers {
     private map = null;
