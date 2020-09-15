@@ -101,13 +101,14 @@ export default class LeafletPolygons {
                 case PolygonEventType.Move:
                     polygon.on('dragend', (event: any) => {
                         const param = new EventReturn([event.target.getCenter().lat, event.target.getCenter().lng]);
-                        eventFunction(param, event.target.getLatLngs()[0].map((x: any) => [x.lat, x.lng]));
+                        eventFunction(param, event.target.getLatLngs()[0].map((x: any) => [x.lat, x.lng],
+                            event.target.object));
                     });
                     break;
                 case PolygonEventType.InsertAt:
                     polygon.on('editable:vertex:dragend', (event: any) => {
                         const param = new EventReturn([event.vertex.latlng.lat, event.vertex.latlng.lng]);
-                        eventFunction(param, event.vertex.latlngs.map((x: any) => [x.lat, x.lng]));
+                        eventFunction(param, event.vertex.latlngs.map((x: any) => [x.lat, x.lng]), event.target.object);
                     });
                     break;
                 case PolygonEventType.Click:
