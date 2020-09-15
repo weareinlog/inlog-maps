@@ -76,7 +76,7 @@ export default class LeafletPolygons {
                 }
             }
 
-            if (options.object !== null && options.editable !== undefined) {
+            if (options.object) {
                 polygon.object = options.object;
             }
         });
