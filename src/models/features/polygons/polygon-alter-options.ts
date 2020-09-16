@@ -6,6 +6,7 @@ export default class PolygonAlterOptions {
     public fillOpacity?: number;
     public addToMap: boolean;
     public editable?: boolean;
+    public object: any;
 
     constructor(addToMap: boolean, color?: string, opacity?: number, fillColor?: string, fillOpacity?: number,
         weight?: number) {

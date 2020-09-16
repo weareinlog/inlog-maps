@@ -545,7 +545,7 @@ export default class LeafletPolylines {
                 }
 
                 const newPosition = new EventReturn([eventEnd.vertex.latlng.lat, eventEnd.vertex.latlng.lng]);
-                eventFunction(newPosition, lastPosition);
+                eventFunction(newPosition, lastPosition, eventEnd.target.object);
                 polyline.off('editable:vertex:dragend');
             });
         });
@@ -565,7 +565,7 @@ export default class LeafletPolylines {
                 }
 
                 const newPoint = new EventReturn([event.vertex.latlng.lat, event.vertex.latlng.lng]);
-                eventFunction(newPoint, previousPoint);
+                eventFunction(newPoint, previousPoint, event.target.object);
                 polyline.off('editable:vertex:dragend');
             });
         });

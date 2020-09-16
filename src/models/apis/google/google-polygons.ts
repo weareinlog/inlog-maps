@@ -77,6 +77,10 @@ export default class GooglePolygons {
             };
 
             polygon.setOptions(newOptions);
+
+            if (options.object) {
+                polygon.object = options.object;
+            }
         });
     }
 
@@ -99,14 +103,18 @@ export default class GooglePolygons {
                     this.google.maps.event.addListener(polygon.getPath(), 'set_at', (event: any) => {
                         const param = new EventReturn([polygon.getPath()
                             .getAt(event).lat(), polygon.getPath().getAt(event).lng()]);
-                        eventFunction(param, polygon.getPath().getArray().map((x: any) => [x.lat(), x.lng()]));
+
+                        eventFunction(param, polygon.getPath().getArray().map((x: any) => [x.lat(), x.lng()]),
+                            polygon.object);
                     });
                     break;
                 case PolygonEventType.InsertAt:
                     this.google.maps.event.addListener(polygon.getPath(), 'insert_at', (event: any) => {
                         const param = new EventReturn([polygon.getPath()
                             .getAt(event).lat(), polygon.getPath().getAt(event).lng()]);
-                        eventFunction(param, polygon.getPath().getArray().map((x: any) => [x.lat(), x.lng()]));
+
+                        eventFunction(param, polygon.getPath().getArray().map((x: any) => [x.lat(), x.lng()]),
+                            polygon.object);
                     });
                     break;
                 case PolygonEventType.Click:
