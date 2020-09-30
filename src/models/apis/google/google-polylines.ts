@@ -268,7 +268,11 @@ export default class GooglePolylines {
     }
 
     public getPolylineHighlightIndex() {
-        return [this.selectedPath.initialIdx, this.selectedPath.finalIdx];
+        if (this.selectedPath) {
+            return [this.selectedPath.initialIdx, this.selectedPath.finalIdx];
+        }
+
+        return null;
     }
 
     /* Private methods */
@@ -292,8 +296,8 @@ export default class GooglePolylines {
         this.google.maps.event.addDomListener(document, 'keyup', this.onKeyUp.bind(this));
 
         if (polyline.navigationHandlerClick) {
-          const param = new EventReturn([event.latLng.lat(), event.latLng.lng()]);
-          polyline.navigationHandlerClick(param, polyline.object);
+            const param = new EventReturn([event.latLng.lat(), event.latLng.lng()]);
+            polyline.navigationHandlerClick(param, polyline.object);
         }
     }
 
@@ -435,7 +439,7 @@ export default class GooglePolylines {
             const newPosition = new EventReturn([path.lat(), path.lng()]);
             const lastPosition = new EventReturn([lastEvent.lat(), lastEvent.lng()]);
 
-            eventFunction(newPosition, lastPosition, polyline.object);
+            eventFunction(newPosition, lastPosition, polyline.object, newEvent);
         };
         this.google.maps.event.addListener(polyline.getPath(), 'set_at', polyline.moveListener);
     }
@@ -448,7 +452,7 @@ export default class GooglePolylines {
 
             const previousPath = path.getAt(event - 1);
             const previousPoint = new EventReturn([previousPath.lat(), previousPath.lng()]);
-            eventFunction(newPoint, previousPoint, polyline.object);
+            eventFunction(newPoint, previousPoint, polyline.objec, event);
         };
         this.google.maps.event.addListener(polyline.getPath(), 'insert_at', polyline.insertAtListener);
     }
