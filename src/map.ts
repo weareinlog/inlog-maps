@@ -367,7 +367,7 @@ export default class Map {
     public removeAllPolygons(): void {
         for (const type in this.polygonsList) {
             if (this.polygonsList.hasOwnProperty(type)) {
-                this.removePolylines(type);
+                this.removePolygons(type);
             }
         }
     }

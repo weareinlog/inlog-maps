@@ -108,9 +108,15 @@ export default class LeafletPolylines {
         polylines.forEach((polyline: any) => {
             if (show) {
                 self.map.addLayer(polyline);
+                if (polyline.options.editable) {
+                    polyline.enableEdit();
+                }
                 if (polyline.decorator) { self.map.addLayer(polyline.decorator); }
             } else {
                 self.map.removeLayer(polyline);
+                if (polyline.options.editable) {
+                    polyline.disableEdit();
+                }
                 if (polyline.decorator) { self.map.removeLayer(polyline.decorator); }
             }
         });
@@ -284,7 +290,11 @@ export default class LeafletPolylines {
     }
 
     public getPolylineHighlightIndex() {
-        return [this.selectedPath.initialIdx, this.selectedPath.finalIdx];
+        if (this.selectedPath) {
+            return [this.selectedPath.initialIdx, this.selectedPath.finalIdx];
+        }
+
+        return null;
     }
 
     /* Private methods */
@@ -545,7 +555,7 @@ export default class LeafletPolylines {
                 }
 
                 const newPosition = new EventReturn([eventEnd.vertex.latlng.lat, eventEnd.vertex.latlng.lng]);
-                eventFunction(newPosition, lastPosition, eventEnd.target.object);
+                eventFunction(newPosition, lastPosition, eventEnd.target.object, eventEnd.vertex.getIndex());
                 polyline.off('editable:vertex:dragend');
             });
         });
@@ -565,7 +575,7 @@ export default class LeafletPolylines {
                 }
 
                 const newPoint = new EventReturn([event.vertex.latlng.lat, event.vertex.latlng.lng]);
-                eventFunction(newPoint, previousPoint, event.target.object);
+                eventFunction(newPoint, previousPoint, event.target.object, event.vertex.getIndex());
                 polyline.off('editable:vertex:dragend');
             });
         });
