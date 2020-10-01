@@ -274,7 +274,7 @@ export default class Leaflet implements IMapFunctions {
         this.leafletPolylines.addPolylinePath(polylines, position);
     }
 
-    public getPolylinePath(polyline: any): number[] {
+    public getPolylinePath(polyline: any): number[][] {
         return this.leafletPolylines.getPolylinePath(polyline);
     }
 
@@ -296,6 +296,9 @@ export default class Leaflet implements IMapFunctions {
 
     public getObjectPolyline(polyline: any): object {
         return this.leafletPolylines.getObjectPolyline(polyline);
+    }
+    public getObjectPolylineHighlight(): object {
+        return this.leafletPolylines.getObjectPolylineHighlight();
     }
 
     public addPolylineHighlightEvent(eventType: PolylineEventType, eventFunction: any): void {

@@ -1,4 +1,4 @@
-# [@inlog/inlog-maps](https://github.com/weareinlog/inlog-maps#readme) *4.8.1*
+# [@inlog/inlog-maps](https://github.com/weareinlog/inlog-maps#readme) *4.8.2*
 
 > A library for using generic layer maps 
 
@@ -1271,7 +1271,7 @@ Use this function to set position of polyline highlight
 
 #### Map.getObjectPolyline(type, condition) 
 
-
+Use this function to get the object of a polyline
 
 
 
@@ -1282,6 +1282,22 @@ Use this function to set position of polyline highlight
 | ---- | ---- | ----------- | -------- |
 | type | `string`  |  | &nbsp; |
 | condition | `any`  |  | &nbsp; |
+
+
+
+
+##### Returns
+
+
+- `object`  
+
+
+
+#### Map.getObjectPolylineHighlight() 
+
+Use this function to get the object of the polyline highligth
+
+
 
 
 

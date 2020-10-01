@@ -293,7 +293,7 @@ export default class GoogleMaps implements IMapFunctions {
         this.googlePolylines.addPolylinePath(polylines, position);
     }
 
-    public getPolylinePath(polyline: any): number[] {
+    public getPolylinePath(polyline: any): number[][] {
         return this.googlePolylines.getPolylinePath(polyline);
     }
 
@@ -315,6 +315,10 @@ export default class GoogleMaps implements IMapFunctions {
 
     public getObjectPolyline(polyline: any): object {
         return this.googlePolylines.getObjectPolyline(polyline);
+    }
+
+    public getObjectPolylineHighlight(): object {
+        return this.googlePolylines.getObjectPolylineHighlight();
     }
 
     public addPolylineHighlightEvent(eventType: PolylineEventType, eventFunction: any): void {
