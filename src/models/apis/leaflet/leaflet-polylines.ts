@@ -180,6 +180,7 @@ export default class LeafletPolylines {
             }
 
             if (options.editable) {
+                polyline.disableEdit();
                 polyline.enableEdit();
             }
         });
@@ -208,7 +209,7 @@ export default class LeafletPolylines {
         });
     }
 
-    public getPolylinePath(polyline: any): number[] {
+    public getPolylinePath(polyline: any): number[][] {
         return polyline.getLatLngs().map((x: any) => [x.lat, x.lng]);
     }
 
@@ -281,6 +282,14 @@ export default class LeafletPolylines {
 
     public getObjectPolyline(polyline: any): object {
         return polyline.object;
+    }
+
+    public getObjectPolylineHighlight(): object {
+        if (this.selectedPath) {
+            return this.selectedPath.object;
+        }
+
+        return null;
     }
 
     public addPolylineHighlightEvent(eventType: PolylineEventType, eventFunction: any) {
@@ -398,7 +407,7 @@ export default class LeafletPolylines {
         if (self.selectedPath) {
             self.selectedPath.setLatLngs(pathSelected);
         } else {
-            this.addNewSelectedPath(pathSelected, options);
+            this.addNewSelectedPath(pathSelected, options, polyline.object);
             this.selectedPath.addTo(this.map);
         }
 
@@ -448,7 +457,7 @@ export default class LeafletPolylines {
         this.selectedPath.decorator.addTo(this.map);
     }
 
-    private addNewSelectedPath(pathSelected, options) {
+    private addNewSelectedPath(pathSelected, options, object) {
         const newOptions: any = {
             color: options && options.color || '#FF0000',
             draggable: false,
@@ -478,6 +487,7 @@ export default class LeafletPolylines {
             this.setArrowSelectedPath();
         }
 
+        this.selectedPath.object = object;
         this.selectedPath.highlight = true;
     }
 

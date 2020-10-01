@@ -6,6 +6,7 @@ import { MapType } from './models/dto/map-type';
 import CircleAlterOptions from './models/features/circle/circle-alter-options';
 import CircleOptions from './models/features/circle/circle-options';
 import GeoJsonOptions from './models/features/geojson/geojson-options';
+import MarkerClustererConfig from './models/features/marker-clusterer/marker-clusterer-config';
 import CircleMarkerOptions from './models/features/marker/circle-marker-options';
 import MarkerAlterOptions from './models/features/marker/marker-alter-options';
 import MarkerOptions from './models/features/marker/marker-options';
@@ -14,7 +15,6 @@ import PolygonAlterOptions from './models/features/polygons/polygon-alter-option
 import PolygonOptions from './models/features/polygons/polygon-options';
 import PolylineOptions from './models/features/polyline/polyline-options';
 import PopupOptions from './models/features/popup/popup-options';
-import MarkerClustererConfig from './models/features/marker-clusterer/marker-clusterer-config';
 
 export default class Map {
     private markersList = {};
@@ -742,7 +742,7 @@ export default class Map {
      * @param {any} condition
      * @returns {number[]}
      */
-    public getPolylinePath(type: string, condition?: any): number[] {
+    public getPolylinePath(type: string, condition?: any): number[][] {
         const polyline = this.getPolylines(type, condition);
 
         if (polyline && polyline.length) {
@@ -797,7 +797,7 @@ export default class Map {
     }
 
     /**
-     *
+     * Use this function to get the object of a polyline
      * @param {string} type
      * @param {any} condition
      * @returns {object}
@@ -810,6 +810,14 @@ export default class Map {
         } else {
             return null;
         }
+    }
+
+    /**
+     * Use this function to get the object of the polyline highligth
+     * @returns {object}
+     */
+    public getObjectPolylineHighlight(): any {
+        return this.map.getObjectPolylineHighlight();
     }
 
     /**
