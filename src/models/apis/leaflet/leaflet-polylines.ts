@@ -406,6 +406,7 @@ export default class LeafletPolylines {
 
         if (self.selectedPath) {
             self.selectedPath.setLatLngs(pathSelected);
+            this.selectedPath.object = polyline.object;
         } else {
             this.addNewSelectedPath(pathSelected, options, polyline.object);
             this.selectedPath.addTo(this.map);
