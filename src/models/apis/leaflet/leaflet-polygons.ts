@@ -110,6 +110,11 @@ export default class LeafletPolygons {
                         const param = new EventReturn([event.vertex.latlng.lat, event.vertex.latlng.lng]);
                         eventFunction(param, event.vertex.latlngs.map((x: any) => [x.lat, x.lng]), event.target.object);
                     });
+
+                    polygon.on('editable:vertex:clicked', (event: any) => {
+                        const param = new EventReturn([event.vertex.latlng.lat, event.vertex.latlng.lng]);
+                        eventFunction(param, event.vertex.latlngs.map((x: any) => [x.lat, x.lng]), event.target.object);
+                    });
                     break;
                 case PolygonEventType.Click:
                     polygon.on('click', (event: any) => {
