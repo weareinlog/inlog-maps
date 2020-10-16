@@ -384,6 +384,7 @@ export default class GooglePolylines {
 
         if (this.selectedPath) {
             this.selectedPath.setPath(pathSelected);
+            this.selectedPath.object = polyline.object;
             this.updateSelectedPathListeners();
         } else {
             const newOptions: any = {
