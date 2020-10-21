@@ -78,7 +78,7 @@ export default class GoogleMap {
         return [latlng.lat(), latlng.lng()];
     }
 
-    public fitBoundsElements(markers: any, circles: any, polygons: any) {
+    public fitBoundsElements(markers: any, circles: any, polygons: any, polylines: any) {
         const bounds = new google.maps.LatLngBounds();
 
         if (markers && markers.length) {
@@ -97,6 +97,13 @@ export default class GoogleMap {
             polygons.forEach((polygon: any) => polygon.getPaths()
                 .forEach((path: any) => path.getArray()
                     .forEach((ponto: any) => bounds.extend(ponto))));
+
+            this.map.fitBounds(bounds);
+        }
+
+        if (polylines && polylines.length) {
+            polylines.forEach((polyline: any) => polyline.getPath()
+                .forEach((path: any) => bounds.extend(new google.maps.LatLng(path.lat(), path.lng()))));
 
             this.map.fitBounds(bounds);
         }

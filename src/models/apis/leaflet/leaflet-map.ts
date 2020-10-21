@@ -73,7 +73,7 @@ export default class LeafletMap {
         return [latlng.lat, latlng.lng];
     }
 
-    public fitBoundsElements(markers: any, circles: any, polygons: any): void {
+    public fitBoundsElements(markers: any, circles: any, polygons: any, polylines: any): void {
         const group = [];
 
         if (markers && markers.length) {
@@ -86,6 +86,10 @@ export default class LeafletMap {
 
         if (polygons && polygons.length) {
             polygons.forEach((polygon: any) => group.push(polygon));
+        }
+
+        if (polylines && polylines.length) {
+            polylines.forEach((polyline: any) => group.push(polyline));
         }
 
         if (group && group.length) {
