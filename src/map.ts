@@ -991,7 +991,10 @@ export default class Map {
         const polygons = this.getPolygons(type, condition)
             .filter((polygon: any) => this.map.isPolygonOnMap(polygon));
 
-        this.map.fitBoundsElements(markers, circles, polygons);
+        const polylines = this.getPolylines(type, condition)
+            .filter((polyline: any) => this.map.isPolylineOnMap(polyline));
+
+        this.map.fitBoundsElements(markers, circles, polygons, polylines);
     }
 
     /* Overlay */

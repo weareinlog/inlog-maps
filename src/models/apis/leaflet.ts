@@ -359,8 +359,8 @@ export default class Leaflet implements IMapFunctions {
         return this.leafletMap.pixelsToLatLng(offsetx, offsety);
     }
 
-    public fitBoundsElements(markers: any, circles: any, polygons: any): void {
-        this.leafletMap.fitBoundsElements(markers, circles, polygons);
+    public fitBoundsElements(markers: any, circles: any, polygons: any, polylines: any): void {
+        this.leafletMap.fitBoundsElements(markers, circles, polygons, polylines);
     }
 
     /* Overlay */

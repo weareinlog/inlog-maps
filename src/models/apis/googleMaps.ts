@@ -379,8 +379,8 @@ export default class GoogleMaps implements IMapFunctions {
         return this.googleMap.pixelsToLatLng(offsetx, offsety);
     }
 
-    public fitBoundsElements(markers: any, circles: any, polygons: any): void {
-        this.googleMap.fitBoundsElements(markers, circles, polygons);
+    public fitBoundsElements(markers: any, circles: any, polygons: any, polylines: any): void {
+        this.googleMap.fitBoundsElements(markers, circles, polygons, polylines);
     }
 
     /* Overlay */
