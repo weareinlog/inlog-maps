@@ -117,6 +117,11 @@ export default class GoogleMaps implements IMapFunctions {
                 });
             }
 
+            if (params.showTraffic) {
+                const trafficLayer = new google.maps.TrafficLayer();
+                trafficLayer.setMap(map);
+            }
+
             return this;
         } catch (err) {
             return err;

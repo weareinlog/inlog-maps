@@ -12,7 +12,9 @@ Install the library
 const params = {
     libraries: ['drawing'],
     apiKey: '<your-api-key-here>',
-    gestureHandling: false
+    gestureHandling: false,
+    showTraffic: false,
+    options: {} // google maps options
 };
 
 const currentMap = new InlogMaps.Map;
