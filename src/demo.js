@@ -4,7 +4,8 @@ const googleMapsLibParams = {
     options: {
         mapTypeControl: false,
         zoomControl: false
-    }
+    },
+    showTraffic: false
 };
 
 const leafletLibParams = {
