@@ -652,6 +652,30 @@ This functions returns if polygon exists
 
 
 
+#### Map.getPolygonPath(type, condition) 
+
+Use this function to get the path of some polygon
+
+
+
+
+##### Parameters
+
+| Name | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| type | `string`  |  | &nbsp; |
+| condition | `any`  |  | &nbsp; |
+
+
+
+
+##### Returns
+
+
+- `Array.&lt;number&gt;`  
+
+
+
 #### Map.addPolygonEvent(type, event, eventFunction, condition) 
 
 This function add new events on polygon

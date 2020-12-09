@@ -96,6 +96,10 @@ export default class GooglePolygons {
         return !!polygon.map;
     }
 
+    public getPolygonPath(polygon: any): number[][] {
+        return polygon.getPath().getArray().map((x: any) => [x.lat(), x.lng()]);
+    }
+
     public addPolygonEvent(polygons: any, eventType: PolygonEventType, eventFunction: any): void {
         polygons.forEach((polygon: any) => {
             switch (eventType) {

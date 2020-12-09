@@ -94,6 +94,10 @@ export default class LeafletPolygons {
         return this.map.hasLayer(polygon);
     }
 
+    public getPolygonPath(polygon: any): number[][] {
+        return polygon.getLatLngs()[0].map((x: any) => [x.lat, x.lng]);
+    }
+
     public addPolygonEvent(polygons: any, eventType: PolygonEventType, eventFunction: any): void {
         const self = this;
         polygons.forEach((polygon: any) => {
