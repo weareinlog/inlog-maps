@@ -1,4 +1,4 @@
-# [@inlog/inlog-maps](https://github.com/weareinlog/inlog-maps#readme) *4.8.5*
+# [@inlog/inlog-maps](https://github.com/weareinlog/inlog-maps#readme) *4.8.6*
 
 > A library for using generic layer maps 
 
@@ -649,6 +649,30 @@ This functions returns if polygon exists
 
 
 - `boolean`  
+
+
+
+#### Map.getPolygonPath(type, condition) 
+
+Use this function to get the path of some polygon
+
+
+
+
+##### Parameters
+
+| Name | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| type | `string`  |  | &nbsp; |
+| condition | `any`  |  | &nbsp; |
+
+
+
+
+##### Returns
+
+
+- `Array.&lt;number&gt;`  
 
 
 

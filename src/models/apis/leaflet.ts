@@ -204,6 +204,10 @@ export default class Leaflet implements IMapFunctions {
         return this.leafletPolygons.isPolygonOnMap(polygon);
     }
 
+    public getPolygonPath(polygon: any): number[][] {
+        return this.leafletPolygons.getPolygonPath(polygon);
+    }
+
     public addPolygonEvent(polygons: any, eventType: PolygonEventType, eventFunction: any): void {
         this.leafletPolygons.addPolygonEvent(polygons, eventType, eventFunction);
     }

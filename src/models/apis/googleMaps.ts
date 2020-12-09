@@ -228,6 +228,10 @@ export default class GoogleMaps implements IMapFunctions {
         return this.googlePolygons.isPolygonOnMap(polygon);
     }
 
+    public getPolygonPath(polygon: any): number[][] {
+        return this.googlePolygons.getPolygonPath(polygon);
+    }
+
     public addPolygonEvent(polygons: any, eventType: PolygonEventType, eventFunction: any): void {
         return this.googlePolygons.addPolygonEvent(polygons, eventType, eventFunction);
     }

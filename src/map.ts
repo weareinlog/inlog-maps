@@ -426,6 +426,20 @@ export default class Map {
     }
 
     /**
+     * Use this function to get the path of some polygon
+     * @param {string} type
+     * @param {any} condition
+     * @returns {number[]}
+     */
+    public getPolygonPath(type: string, condition?: any): number[][] {
+        const polygon = this.getPolygons(type, condition);
+
+        if (polygon && polygon.length) {
+            return this.map.getPolygonPath(polygon[0]);
+        }
+    }
+
+    /**
      * This function add new events on polygon
      * @param {string} type
      * @param {InlogMaps.PolygonEventType} event

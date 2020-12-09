@@ -47,6 +47,7 @@ export default interface IMapFunctions {
     fitBoundsPolygons(polygons: any): void;
     setCenterPolygons(polygons: any): void;
     isPolygonOnMap(polygon: any): boolean;
+    getPolygonPath(polygon: any): number[][];
     addPolygonEvent(polygons: any, event: PolygonEventType, eventFunction: any): void;
     removePolygonEvent(polygons: any, event: PolygonEventType): void;
 
