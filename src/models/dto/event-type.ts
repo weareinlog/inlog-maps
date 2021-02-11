@@ -7,7 +7,8 @@ export enum MarkerEventType {
     Click,
     AfterDrag,
     MouseOver,
-    MouseOut
+    MouseOut,
+    BeforeDrag
 }
 
 export enum CircleEventType {
