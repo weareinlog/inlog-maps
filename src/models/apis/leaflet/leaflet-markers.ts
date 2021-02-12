@@ -1,4 +1,4 @@
-import { MarkerEventType } from '../../dto/event-type';
+import {MarkerEventType} from '../../dto/event-type';
 import EventReturn from '../../features/events/event-return';
 import MarkerClustererConfig from '../../features/marker-clusterer/marker-clusterer-config';
 import CircleMarkerOptions from '../../features/marker/circle-marker-options';
@@ -183,6 +183,12 @@ export default class LeafletMarkers {
                         eventFunction(param, marker.object);
                     });
                     break;
+                case MarkerEventType.BeforeDrag:
+                    marker.on('dragstart', (event: any) => {
+                        const param = new EventReturn([event.target.getLatLng().lat, event.target.getLatLng().lng]);
+                        eventFunction(param, marker.object);
+                    });
+                    break;
                 default:
                     break;
             }
@@ -203,6 +209,9 @@ export default class LeafletMarkers {
                     break;
                 case MarkerEventType.MouseOut:
                     marker.off('mouseout');
+                    break;
+                case MarkerEventType.BeforeDrag:
+                    marker.off('dragstart');
                     break;
                 default:
                     break;

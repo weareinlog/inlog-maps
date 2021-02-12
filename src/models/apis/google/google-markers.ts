@@ -1,9 +1,10 @@
-import { MarkerEventType } from '../../dto/event-type';
+import {MarkerEventType} from '../../dto/event-type';
 import EventReturn from '../../features/events/event-return';
 import MarkerClustererConfig from '../../features/marker-clusterer/marker-clusterer-config';
 import CircleMarkerOptions from '../../features/marker/circle-marker-options';
 import MarkerAlterOptions from '../../features/marker/marker-alter-options';
 import MarkerOptions from '../../features/marker/marker-options';
+
 const MarkerClusterer = require('@google/markerclustererplus');
 
 export default class GoogleMarkers {
@@ -214,6 +215,12 @@ export default class GoogleMarkers {
                         eventFunction(param, marker.object);
                     });
                     break;
+                case MarkerEventType.BeforeDrag:
+                    this.google.maps.event.addListener(marker, 'dragstart', (event: any) => {
+                        const param = new EventReturn([event.latLng.lat(), event.latLng.lng()]);
+                        eventFunction(param, marker.object);
+                    });
+                    break;
                 default:
                     break;
             }
@@ -234,6 +241,9 @@ export default class GoogleMarkers {
                     break;
                 case MarkerEventType.MouseOut:
                     this.google.maps.event.clearListeners(marker, 'mouseout');
+                    break;
+                case MarkerEventType.BeforeDrag:
+                    this.google.maps.event.clearListeners(marker, "dragstart");
                     break;
                 default:
                     break;
