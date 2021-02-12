@@ -157,20 +157,8 @@ function addMarker() {
         simpleMarkerShow = true;
     } else {
         simpleMarkerShow = !simpleMarkerShow;
-        currentMap.addMarkerEvent('simple', inlogMaps.MarkerEventType.BeforeDrag, testeAntes);
-        currentMap.addMarkerEvent('simple', inlogMaps.MarkerEventType.AfterDrag, testeDepois);
         currentMap.toggleMarkers(simpleMarkerShow, 'simple');
     }
-}
-
-function testeAntes(event) {
-    console.log('antes:');
-    console.log(event);
-}
-
-function testeDepois(event) {
-    console.log('depois:');
-    console.log(event);
 }
 
 function onMouseOver(event) {
