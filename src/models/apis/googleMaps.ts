@@ -200,7 +200,7 @@ export default class GoogleMaps implements IMapFunctions {
     }
 
     public countMarkersOnCluster(markerClusterer: any): number {
-        return this.countMarkersOnCluster(markerClusterer);
+        return this.googleMarkers.countMarkersOnCluster(markerClusterer);
     }
 
     /* Polygons */
