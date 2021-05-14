@@ -52,7 +52,8 @@ export default class LeafletMap {
     }
 
     public getCenter(): number[] {
-        return this.map.getCenter();
+        const center = this.map.getCenter();
+        return [center.lat, center.lng];
     }
 
     public setCenter(position: number[]) {
@@ -61,7 +62,7 @@ export default class LeafletMap {
 
     public pixelsToLatLng(offsetx: number, offsety: number) {
         const scale = Math.pow(2, this.map.getZoom());
-        const worldCoordinateCenter = this.map.project(this.map.getCenter());
+        const worldCoordinateCenter = this.leaflet.CRS.Simple.project(this.map.getCenter())
         const pixelOffset = new this.leaflet.Point(offsetx / scale || 0, offsety / scale || 0);
 
         const worldCoordinateNewCenter = new this.leaflet.Point(
@@ -69,7 +70,7 @@ export default class LeafletMap {
             worldCoordinateCenter.y + pixelOffset.y
         );
 
-        const latlng = this.map.unproject(worldCoordinateNewCenter);
+        const latlng = this.leaflet.CRS.Simple.unproject(worldCoordinateNewCenter);
         return [latlng.lat, latlng.lng];
     }
 

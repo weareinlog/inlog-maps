@@ -76,6 +76,12 @@ export default class GooglePolygons {
                 strokeWeight: options.weight ? options.weight : polygon.strokeWeight
             };
 
+            if (options.path) {
+                const paths = [];
+                options.path.forEach((path) => paths.push({ lat: path[0], lng: path[1] }));
+                polygon.setPath(paths);
+            }
+
             polygon.setOptions(newOptions);
 
             if (options.object) {

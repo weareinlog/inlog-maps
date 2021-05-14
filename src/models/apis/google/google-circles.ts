@@ -90,6 +90,10 @@ export default class GoogleCircles {
         return [center.lat(), center.lng()];
     }
 
+    public getCircleRadius(circle: any): number {
+        return circle.getRadius();
+    }
+
     public addCircleEvent(circles: any, eventType: CircleEventType, eventFunction: any): void {
         circles.forEach((circle: any) => {
             switch (eventType) {

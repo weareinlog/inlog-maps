@@ -241,6 +241,10 @@ export default class Leaflet implements IMapFunctions {
         return this.leafletCircles.getCircleCenter(circle);
     }
 
+    public getCircleRadius(circle: any): number {
+        return this.leafletCircles.getCircleRadius(circle);
+    }
+
     public addCircleEvent(circles: any, eventType: CircleEventType, eventFunction: any): void {
         this.leafletCircles.addCircleEvent(circles, eventType, eventFunction);
     }
