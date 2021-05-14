@@ -58,6 +58,7 @@ export default interface IMapFunctions {
     fitBoundsCircles(circles: any): void;
     isCircleOnMap(circle: any): boolean;
     getCircleCenter(circle: any): number[];
+    getCircleRadius(circle: any): number;
     addCircleEvent(circles: any, event: CircleEventType, eventFunction: any): void;
     removeCircleEvent(circles: any, event: CircleEventType): void;
 

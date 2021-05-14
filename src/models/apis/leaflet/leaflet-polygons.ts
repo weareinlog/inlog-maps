@@ -66,6 +66,10 @@ export default class LeafletPolygons {
                 weight: options.weight ? options.weight : polygon.options.weight
             };
 
+            if (options.path) {
+                polygon.setLatLngs(options.path);
+            }
+
             polygon.setStyle(style);
 
             if (options.editable !== null && options.editable !== undefined) {

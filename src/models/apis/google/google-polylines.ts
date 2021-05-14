@@ -461,7 +461,7 @@ export default class GooglePolylines {
             const newPoint = new EventReturn([newPath.lat(), newPath.lng()]);
 
             const previousPath = path.getAt(event - 1);
-            const previousPoint = new EventReturn([previousPath.lat(), previousPath.lng()]);
+            const previousPoint = previousPath ? new EventReturn([previousPath.lat(), previousPath.lng()]) : null;
             eventFunction(newPoint, previousPoint, polyline.object, event);
         };
         this.google.maps.event.addListener(polyline.getPath(), 'insert_at', polyline.insertAtListener);

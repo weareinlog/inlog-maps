@@ -17,6 +17,7 @@ export default class LeafletCircles {
         const newOptions = {
             color: options.color,
             draggable: options.draggable,
+            editable: options.editable,
             fillColor: options.fillColor,
             fillOpacity: options.fillOpacity,
             opacity: options.opacity,
@@ -60,6 +61,7 @@ export default class LeafletCircles {
         circles.forEach((circle) => {
             const style = {
                 color: options.color ? options.color : circle.options.color,
+                editable: circle.options.editable,
                 fillColor: options.fillColor ? options.fillColor : circle.options.fillColor,
                 fillOpacity: options.fillOpacity ? options.fillOpacity : circle.options.fillOpacity,
                 opacity: options.opacity ? options.opacity : circle.options.opacity,
@@ -74,6 +76,10 @@ export default class LeafletCircles {
 
             if (options.center) {
                 circle.setLatLng(options.center);
+            }
+
+            if (style.editable) {
+                circle.enableEdit();
             }
         });
     }
@@ -90,6 +96,10 @@ export default class LeafletCircles {
         const center = circle.getLatLng();
 
         return [center.lat, center.lng];
+    }
+
+    public getCircleRadius(circle: any): number {
+        return circle.getRadius();
     }
 
     public addCircleEvent(circles: any, eventType: CircleEventType, eventFunction: any): void {

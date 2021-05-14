@@ -265,6 +265,10 @@ export default class GoogleMaps implements IMapFunctions {
         return this.googleCircles.getCircleCenter(circle);
     }
 
+    public getCircleRadius(circle: any): number {
+        return this.googleCircles.getCircleRadius(circle);
+    }
+
     public addCircleEvent(circles: any, eventType: CircleEventType, eventFunction: any): void {
         this.googleCircles.addCircleEvent(circles, eventType, eventFunction);
     }

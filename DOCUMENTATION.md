@@ -1,4 +1,4 @@
-# [@inlog/inlog-maps](https://github.com/weareinlog/inlog-maps#readme) *4.8.8*
+# [@inlog/inlog-maps](https://github.com/weareinlog/inlog-maps#readme) *4.9.0*
 
 > A library for using generic layer maps 
 
@@ -911,6 +911,30 @@ This function return circle center
 
 
 - `Array.&lt;number&gt;`  
+
+
+
+#### Map.getCircleRadius(type, condition) 
+
+This function return circle center
+
+
+
+
+##### Parameters
+
+| Name | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| type | `string`  |  | &nbsp; |
+| condition | `any`  | [nullable] | &nbsp; |
+
+
+
+
+##### Returns
+
+
+- `number`  
 
 
 

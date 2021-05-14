@@ -587,6 +587,22 @@ export default class Map {
     }
 
     /**
+     * This function return circle center
+     * @param {string} type
+     * @param {any} condition [nullable]
+     * @returns {number}
+     */
+    public getCircleRadius(type: string, condition?: any): number {
+        const circles = this.getCircles(type, condition);
+
+        if (circles && circles.length) {
+            return this.map.getCircleRadius(circles[0]);
+        }
+
+        return null;
+    }
+
+    /**
      * This function add new events on circle
      * @param {string} type
      * @param {InlogMaps.CircleEventType} event
