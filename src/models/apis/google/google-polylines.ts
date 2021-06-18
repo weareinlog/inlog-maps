@@ -51,7 +51,8 @@ export default class GooglePolylines {
                         icon: {
                             path: 'M 0,-1 0,1',
                             scale: 2,
-                            strokeOpacity: 1
+                            strokeOpacity: 1,
+                            strokeWeight: options.weight
                         },
                         offset: '0',
                         repeat: '10px'
