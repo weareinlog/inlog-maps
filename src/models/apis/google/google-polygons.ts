@@ -73,7 +73,9 @@ export default class GooglePolygons {
                 fillOpacity: options.fillOpacity ? options.fillOpacity : polygon.fillOpacity,
                 strokeColor: options.color ? options.color : polygon.strokeColor,
                 strokeOpacity: options.opacity ? options.opacity : polygon.strokeOpacity,
-                strokeWeight: options.weight ? options.weight : polygon.strokeWeight
+                strokeWeight: options.weight ? options.weight : polygon.strokeWeight,
+                draggable: options.draggable !== null && options.draggable !== undefined ?
+                    options.draggable : polygon.draggable
             };
 
             if (options.path) {

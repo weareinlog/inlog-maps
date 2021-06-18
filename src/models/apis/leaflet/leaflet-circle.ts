@@ -28,6 +28,7 @@ export default class LeafletCircles {
 
         if (eventClick) {
             circle.on('click', (event: any) => {
+                self.leaflet.DomEvent.stopPropagation(event);
                 const param = new EventReturn([event.latlng.lat, event.latlng.lng]);
                 eventClick(param, event.target.object);
             });
@@ -61,7 +62,8 @@ export default class LeafletCircles {
         circles.forEach((circle) => {
             const style = {
                 color: options.color ? options.color : circle.options.color,
-                editable: circle.options.editable,
+                draggable: options.draggable ? options.draggable : circle.options.draggable,
+                editable: options.editable ? options.editable : circle.options.editable,
                 fillColor: options.fillColor ? options.fillColor : circle.options.fillColor,
                 fillOpacity: options.fillOpacity ? options.fillOpacity : circle.options.fillOpacity,
                 opacity: options.opacity ? options.opacity : circle.options.opacity,
@@ -78,8 +80,12 @@ export default class LeafletCircles {
                 circle.setLatLng(options.center);
             }
 
-            if (style.editable) {
-                circle.enableEdit();
+            if (options.editable !== null && options.editable !== undefined) {
+                if (options.editable) {
+                    circle.enableEdit();
+                } else {
+                    circle.disableEdit();
+                }
             }
         });
     }

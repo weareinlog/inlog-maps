@@ -6,6 +6,8 @@ export default class CircleAlterOptions {
     public fillColor?: string;
     public color?: string;
     public opacity?: number;
+    public editable?: boolean;
+    public draggable?: boolean;
 
     constructor(center: number[], radius: number, weight: number, fillOpacity?: number,
         fillColor?: string, color?: string, opacity?: number) {
