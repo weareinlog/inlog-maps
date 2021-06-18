@@ -60,6 +60,7 @@ export default class LeafletPolygons {
         polygons.forEach((polygon) => {
             const style = {
                 color: options.color ? options.color : polygon.options.color,
+                draggable: options.draggable ? options.draggable : polygon.options.draggable,
                 fillColor: options.fillColor ? options.fillColor : polygon.options.fillColor,
                 fillOpacity: options.fillOpacity ? options.fillOpacity : polygon.options.fillOpacity,
                 opacity: options.opacity ? options.opacity : polygon.options.opacity,

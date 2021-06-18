@@ -5,9 +5,10 @@ export default class PolygonAlterOptions {
     public fillColor?: string;
     public fillOpacity?: number;
     public addToMap: boolean;
-    public editable?: boolean;
     public object: any;
     public path: number[][];
+    public editable?: boolean;
+    public draggable?: boolean;
 
     constructor(addToMap: boolean, color?: string, opacity?: number, fillColor?: string, fillOpacity?: number,
         weight?: number) {

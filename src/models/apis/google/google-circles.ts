@@ -69,7 +69,11 @@ export default class GoogleCircles {
                 radius: options.radius ? options.radius : circle.radius,
                 strokeColor: options.color ? options.color : circle.strokeColor,
                 strokeOpacity: options.opacity ? options.opacity : circle.strokeOpacity,
-                strokeWeight: options.weight ? options.weight : circle.strokeWeight
+                strokeWeight: options.weight ? options.weight : circle.strokeWeight,
+                editable: options.editable !== null && options.editable !== undefined ?
+                    options.editable : circle.editable,
+                draggable: options.draggable !== null && options.draggable !== undefined ?
+                    options.draggable : circle.draggable
             };
 
             circle.setOptions(newOptions);
