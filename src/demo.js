@@ -395,6 +395,7 @@ function addPolylineWithNavigation() {
     options.fitBounds = true;
     options.navigateOptions = new inlogMaps.NavigationOptions('#0000FF');
     options.navigateOptions.navigateByPoint = false;
+    options.navigateOptions.navegateOnKeyPress = true;
     currentMap.drawPolylineWithNavigation('polylineNavigation', options);
 }
 
