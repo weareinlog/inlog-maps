@@ -199,6 +199,7 @@ export default class GooglePolylines {
 
     public removePolylineHighlight() {
         this.google.maps.event.clearListeners(document, 'keyup');
+        this.google.maps.event.clearListeners(document, 'keydown');
         if (this.selectedPath) {
             this.selectedPath.setMap(null);
             this.selectedPath = null;
@@ -254,8 +255,13 @@ export default class GooglePolylines {
         this.moveSelectedPath(polyline, this.navigationOptions);
         this.selectedPolyline = polyline;
 
-        this.google.maps.event.clearListeners(document, 'keyup');
-        this.google.maps.event.addDomListener(document, 'keyup', this.onKeyUp.bind(this));
+        if (this.navigationOptions.navegateOnKeyPress) {
+            this.google.maps.event.clearListeners(document, 'keydown');
+            this.google.maps.event.addDomListener(document, 'keydown', this.onKeyUp.bind(this));
+        } else {
+            this.google.maps.event.clearListeners(document, 'keyup');
+            this.google.maps.event.addDomListener(document, 'keyup', this.onKeyUp.bind(this));
+        }
     }
 
     public getObjectPolyline(polyline: any): object {
@@ -301,8 +307,13 @@ export default class GooglePolylines {
         this.moveSelectedPath(polyline, this.navigationOptions);
         this.selectedPolyline = polyline;
 
-        this.google.maps.event.clearListeners(document, 'keyup');
-        this.google.maps.event.addDomListener(document, 'keyup', this.onKeyUp.bind(this));
+        if (this.navigationOptions.navegateOnKeyPress) {
+            this.google.maps.event.clearListeners(document, 'keydown');
+            this.google.maps.event.addDomListener(document, 'keydown', this.onKeyUp.bind(this));
+        } else {
+            this.google.maps.event.clearListeners(document, 'keyup');
+            this.google.maps.event.addDomListener(document, 'keyup', this.onKeyUp.bind(this));
+        }
 
         if (polyline.navigationHandlerClick) {
             const param = new EventReturn([event.latLng.lat(), event.latLng.lng()]);

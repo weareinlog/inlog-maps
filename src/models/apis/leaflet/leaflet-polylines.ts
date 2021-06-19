@@ -230,6 +230,7 @@ export default class LeafletPolylines {
         }
 
         document.onkeyup = null;
+        document.onkeydown = null;
     }
 
     public addPolylineEvent(polylines: any, eventType: PolylineEventType, eventFunction: any) {
@@ -277,7 +278,12 @@ export default class LeafletPolylines {
         this.moveSelectedPath(polyline, this.navigationOptions);
         this.selectedPolyline = polyline;
 
-        document.onkeyup = this.onKeyUp.bind(this);
+        if (this.navigationOptions.navegateOnKeyPress) {
+            document.onkeydown = this.onKeyUp.bind(this);
+        } else {
+            document.onkeyup = this.onKeyUp.bind(this);
+        }
+
     }
 
     public getObjectPolyline(polyline: any): object {
@@ -321,7 +327,11 @@ export default class LeafletPolylines {
         this.moveSelectedPath(polyline, this.navigationOptions);
         this.selectedPolyline = polyline;
 
-        document.onkeyup = this.onKeyUp.bind(this);
+        if (this.navigationOptions.navegateOnKeyPress) {
+            document.onkeydown = this.onKeyUp.bind(this);
+        } else {
+            document.onkeyup = this.onKeyUp.bind(this);
+        }
 
         if (polyline.navigationHandlerClick) {
             const param = new EventReturn([event.latlng.lat, event.latlng.lng]);
