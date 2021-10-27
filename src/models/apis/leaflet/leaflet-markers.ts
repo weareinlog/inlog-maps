@@ -1,4 +1,4 @@
-import {MarkerEventType} from '../../dto/event-type';
+import { MarkerEventType } from '../../dto/event-type';
 import EventReturn from '../../features/events/event-return';
 import MarkerClustererConfig from '../../features/marker-clusterer/marker-clusterer-config';
 import CircleMarkerOptions from '../../features/marker/circle-marker-options';
@@ -261,7 +261,8 @@ export default class LeafletMarkers {
             deltaLat: (position[0] - marker.getLatLng().lat) / numDeltas,
             deltaLng: (position[1] - marker.getLatLng().lng) / numDeltas,
             i: 0,
-            position: [marker.getLatLng().lat, marker.getLatLng().lng]
+            position: [marker.getLatLng().lat, marker.getLatLng().lng],
+            lastPosition: position
         };
 
         this.moveMarker(marker, reference, numDeltas);
@@ -271,9 +272,11 @@ export default class LeafletMarkers {
         reference.position[0] += reference.deltaLat;
         reference.position[1] += reference.deltaLng;
         marker.setLatLng(reference.position);
-        if (reference.i <= numDeltas) {
+        if (reference.i < numDeltas) {
             reference.i++;
             setTimeout(() => this.moveMarker(marker, reference, numDeltas), 20);
+        } else if (reference.i === numDeltas) {
+            setTimeout(() => marker.setLatLng(reference.lastPosition), 20);
         }
     }
 }

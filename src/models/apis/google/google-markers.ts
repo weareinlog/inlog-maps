@@ -1,4 +1,4 @@
-import {MarkerEventType} from '../../dto/event-type';
+import { MarkerEventType } from '../../dto/event-type';
 import EventReturn from '../../features/events/event-return';
 import MarkerClustererConfig from '../../features/marker-clusterer/marker-clusterer-config';
 import CircleMarkerOptions from '../../features/marker/circle-marker-options';
@@ -295,6 +295,7 @@ export default class GoogleMarkers {
             deltaLng: (position.lng - marker.getPosition().lng()) / numDeltas,
             i: 0,
             position: [marker.getPosition().lat(), marker.getPosition().lng()],
+            lastPosition: position
         };
 
         this.moveMarker(marker, reference, numDeltas);
@@ -304,9 +305,11 @@ export default class GoogleMarkers {
         reference.position[0] += reference.deltaLat;
         reference.position[1] += reference.deltaLng;
         marker.setPosition(new google.maps.LatLng(reference.position[0], reference.position[1]));
-        if (reference.i <= numDeltas) {
+        if (reference.i < numDeltas) {
             reference.i++;
             setTimeout(() => this.moveMarker(marker, reference, numDeltas), 20);
+        } else if (reference.i === numDeltas) {
+            setTimeout(() => marker.setPosition(reference.lastPosition), 20);
         }
     }
 }
