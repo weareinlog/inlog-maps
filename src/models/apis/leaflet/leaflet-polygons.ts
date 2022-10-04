@@ -74,10 +74,10 @@ export default class LeafletPolygons {
             polygon.setStyle(style);
 
             if (options.editable !== null && options.editable !== undefined) {
+                polygon.disableEdit();
+
                 if (options.editable) {
                     polygon.enableEdit();
-                } else {
-                    polygon.disableEdit();
                 }
             }
 
@@ -107,30 +107,22 @@ export default class LeafletPolygons {
         const self = this;
         polygons.forEach((polygon: any) => {
             switch (eventType) {
-                case PolygonEventType.Move:
-                    polygon.on('dragend', (event: any) => {
-                        const param = new EventReturn([event.target.getCenter().lat, event.target.getCenter().lng]);
-                        eventFunction(param, event.target.getLatLngs()[0].map((x: any) => [x.lat, x.lng],
-                            event.target.object));
-                    });
+                case PolygonEventType.SetAt:
+                    this.addPolygonEventMove(polygon, eventFunction);
                     break;
                 case PolygonEventType.InsertAt:
-                    polygon.on('editable:vertex:dragend', (event: any) => {
-                        const param = new EventReturn([event.vertex.latlng.lat, event.vertex.latlng.lng]);
-                        eventFunction(param, event.vertex.latlngs.map((x: any) => [x.lat, x.lng]), event.target.object);
-                    });
-
-                    polygon.on('editable:vertex:clicked', (event: any) => {
-                        const param = new EventReturn([event.vertex.latlng.lat, event.vertex.latlng.lng]);
-                        eventFunction(param, event.vertex.latlngs.map((x: any) => [x.lat, x.lng]), event.target.object);
-                    });
+                    this.addPolygonEventInsertAt(polygon, eventFunction);
+                    break;
+                case PolygonEventType.RemoveAt:
+                    this.addPolygonEventRemoveAt(polygon, eventFunction);
+                    break;
+                case PolygonEventType.DragPolygon:
+                    this.addPolygonEventDragPolygon(polygon, eventFunction);
                     break;
                 case PolygonEventType.Click:
-                    polygon.on('click', (event: any) => {
-                        self.leaflet.DomEvent.stopPropagation(event);
-                        const param = new EventReturn([event.latlng.lat, event.latlng.lng]);
-                        eventFunction(param, event.target.object);
-                    });
+                    this.addPolygonEventClick(polygon, eventFunction, self);
+                    break;
+                default:
                     break;
             }
         });
@@ -139,11 +131,18 @@ export default class LeafletPolygons {
     public removePolygonEvent(polygons: any, event: PolygonEventType): void {
         polygons.forEach((polygon: any) => {
             switch (event) {
-                case PolygonEventType.Move:
+                case PolygonEventType.SetAt:
                     polygon.off('editable:vertex:dragstart');
                     break;
                 case PolygonEventType.InsertAt:
-                    polygon.off('editable:vertex:dragend');
+                    polygon.off('editable:vertex:new');
+                    break;
+                case PolygonEventType.RemoveAt:
+                    polygon.off('editable:vertex:clicked');
+                    polygon.off('editable:vertex:deleted');
+                    break;
+                case PolygonEventType.DragPolygon:
+                    polygon.off('dragend');
                     break;
                 case PolygonEventType.Click:
                     polygon.off('click');
@@ -155,5 +154,57 @@ export default class LeafletPolygons {
     public getBoundsPolygons(polygons) {
         const group = new this.leaflet.FeatureGroup(polygons);
         return group.getBounds();
+    }
+
+    private addPolygonEventMove(polygon: any, eventFunction: any) {
+        polygon.on('editable:vertex:dragstart', (eventStart: any) => {
+            const lastPosition = new EventReturn([eventStart.vertex.latlng.lat, eventStart.vertex.latlng.lng]);
+
+            polygon.on('editable:vertex:dragend', (eventEnd: any) => {
+                const newPosition = new EventReturn([eventEnd.vertex.latlng.lat, eventEnd.vertex.latlng.lng]);
+                eventFunction(newPosition, lastPosition, eventEnd.target.object, eventEnd.vertex.getIndex(),
+                    eventEnd.vertex.latlngs.map((x: any) => new EventReturn([x.lat, x.lng])));
+                polygon.off('editable:vertex:dragend');
+            });
+        });
+    }
+
+    private addPolygonEventInsertAt(polygon: any, eventFunction: any) {
+        polygon.on('editable:vertex:new', (eventNew: any) => {
+            const latlngs = eventNew.vertex.latlngs;
+            const previous = latlngs[latlngs.findIndex((x: any) => x === eventNew.vertex.latlng) - 1];
+
+            if (previous) {
+                const previousPoint = new EventReturn([previous.lat, previous.lng]);
+
+                polygon.on('editable:vertex:dragend', (event: any) => {
+                    const newPoint = new EventReturn([event.vertex.latlng.lat, event.vertex.latlng.lng]);
+                    eventFunction(newPoint, previousPoint, event.target.object, event.vertex.getIndex(),
+                        event.vertex.latlngs.map((x: any) => new EventReturn([x.lat, x.lng])));
+                    polygon.off('editable:vertex:dragend');
+                });
+            }
+        });
+    }
+
+    private addPolygonEventRemoveAt(polygon: any, eventFunction: any) {
+        polygon.on('editable:vertex:deleted', (event: any) => {
+            const param = new EventReturn([event.vertex.latlng.lat, event.vertex.latlng.lng]);
+            eventFunction(param, event.vertex.latlngs.map((x: any) => new EventReturn([x.lat, x.lng])), event.target.object);
+        });
+    }
+
+    private addPolygonEventDragPolygon(polygon: any, eventFunction: any) {
+        polygon.on('dragend', (event: any) => {
+            eventFunction(event.target.getLatLngs()[0].map((x: any) => new EventReturn([x.lat, x.lng]), event.target.object));
+        });
+    }
+
+    private addPolygonEventClick(polygon: any, eventFunction: any, self: any) {
+        polygon.on('click', (event: any) => {
+            self.leaflet.DomEvent.stopPropagation(event);
+            const param = new EventReturn([event.latlng.lat, event.latlng.lng]);
+            eventFunction(param, event.target.object);
+        });
     }
 }

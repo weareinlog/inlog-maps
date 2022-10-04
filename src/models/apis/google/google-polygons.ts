@@ -111,29 +111,20 @@ export default class GooglePolygons {
     public addPolygonEvent(polygons: any, eventType: PolygonEventType, eventFunction: any): void {
         polygons.forEach((polygon: any) => {
             switch (eventType) {
-                case PolygonEventType.Move:
-                    this.google.maps.event.addListener(polygon.getPath(), 'set_at', (event: any) => {
-                        const param = new EventReturn([polygon.getPath()
-                            .getAt(event).lat(), polygon.getPath().getAt(event).lng()]);
-
-                        eventFunction(param, polygon.getPath().getArray().map((x: any) => [x.lat(), x.lng()]),
-                            polygon.object);
-                    });
+                case PolygonEventType.SetAt:
+                    this.addPolygonEventMove(polygon, eventFunction);
                     break;
                 case PolygonEventType.InsertAt:
-                    this.google.maps.event.addListener(polygon.getPath(), 'insert_at', (event: any) => {
-                        const param = new EventReturn([polygon.getPath()
-                            .getAt(event).lat(), polygon.getPath().getAt(event).lng()]);
-
-                        eventFunction(param, polygon.getPath().getArray().map((x: any) => [x.lat(), x.lng()]),
-                            polygon.object);
-                    });
+                    this.addPolygonEventInsertAt(polygon, eventFunction);
+                    break;
+                case PolygonEventType.RemoveAt:
+                    this.addPolygonEventRemoveAt(polygon, eventFunction);
+                    break;
+                case PolygonEventType.DragPolygon:
+                    this.addPolygonEventDragPolygon(polygon, eventFunction);
                     break;
                 case PolygonEventType.Click:
-                    this.google.maps.event.addListener(polygon, 'click', (event: any) => {
-                        const param = new EventReturn([event.latLng.lat(), event.latLng.lng()]);
-                        eventFunction(param, polygon.object);
-                    });
+                    this.addPolygonEventClick(polygon, eventFunction);
                     break;
                 default:
                     break;
@@ -144,11 +135,18 @@ export default class GooglePolygons {
     public removePolygonEvent(polygons: any, event: PolygonEventType): void {
         polygons.forEach((polygon: any) => {
             switch (event) {
-                case PolygonEventType.Move:
+                case PolygonEventType.SetAt:
                     this.google.maps.event.clearListeners(polygon.getPath(), 'set_at');
                     break;
                 case PolygonEventType.InsertAt:
                     this.google.maps.event.clearListeners(polygon.getPath(), 'insert_at');
+                    break;
+                case PolygonEventType.RemoveAt:
+                    this.google.maps.event.clearListeners(polygon.getPath(), 'remove_at');
+                    break;
+                case PolygonEventType.DragPolygon:
+                    this.google.maps.event.clearListeners(polygon, 'dragstart');
+                    this.google.maps.event.clearListeners(polygon, 'dragend');
                     break;
                 case PolygonEventType.Click:
                     this.google.maps.event.clearListeners(polygon, 'click');
@@ -164,9 +162,7 @@ export default class GooglePolygons {
 
         polygons.forEach((polygon: any) => {
             const paths = polygon.getPaths().getArray();
-
-            paths.forEach((path: any) => path.getArray()
-                .forEach((x: any) => bounds.extend(x)));
+            paths.forEach((path: any) => path.getArray().forEach((x: any) => bounds.extend(x)));
         });
 
         return bounds;
@@ -176,9 +172,57 @@ export default class GooglePolygons {
         const bounds = new this.google.maps.LatLngBounds();
         const paths = polygon.getPaths().getArray();
 
-        paths.forEach((path: any) => {
-            path.getArray().forEach((x) => bounds.extend(x));
-        });
+        paths.forEach((path: any) => path.getArray().forEach((x: any) => bounds.extend(x)));
         return bounds;
+    }
+
+    private addPolygonEventMove(polygon, eventFunction) {
+        this.google.maps.event.addListener(polygon.getPath(), 'set_at', (newEvent: any, lastEvent: any) => {
+            if (polygon.dragging)
+                return;
+
+            const path = polygon.getPath().getAt(newEvent);
+            const newPosition = new EventReturn([path.lat(), path.lng()]);
+            const lastPosition = new EventReturn([lastEvent.lat(), lastEvent.lng()]);
+
+            eventFunction(newPosition, lastPosition, polygon.object, newEvent, polygon.getPath().getArray().map((x: any) => new EventReturn([x.lat(), x.lng()])));
+        });
+    }
+
+    private addPolygonEventInsertAt(polygon, eventFunction) {
+        this.google.maps.event.addListener(polygon.getPath(), 'insert_at', (event: any) => {
+            const path = polygon.getPath();
+            const newPath = path.getAt(event);
+            const newPoint = new EventReturn([newPath.lat(), newPath.lng()]);
+
+            const previousPath = path.getAt(event - 1);
+            const previousPoint = previousPath ? new EventReturn([previousPath.lat(), previousPath.lng()]) : null;
+            eventFunction(newPoint, previousPoint, polygon.object, event, polygon.getPath().getArray().map((x: any) => new EventReturn([x.lat(), x.lng()])));
+        });
+    }
+
+    private addPolygonEventRemoveAt(polygon, eventFunction) {
+        this.google.maps.event.addListener(polygon.getPath(), 'remove_at', (event: any) => {
+            const param = new EventReturn([polygon.getPath().getAt(event).lat(), polygon.getPath().getAt(event).lng()]);
+            eventFunction(param, polygon.getPath().getArray().map((x: any) => new EventReturn([x.lat(), x.lng()])), polygon.object);
+        });
+    }
+
+    private addPolygonEventDragPolygon(polygon, eventFunction) {
+        this.google.maps.event.addListener(polygon, 'dragstart', (event: any) => {
+            polygon.dragging = true;
+        });
+
+        this.google.maps.event.addListener(polygon, 'dragend', (event: any) => {
+            polygon.dragging = false;
+            eventFunction(polygon.getPath().getArray().map((x: any) => new EventReturn([x.lat(), x.lng()])), polygon.object);
+        });
+    }
+
+    private addPolygonEventClick(polygon, eventFunction) {
+        this.google.maps.event.addListener(polygon, 'click', (event: any) => {
+            const param = new EventReturn([event.latLng.lat(), event.latLng.lng()]);
+            eventFunction(param, polygon.object);
+        });
     }
 }

@@ -18,13 +18,16 @@ export enum CircleEventType {
 }
 
 export enum PolygonEventType {
+    SetAt,
     InsertAt,
-    Move,
+    RemoveAt,
+    DragPolygon,
     Click
 }
 
 export enum PolylineEventType {
-    Move,
+    SetAt,
     InsertAt,
-    RemoveAt
+    RemoveAt,
+    DragPolyline
 }

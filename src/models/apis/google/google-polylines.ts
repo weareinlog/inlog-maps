@@ -212,7 +212,7 @@ export default class GooglePolylines {
     public addPolylineEvent(polylines: any, eventType: PolylineEventType, eventFunction: any) {
         polylines.forEach((polyline: any) => {
             switch (eventType) {
-                case PolylineEventType.Move:
+                case PolylineEventType.SetAt:
                     this.addPolylineEventMove(polyline, eventFunction);
                     break;
                 case PolylineEventType.InsertAt:
@@ -221,6 +221,9 @@ export default class GooglePolylines {
                 case PolylineEventType.RemoveAt:
                     this.addPolylineEventRemoveAt(polyline, eventFunction);
                     break;
+                case PolylineEventType.DragPolyline:
+                    this.addPolylineEventDragPolyline(polyline, eventFunction);
+                    break;
                 default:
                     break;
             }
@@ -228,11 +231,11 @@ export default class GooglePolylines {
     }
 
     public removePolylineEvent(polylines: any, event: PolylineEventType) {
-        polylines.forEach((polyline: any) =>
-            this.google.maps.event.clearListeners(polyline, 'click'));
+        polylines.forEach((polyline: any) => this.google.maps.event.clearListeners(polyline, 'click'));
+
         polylines.forEach((polyline: any) => {
             switch (event) {
-                case PolylineEventType.Move:
+                case PolylineEventType.SetAt:
                     this.google.maps.event.clearListeners(polyline.getPath(), 'set_at');
                     break;
                 case PolylineEventType.InsertAt:
@@ -240,6 +243,10 @@ export default class GooglePolylines {
                     break;
                 case PolylineEventType.RemoveAt:
                     this.google.maps.event.clearListeners(polyline.getPath(), 'remove_at');
+                    break;
+                case PolylineEventType.DragPolyline:
+                    this.google.maps.event.clearListeners(polyline, 'dragstart');
+                    this.google.maps.event.clearListeners(polyline, 'dragend');
                     break;
                 default:
                     break;
@@ -457,11 +464,14 @@ export default class GooglePolylines {
 
     private addPolylineEventMove(polyline: any, eventFunction: any) {
         polyline.moveListener = (newEvent: any, lastEvent: any) => {
+            if (polyline.dragging)
+                return;
+
             const path = polyline.getPath().getAt(newEvent);
             const newPosition = new EventReturn([path.lat(), path.lng()]);
             const lastPosition = new EventReturn([lastEvent.lat(), lastEvent.lng()]);
 
-            eventFunction(newPosition, lastPosition, polyline.object, newEvent);
+            eventFunction(newPosition, lastPosition, polyline.object, newEvent, polyline.getPath().getArray().map((x: any) => new EventReturn([x.lat(), x.lng()])));
         };
         this.google.maps.event.addListener(polyline.getPath(), 'set_at', polyline.moveListener);
     }
@@ -474,18 +484,28 @@ export default class GooglePolylines {
 
             const previousPath = path.getAt(event - 1);
             const previousPoint = previousPath ? new EventReturn([previousPath.lat(), previousPath.lng()]) : null;
-            eventFunction(newPoint, previousPoint, polyline.object, event);
+            eventFunction(newPoint, previousPoint, polyline.object, event, polyline.getPath().getArray().map((x: any) => new EventReturn([x.lat(), x.lng()])));
         };
         this.google.maps.event.addListener(polyline.getPath(), 'insert_at', polyline.insertAtListener);
     }
 
     private addPolylineEventRemoveAt(polyline: any, eventFunction: any) {
         polyline.removeAtListener = (event: any) => {
-            const param = new EventReturn([polyline.getPath().getAt(event).lat(),
-            polyline.getPath().getAt(event).lng()]);
-            eventFunction(param);
+            const param = new EventReturn([polyline.getPath().getAt(event).lat(), polyline.getPath().getAt(event).lng()]);
+            eventFunction(param, polyline.object, polyline.getPath().getArray().map((x: any) => new EventReturn([x.lat(), x.lng()])));
         };
         this.google.maps.event.addListener(polyline.getPath(), 'remove_at', polyline.removeAtListener);
+    }
+
+    private addPolylineEventDragPolyline(polyline: any, eventFunction: any) {
+        polyline.dragPolylineListener = () => {
+            polyline.dragging = false;
+            const param = polyline.getPath().getArray().map((x: any) => new EventReturn([x.lat(), x.lng()]));
+            eventFunction(param, polyline.object);
+        };
+
+        this.google.maps.event.addListener(polyline, 'dragend', polyline.dragPolylineListener);
+        this.google.maps.event.addListener(polyline, 'dragstart', () => polyline.dragging = true);
     }
 
     private updateSelectedPathListeners() {

@@ -1,3 +1,4 @@
+import { Polyline } from 'leaflet';
 import { PolylineEventType } from '../../dto/event-type';
 import { PolylineType } from '../../dto/polyline-type';
 import EventReturn from '../../features/events/event-return';
@@ -236,7 +237,7 @@ export default class LeafletPolylines {
     public addPolylineEvent(polylines: any, eventType: PolylineEventType, eventFunction: any) {
         polylines.forEach((polyline: any) => {
             switch (eventType) {
-                case PolylineEventType.Move:
+                case PolylineEventType.SetAt:
                     this.addPolylineEventMove(polyline, eventFunction);
                     break;
                 case PolylineEventType.InsertAt:
@@ -244,6 +245,9 @@ export default class LeafletPolylines {
                     break;
                 case PolylineEventType.RemoveAt:
                     this.addPolylineEventRemoveAt(polyline, eventFunction);
+                    break;
+                case PolylineEventType.DragPolyline:
+                    this.addPolylineEventDragPolyline(polyline, eventFunction);
                     break;
                 default:
                     break;
@@ -254,15 +258,17 @@ export default class LeafletPolylines {
     public removePolylineEvent(polylines: any, event: PolylineEventType) {
         polylines.forEach((polyline: any) => {
             switch (event) {
-                case PolylineEventType.Move:
-                    polyline.off('editable:vertex:dragend');
+                case PolylineEventType.SetAt:
+                    polyline.off('editable:vertex:dragstart');
                     break;
                 case PolylineEventType.InsertAt:
                     polyline.off('editable:vertex:new');
-                    polyline.off('editable:vertex:dragend');
                     break;
                 case PolylineEventType.RemoveAt:
                     polyline.off('editable:vertex:deleted');
+                    break;
+                case PolylineEventType.DragPolyline:
+                    polyline.off('dragend');
                     break;
                 default:
                     break;
@@ -576,7 +582,7 @@ export default class LeafletPolylines {
                 }
 
                 const newPosition = new EventReturn([eventEnd.vertex.latlng.lat, eventEnd.vertex.latlng.lng]);
-                eventFunction(newPosition, lastPosition, eventEnd.target.object, eventEnd.vertex.getIndex());
+                eventFunction(newPosition, lastPosition, eventEnd.target.object, eventEnd.vertex.getIndex(), polyline.getLatLngs().map((x: any) => new EventReturn([x.lat, x.lng])));
                 polyline.off('editable:vertex:dragend');
             });
         });
@@ -596,7 +602,7 @@ export default class LeafletPolylines {
                 }
 
                 const newPoint = new EventReturn([event.vertex.latlng.lat, event.vertex.latlng.lng]);
-                eventFunction(newPoint, previousPoint, event.target.object, event.vertex.getIndex());
+                eventFunction(newPoint, previousPoint, event.target.object, event.vertex.getIndex(), polyline.getLatLngs().map((x: any) => new EventReturn([x.lat, x.lng])));
                 polyline.off('editable:vertex:dragend');
             });
         });
@@ -605,7 +611,14 @@ export default class LeafletPolylines {
     private addPolylineEventRemoveAt(polyline: any, eventFunction: any) {
         polyline.on('editable:vertex:deleted', (event: any) => {
             const param = new EventReturn([event.vertex.latlng.lat, event.vertex.latlng.lng]);
-            eventFunction(param);
+            eventFunction(param, event.target.object, polyline.getLatLngs().map((x: any) => new EventReturn([x.lat, x.lng])));
+        });
+    }
+
+    private addPolylineEventDragPolyline(polyline: any, eventFunction: any) {
+        polyline.on('dragend', (event: any) => {
+            const param = event.target.getLatLngs().map((x: any) => new EventReturn([x.lat, x.lng]));
+            eventFunction(param, event.target.object);
         });
     }
 }
