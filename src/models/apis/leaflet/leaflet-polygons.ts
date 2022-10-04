@@ -196,7 +196,18 @@ export default class LeafletPolygons {
 
     private addPolygonEventDragPolygon(polygon: any, eventFunction: any) {
         polygon.on('dragend', (event: any) => {
-            eventFunction(event.target.getLatLngs()[0].map((x: any) => new EventReturn([x.lat, x.lng]), event.target.object));
+
+            const path = event.target.getLatLngs().map((x: any) => {
+                return x.map((y: any) => {
+                    if (Array.isArray(y)) {
+                        return y.map(z => new EventReturn([z.lat, z.lng]));
+                    } else {
+                        return new EventReturn([y.lat, y.lng]);
+                    }
+                });
+            });
+
+            eventFunction(path, event.target.object);
         });
     }
 
