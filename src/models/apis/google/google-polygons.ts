@@ -14,14 +14,8 @@ export default class GooglePolygons {
 
     public drawPolygon(options: PolygonOptions, eventClick: any) {
         const self = this;
-        const paths = [];
-
-        options.path.forEach((path) => {
-            paths.push({
-                lat: path[0],
-                lng: path[1]
-            });
-        });
+        let paths = this.getPathRecursiveArray(options.path);
+        paths = this.getPathPolylineArray(paths);
 
         const newOptions = {
             draggable: options.draggable,
@@ -224,5 +218,22 @@ export default class GooglePolygons {
             const param = new EventReturn([event.latLng.lat(), event.latLng.lng()]);
             eventFunction(param, polygon.object);
         });
+    }
+
+    private getPathRecursiveArray(path: any) {
+        if (Array.isArray(path) && typeof path[0] !== 'number') {
+            return path.map(x => this.getPathRecursiveArray(x));
+        }
+        else return { lat: path[0], lng: path[1] }
+    }
+
+    private getPathPolylineArray(path: any) {
+        if (typeof path[0].lat === 'number') {
+            return path;
+        }
+        else if (typeof path[0][0].lat !== 'number') {
+            path = path[0];
+            return this.getPathPolylineArray(path);
+        } else return path;
     }
 }
