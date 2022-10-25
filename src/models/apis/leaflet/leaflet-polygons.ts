@@ -162,8 +162,15 @@ export default class LeafletPolygons {
 
             polygon.on('editable:vertex:dragend', (eventEnd: any) => {
                 const newPosition = new EventReturn([eventEnd.vertex.latlng.lat, eventEnd.vertex.latlng.lng]);
-                eventFunction(newPosition, lastPosition, eventEnd.target.object, eventEnd.vertex.getIndex(),
-                    eventEnd.vertex.latlngs.map((x: any) => new EventReturn([x.lat, x.lng])));
+                const path = polygon.getLatLngs().map((x: any) => {
+                    if (Array.isArray(x[0])) {
+                        return x.map((y: any) => y.map(z => new EventReturn([z.lat, z.lng])));
+                    } else {
+                        return [x.map((y: any) => new EventReturn([y.lat, y.lng]))];
+                    }
+                });
+
+                eventFunction(newPosition, lastPosition, eventEnd.target.object, eventEnd.vertex.getIndex(), path[0]);
                 polygon.off('editable:vertex:dragend');
             });
         });
@@ -179,8 +186,15 @@ export default class LeafletPolygons {
 
                 polygon.on('editable:vertex:dragend', (event: any) => {
                     const newPoint = new EventReturn([event.vertex.latlng.lat, event.vertex.latlng.lng]);
-                    eventFunction(newPoint, previousPoint, event.target.object, event.vertex.getIndex(),
-                        event.vertex.latlngs.map((x: any) => new EventReturn([x.lat, x.lng])));
+                    const path = polygon.getLatLngs().map((x: any) => {
+                        if (Array.isArray(x[0])) {
+                            return x.map((y: any) => y.map(z => new EventReturn([z.lat, z.lng])));
+                        } else {
+                            return [x.map((y: any) => new EventReturn([y.lat, y.lng]))];
+                        }
+                    });
+
+                    eventFunction(newPoint, previousPoint, event.target.object, event.vertex.getIndex(), path[0]);
                     polygon.off('editable:vertex:dragend');
                 });
             }
@@ -190,24 +204,30 @@ export default class LeafletPolygons {
     private addPolygonEventRemoveAt(polygon: any, eventFunction: any) {
         polygon.on('editable:vertex:deleted', (event: any) => {
             const param = new EventReturn([event.vertex.latlng.lat, event.vertex.latlng.lng]);
-            eventFunction(param, event.vertex.latlngs.map((x: any) => new EventReturn([x.lat, x.lng])), event.target.object);
+
+            const path = polygon.getLatLngs().map((x: any) => {
+                if (Array.isArray(x[0])) {
+                    return x.map((y: any) => y.map(z => new EventReturn([z.lat, z.lng])));
+                } else {
+                    return [x.map((y: any) => new EventReturn([y.lat, y.lng]))];
+                }
+            });
+
+            eventFunction(param, path[0], event.target.object);
         });
     }
 
     private addPolygonEventDragPolygon(polygon: any, eventFunction: any) {
         polygon.on('dragend', (event: any) => {
-
-            const path = event.target.getLatLngs().map((x: any) => {
-                return x.map((y: any) => {
-                    if (Array.isArray(y)) {
-                        return y.map(z => new EventReturn([z.lat, z.lng]));
-                    } else {
-                        return new EventReturn([y.lat, y.lng]);
-                    }
-                });
+            const path = polygon.getLatLngs().map((x: any) => {
+                if (Array.isArray(x[0])) {
+                    return x.map((y: any) => y.map(z => new EventReturn([z.lat, z.lng])));
+                } else {
+                    return [x.map((y: any) => new EventReturn([y.lat, y.lng]))];
+                }
             });
 
-            eventFunction(path, event.target.object);
+            eventFunction(path[0], event.target.object);
         });
     }
 
