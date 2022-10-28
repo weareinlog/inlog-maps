@@ -25,7 +25,7 @@ export class MapsApiLoaderService {
     public static loadLeafletAPI(params) {
         const link = document.createElement('link');
         link.rel = 'stylesheet';
-        link.href = 'https://unpkg.com/leaflet@1.4.0/dist/leaflet.css';
+        link.href = 'https://desenvolvimentoweb.blob.core.windows.net/inlog-leaflet/leaflet.css';
         // link.integrity = params.cssIntegrity;
         // link.setAttribute('crossorigin', params.crossorigin);
 
@@ -35,7 +35,7 @@ export class MapsApiLoaderService {
         script.type = 'text/javascript';
 
         script.src = urlBuilder({
-            base: 'https://unpkg.com/leaflet@1.4.0/dist/leaflet.js',
+            base: 'https://desenvolvimentoweb.blob.core.windows.net/inlog-leaflet/leaflet.js',
             callback: 'mapsAPILoadCallback',
             // crossorigin: params.crossorigin,
             // integrity: params.integrity
