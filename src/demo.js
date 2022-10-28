@@ -1,6 +1,6 @@
 const googleMapsLibParams = {
     libraries: ['drawing', 'places'],
-    apiKey: '<your-api-key-here>',
+    apiKey: '',
     options: {
         mapTypeControl: false,
         zoomControl: false
@@ -26,6 +26,7 @@ const leafletLibParams = {
 const inlogMaps = window.InlogMaps;
 const currentMap = new inlogMaps.Map;
 
+// currentMap.initialize(inlogMaps.MapType.Google, googleMapsLibParams)
 currentMap.initialize(inlogMaps.MapType.Leaflet, leafletLibParams)
     .then(() => console.log('map initialized!'));
 
@@ -338,6 +339,11 @@ function addPolyline() {
             item: 'New'
         };
         currentMap.drawPolyline('polyline', options, onClickPolyline);
+
+        currentMap.addPolylineEvent('polyline', inlogMaps.PolylineEventType.SetAt, () => { debugger });
+        currentMap.addPolylineEvent('polyline', inlogMaps.PolylineEventType.InsertAt, () => { debugger });
+        currentMap.addPolylineEvent('polyline', inlogMaps.PolylineEventType.DragPolyline, () => { debugger });
+
         polylineShow = true;
     } else {
         polylineShow = !polylineShow;
@@ -456,6 +462,11 @@ function addPolygon() {
         options.draggable = true;
         options.editable = isPolygonEditable;
         currentMap.drawPolygon('polygon', options, onClickPolygon);
+
+        currentMap.addPolygonEvent('polygon', inlogMaps.PolygonEventType.SetAt, () => { debugger });
+        currentMap.addPolygonEvent('polygon', inlogMaps.PolygonEventType.InsertAt, () => { debugger });
+        currentMap.addPolygonEvent('polygon', inlogMaps.PolygonEventType.DragPolygon, (event, object) => { console.log(event, object) });
+
         polygonShow = true;
 
         const div = document.createElement('div');
