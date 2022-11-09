@@ -50,7 +50,7 @@
     "leaflet.markercluster": "^1.4.1",
     "leaflet.path.drag": "0.0.6",
     "shx": "^0.2.2",
-    "webpack": "^2.2.1"
+    "webpack": "^5.75.0"
   },
   "bugs": {
     "url": "https://github.com/weareinlog/inlog-maps/issues"
