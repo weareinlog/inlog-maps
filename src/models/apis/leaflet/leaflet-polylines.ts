@@ -61,6 +61,13 @@ export default class LeafletPolylines {
                 const param = new EventReturn([event.latlng.lat, event.latlng.lng]);
                 eventClick(param, event.target.object);
             });
+
+            polyline.on('editable:vertex:rawclick', (event) => {
+                event.cancel()
+                const param = new EventReturn([event.latlng.lat, event.latlng.lng]);
+                eventClick(param, event.target.object);
+            });
+
         }
 
         if (options.style && options.style === PolylineType.Arrow) {
