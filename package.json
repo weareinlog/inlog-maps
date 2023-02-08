@@ -1,6 +1,6 @@
 {
   "name": "@inlog/inlog-maps",
-  "version": "5.0.1",
+  "version": "5.0.2",
   "description": "A library for using generic layer maps ",
   "main": "index.js",
   "types": "dist/index.d.ts",
@@ -34,7 +34,8 @@
     "doxdox": "git+https://git@github.com/weareinlog/doxdox.git",
     "mocha": "^5.2.0",
     "ts-loader": "^5.3.0",
-    "typescript": "^2.9.2"
+    "typescript": "^2.9.2",
+    "webpack-cli": "^5.0.1"
   },
   "dependencies": {
     "@google/markerclustererplus": "^2.1.11",
@@ -49,7 +50,7 @@
     "leaflet-polylinedecorator": "^1.6.0",
     "leaflet.markercluster": "^1.4.1",
     "leaflet.path.drag": "0.0.6",
-    "shx": "^0.2.2",
+    "shx": "^0.3.4",
     "webpack": "^2.2.1"
   },
   "bugs": {

@@ -19,7 +19,7 @@ const leafletLibParams = {
         '../node_modules/leaflet-gesture-handling/dist/leaflet-gesture-handling.css',
         '../node_modules/leaflet.markercluster/dist/MarkerCluster.Default.css'
     ],
-    wikimedia: true
+    wikimedia: false
     // gestureHandling: true
 };
 
@@ -155,6 +155,7 @@ function addMarker() {
         let options = new inlogMaps.MarkerOptions([-25.4327193, -49.2806026], true, true, null, true);
         currentMap.drawMarker('simple', options, onClickMarker);
         currentMap.addMarkerEvent('simple', inlogMaps.MarkerEventType.MouseOver, onMouseOver);
+        currentMap.addMarkerEvent('simple', inlogMaps.MarkerEventType.RightClick, onRightClick);
         simpleMarkerShow = true;
     } else {
         simpleMarkerShow = !simpleMarkerShow;
@@ -163,6 +164,9 @@ function addMarker() {
 }
 
 function onMouseOver(event) {
+    console.log(event);
+}
+function onRightClick(event) {
     console.log(event);
 }
 

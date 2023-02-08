@@ -165,6 +165,12 @@ export default class LeafletMarkers {
                         eventFunction(param, marker.object);
                     });
                     break;
+                case MarkerEventType.RightClick:
+                    marker.on('contextmenu', (event: any) => {
+                        const param = new EventReturn([event.latlng.lat, event.latlng.lng]);
+                        eventFunction(param, marker.object);
+                    });
+                    break;
                 case MarkerEventType.AfterDrag:
                     marker.on('dragend', (event: any) => {
                         const param = new EventReturn([event.target.getLatLng().lat, event.target.getLatLng().lng]);
@@ -200,6 +206,9 @@ export default class LeafletMarkers {
             switch (event) {
                 case MarkerEventType.Click:
                     marker.off('click');
+                    break;
+                case MarkerEventType.RightClick:
+                    marker.off('contextmenu');
                     break;
                 case MarkerEventType.AfterDrag:
                     marker.off('dragend');
