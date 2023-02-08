@@ -32,7 +32,7 @@
     "@types/leaflet-editable": "^0.7.34",
     "chai": "^4.2.0",
     "doxdox": "git+https://git@github.com/weareinlog/doxdox.git",
-    "mocha": "^5.2.0",
+    "mocha": "^10.2.0",
     "ts-loader": "^5.3.0",
     "typescript": "^2.9.2",
     "webpack-cli": "^5.0.1"
