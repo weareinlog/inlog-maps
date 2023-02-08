@@ -197,6 +197,12 @@ export default class GoogleMarkers {
                         eventFunction(param, marker.object);
                     });
                     break;
+                case MarkerEventType.RightClick:
+                    this.google.maps.event.addListener(marker, 'rightclick', (event: any) => {
+                        const param = new EventReturn([event.latLng.lat(), event.latLng.lng()]);
+                        eventFunction(param, marker.object);
+                    });
+                    break;
                 case MarkerEventType.AfterDrag:
                     this.google.maps.event.addListener(marker, 'dragend', (event: any) => {
                         const param = new EventReturn([event.latLng.lat(), event.latLng.lng()]);
@@ -232,6 +238,9 @@ export default class GoogleMarkers {
             switch (event) {
                 case MarkerEventType.Click:
                     this.google.maps.event.clearListeners(marker, 'click');
+                    break;
+                case MarkerEventType.RightClick:
+                    this.google.maps.event.clearListeners(marker, 'rightclick');
                     break;
                 case MarkerEventType.AfterDrag:
                     this.google.maps.event.clearListeners(marker, 'dragend');

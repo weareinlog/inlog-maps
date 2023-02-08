@@ -5,6 +5,7 @@ export enum MapEventType {
 
 export enum MarkerEventType {
     Click,
+    RightClick,
     AfterDrag,
     MouseOver,
     MouseOut,
