@@ -224,6 +224,12 @@ export default class GooglePolylines {
                 case PolylineEventType.DragPolyline:
                     this.addPolylineEventDragPolyline(polyline, eventFunction);
                     break;
+                case PolylineEventType.MouseOver:
+                    this.addPolylineEventMouseOver(polyline, eventFunction);
+                    break;
+                case PolylineEventType.MouseOut:
+                    this.addPolylineEventMouseOut(polyline, eventFunction);
+                    break;
                 default:
                     break;
             }
@@ -247,6 +253,12 @@ export default class GooglePolylines {
                 case PolylineEventType.DragPolyline:
                     this.google.maps.event.clearListeners(polyline, 'dragstart');
                     this.google.maps.event.clearListeners(polyline, 'dragend');
+                    break;
+                case PolylineEventType.MouseOver:
+                    this.google.maps.event.clearListeners(polyline, 'mouseover');
+                    break;
+                case PolylineEventType.MouseOut:
+                    this.google.maps.event.clearListeners(polyline, 'mouseout');
                     break;
                 default:
                     break;
@@ -495,6 +507,26 @@ export default class GooglePolylines {
             eventFunction(param, polyline.object, polyline.getPath().getArray().map((x: any) => new EventReturn([x.lat(), x.lng()])));
         };
         this.google.maps.event.addListener(polyline.getPath(), 'remove_at', polyline.removeAtListener);
+    }
+
+    private addPolylineEventMouseOver(polyline: any, eventFunction: any) {
+        polyline.overPolylineListener = () => {
+            polyline.dragging = false;
+            const param = polyline.getPath().getArray().map((x: any) => new EventReturn([x.lat(), x.lng()]));
+            eventFunction(param, polyline.object);
+        };
+
+        this.google.maps.event.addListener(polyline, 'mouseover', polyline.overPolylineListener);
+    }
+
+    private addPolylineEventMouseOut(polyline: any, eventFunction: any) {
+        polyline.outPolylineListener = () => {
+            polyline.dragging = false;
+            const param = polyline.getPath().getArray().map((x: any) => new EventReturn([x.lat(), x.lng()]));
+            eventFunction(param, polyline.object);
+        };
+
+        this.google.maps.event.addListener(polyline, 'mouseout', polyline.outPolylineListener);
     }
 
     private addPolylineEventDragPolyline(polyline: any, eventFunction: any) {

@@ -253,6 +253,12 @@ export default class LeafletPolylines {
                 case PolylineEventType.RemoveAt:
                     this.addPolylineEventRemoveAt(polyline, eventFunction);
                     break;
+                case PolylineEventType.MouseOver:
+                    this.addPolylineEventMouseOver(polyline, eventFunction);
+                    break;
+                case PolylineEventType.MouseOut:
+                    this.addPolylineEventMouseOut(polyline, eventFunction);
+                    break;
                 case PolylineEventType.DragPolyline:
                     this.addPolylineEventDragPolyline(polyline, eventFunction);
                     break;
@@ -276,6 +282,12 @@ export default class LeafletPolylines {
                     break;
                 case PolylineEventType.DragPolyline:
                     polyline.off('dragend');
+                    break;
+                case PolylineEventType.MouseOver:
+                    polyline.off('mouseover');
+                    break;
+                case PolylineEventType.MouseOut:
+                    polyline.off('mouseout');
                     break;
                 default:
                     break;
@@ -619,6 +631,20 @@ export default class LeafletPolylines {
         polyline.on('editable:vertex:deleted', (event: any) => {
             const param = new EventReturn([event.vertex.latlng.lat, event.vertex.latlng.lng]);
             eventFunction(param, event.target.object, polyline.getLatLngs().map((x: any) => new EventReturn([x.lat, x.lng])));
+        });
+    }
+
+    private addPolylineEventMouseOver(polyline: any, eventFunction: any) {
+        polyline.on('mouseover', (event: any) => {
+            const param = event.target.getLatLngs().map((x: any) => new EventReturn([x.lat, x.lng]));
+            eventFunction(param, event.target.object);
+        });
+    }
+
+    private addPolylineEventMouseOut(polyline: any, eventFunction: any) {
+        polyline.on('mouseout', (event: any) => {
+            const param = event.target.getLatLngs().map((x: any) => new EventReturn([x.lat, x.lng]));
+            eventFunction(param, event.target.object);
         });
     }
 

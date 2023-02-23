@@ -355,6 +355,16 @@ function addPolyline() {
     }
 }
 
+function addMouseOverEvent() {
+    currentMap.addPolylineEvent('polyline', inlogMaps.PolylineEventType.MouseOver, onMouseOver);
+    currentMap.addPolylineEvent('polyline', inlogMaps.PolylineEventType.MouseOut, onMouseOver);
+}
+
+function RemoveMouseOverEvent() {
+    currentMap.removePolylineEvent('polyline', inlogMaps.PolylineEventType.MouseOut)
+    currentMap.removePolylineEvent('polyline', inlogMaps.PolylineEventType.MouseOver)
+}
+
 function addPolylineWithNavigation() {
     let options = new inlogMaps.PolylineOptions();
 
