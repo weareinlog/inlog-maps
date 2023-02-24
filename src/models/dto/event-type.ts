@@ -30,5 +30,7 @@ export enum PolylineEventType {
     SetAt,
     InsertAt,
     RemoveAt,
-    DragPolyline
+    DragPolyline,
+    MouseOver,
+    MouseOut
 }
