@@ -360,7 +360,7 @@ function addMouseOverEvent() {
     currentMap.addPolylineEvent('polyline', inlogMaps.PolylineEventType.MouseOut, onMouseOver);
 }
 
-function RemoveMouseOverEvent() {
+function removeMouseOverEvent() {
     currentMap.removePolylineEvent('polyline', inlogMaps.PolylineEventType.MouseOut)
     currentMap.removePolylineEvent('polyline', inlogMaps.PolylineEventType.MouseOver)
 }
