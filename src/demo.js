@@ -346,7 +346,9 @@ function addPolyline() {
 
         currentMap.addPolylineEvent('polyline', inlogMaps.PolylineEventType.SetAt, () => { debugger });
         currentMap.addPolylineEvent('polyline', inlogMaps.PolylineEventType.InsertAt, () => { debugger });
+        currentMap.addPolylineEvent('polyline', inlogMaps.PolylineEventType.RemoveAt, () => { debugger });
         currentMap.addPolylineEvent('polyline', inlogMaps.PolylineEventType.DragPolyline, () => { debugger });
+        currentMap.addPolylineEvent('polyline', inlogMaps.PolylineEventType.RightClick, () => onRightClick);
 
         polylineShow = true;
     } else {
@@ -355,14 +357,16 @@ function addPolyline() {
     }
 }
 
-function addMouseOverEvent() {
+function addMouseEvent() {
     currentMap.addPolylineEvent('polyline', inlogMaps.PolylineEventType.MouseOver, onMouseOver);
     currentMap.addPolylineEvent('polyline', inlogMaps.PolylineEventType.MouseOut, onMouseOver);
+    currentMap.addPolylineEvent('polyline', inlogMaps.PolylineEventType.RightClick, onRightClick);
 }
 
-function removeMouseOverEvent() {
+function removeMouseEvent() {
     currentMap.removePolylineEvent('polyline', inlogMaps.PolylineEventType.MouseOut)
     currentMap.removePolylineEvent('polyline', inlogMaps.PolylineEventType.MouseOver)
+    currentMap.removePolylineEvent('polyline', inlogMaps.PolylineEventType.RightClick)
 }
 
 function addPolylineWithNavigation() {
