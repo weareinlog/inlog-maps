@@ -350,6 +350,12 @@ export default class LeafletPolylines {
         polyline.on('click', this.onClickPolyline.bind(this, polyline));
     }
 
+    private getSnippetPolyline(polyline: any, event: any) {
+        const index = this.checkIdx(polyline, event.latlng);
+        const path = polyline.getLatLngs()
+        return [[path[index].lat, path[index].lng], [path[index + 1].lat, path[index + 1].lng]]
+    }
+    
     private onClickPolyline(polyline: any, event: any) {
         const index = this.checkIdx(polyline, event.latlng);
 
@@ -643,25 +649,30 @@ export default class LeafletPolylines {
 
     private addPolylineEventRightClick(polyline: any, eventFunction: any) {
         polyline.on('contextmenu', (event: any) => {
-            const param = new EventReturn([event.latlng.lat, event.latlng.lng]);
+            let param: any = new EventReturn([event.latlng.lat, event.latlng.lng])
+            param.snippet = this.getSnippetPolyline(polyline, event)
             eventFunction(param, polyline.object);
         });
         polyline.on('editable:vertex:contextmenu', (event: any) => {
-            const param = new EventReturn([event.latlng.lat, event.latlng.lng]);
+            let param: any = new EventReturn([event.latlng.lat, event.latlng.lng])
+            param.snippet = this.getSnippetPolyline(polyline, event)
             eventFunction(param, polyline.object);
         });
     }
 
     private addPolylineEventMouseOver(polyline: any, eventFunction: any) {
         polyline.on('mouseover', (event: any) => {
-            const param = event.target.getLatLngs().map((x: any) => new EventReturn([x.lat, x.lng]));
+            let param: any = new EventReturn([event.latlng.lat, event.latlng.lng])
+            param.snippet = this.getSnippetPolyline(polyline, event)
+            
             eventFunction(param, event.target.object);
         });
     }
 
     private addPolylineEventMouseOut(polyline: any, eventFunction: any) {
         polyline.on('mouseout', (event: any) => {
-            const param = event.target.getLatLngs().map((x: any) => new EventReturn([x.lat, x.lng]));
+            let param: any = new EventReturn([event.latlng.lat, event.latlng.lng])
+            param.snippet = this.getSnippetPolyline(polyline, event)
             eventFunction(param, event.target.object);
         });
     }
