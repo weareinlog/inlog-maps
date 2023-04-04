@@ -654,14 +654,14 @@ export default class LeafletPolylines {
 
     private addPolylineEventMouseOver(polyline: any, eventFunction: any) {
         polyline.on('mouseover', (event: any) => {
-            const param = event.target.getLatLngs().map((x: any) => new EventReturn([x.lat, x.lng]));
+            const param = new EventReturn([event.latlng.lat, event.latlng.lng]);
             eventFunction(param, event.target.object);
         });
     }
 
     private addPolylineEventMouseOut(polyline: any, eventFunction: any) {
         polyline.on('mouseout', (event: any) => {
-            const param = event.target.getLatLngs().map((x: any) => new EventReturn([x.lat, x.lng]));
+            const param = new EventReturn([event.latlng.lat, event.latlng.lng]);
             eventFunction(param, event.target.object);
         });
     }
