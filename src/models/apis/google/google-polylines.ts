@@ -537,7 +537,6 @@ export default class GooglePolylines {
 
     private addPolylineEventMouseOut(polyline: any, eventFunction: any) {
         polyline.outPolylineListener = (event: any) => {
-            console.log(event)
             polyline.dragging = false;
             const param = new EventReturn([event.latLng.lat(), event.latLng.lng()]);
             eventFunction(param, polyline.object);
