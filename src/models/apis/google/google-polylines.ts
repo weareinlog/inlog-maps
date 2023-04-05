@@ -215,6 +215,9 @@ export default class GooglePolylines {
                 case PolylineEventType.SetAt:
                     this.addPolylineEventMove(polyline, eventFunction);
                     break;
+                case PolylineEventType.RightClick:
+                    this.addPolylineEventRightClick(polyline, eventFunction)
+                    break;
                 case PolylineEventType.InsertAt:
                     this.addPolylineEventInsertAt(polyline, eventFunction);
                     break;
@@ -243,6 +246,9 @@ export default class GooglePolylines {
             switch (event) {
                 case PolylineEventType.SetAt:
                     this.google.maps.event.clearListeners(polyline.getPath(), 'set_at');
+                    break;
+                case PolylineEventType.RightClick:
+                    this.google.maps.event.clearListeners(polyline, 'rightclick');
                     break;
                 case PolylineEventType.InsertAt:
                     this.google.maps.event.clearListeners(polyline.getPath(), 'insert_at');
@@ -509,10 +515,20 @@ export default class GooglePolylines {
         this.google.maps.event.addListener(polyline.getPath(), 'remove_at', polyline.removeAtListener);
     }
 
-    private addPolylineEventMouseOver(polyline: any, eventFunction: any) {
-        polyline.overPolylineListener = () => {
+    private addPolylineEventRightClick(polyline: any, eventFunction: any) {
+        polyline.rightClickPolylineListener = (event: any) => {
             polyline.dragging = false;
-            const param = polyline.getPath().getArray().map((x: any) => new EventReturn([x.lat(), x.lng()]));
+            const param = new EventReturn([event.latLng.lat(), event.latLng.lng()]);
+            eventFunction(param, polyline.object);
+        };
+
+        this.google.maps.event.addListener(polyline, 'rightclick', polyline.rightClickPolylineListener);
+    }
+
+    private addPolylineEventMouseOver(polyline: any, eventFunction: any) {
+        polyline.overPolylineListener = (event: any) => {
+            polyline.dragging = false;
+            const param = new EventReturn([event.latLng.lat(), event.latLng.lng()]);
             eventFunction(param, polyline.object);
         };
 
@@ -520,9 +536,9 @@ export default class GooglePolylines {
     }
 
     private addPolylineEventMouseOut(polyline: any, eventFunction: any) {
-        polyline.outPolylineListener = () => {
+        polyline.outPolylineListener = (event: any) => {
             polyline.dragging = false;
-            const param = polyline.getPath().getArray().map((x: any) => new EventReturn([x.lat(), x.lng()]));
+            const param = new EventReturn([event.latLng.lat(), event.latLng.lng()]);
             eventFunction(param, polyline.object);
         };
 

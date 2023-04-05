@@ -247,6 +247,9 @@ export default class LeafletPolylines {
                 case PolylineEventType.SetAt:
                     this.addPolylineEventMove(polyline, eventFunction);
                     break;
+                case PolylineEventType.RightClick:
+                    this.addPolylineEventRightClick(polyline, eventFunction)
+                    break;
                 case PolylineEventType.InsertAt:
                     this.addPolylineEventInsertAt(polyline, eventFunction);
                     break;
@@ -273,6 +276,10 @@ export default class LeafletPolylines {
             switch (event) {
                 case PolylineEventType.SetAt:
                     polyline.off('editable:vertex:dragstart');
+                    break;
+                case PolylineEventType.RightClick:
+                    polyline.off('contextmenu');
+                    polyline.off('editable:vertex:contextmenu');
                     break;
                 case PolylineEventType.InsertAt:
                     polyline.off('editable:vertex:new');
@@ -634,16 +641,27 @@ export default class LeafletPolylines {
         });
     }
 
+    private addPolylineEventRightClick(polyline: any, eventFunction: any) {
+        polyline.on('contextmenu', (event: any) => {
+            const param = new EventReturn([event.latlng.lat, event.latlng.lng]);
+            eventFunction(param, polyline.object);
+        });
+        polyline.on('editable:vertex:contextmenu', (event: any) => {
+            const param = new EventReturn([event.latlng.lat, event.latlng.lng]);
+            eventFunction(param, polyline.object);
+        });
+    }
+
     private addPolylineEventMouseOver(polyline: any, eventFunction: any) {
         polyline.on('mouseover', (event: any) => {
-            const param = event.target.getLatLngs().map((x: any) => new EventReturn([x.lat, x.lng]));
+            const param = new EventReturn([event.latlng.lat, event.latlng.lng]);
             eventFunction(param, event.target.object);
         });
     }
 
     private addPolylineEventMouseOut(polyline: any, eventFunction: any) {
         polyline.on('mouseout', (event: any) => {
-            const param = event.target.getLatLngs().map((x: any) => new EventReturn([x.lat, x.lng]));
+            const param = new EventReturn([event.latlng.lat, event.latlng.lng]);
             eventFunction(param, event.target.object);
         });
     }
