@@ -1,21 +1,23 @@
 name: Publicar Biblioteca
 
 on:
-  push:
-    branches:
-      - master
+    push:
+        branches:
+            - master
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-    - name: Configurar Node.js
-      uses: actions/setup-node@v1
-      with:
-        node-version: '18'
-    - name: Instalar dependências
-      run: npm install
-    - name: Build do projeto
-      run: npm run build
-    - name: Publicar novo pacote
-      run: npm publish --access public
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+            - name: Configurar Node.js
+              uses: actions/setup-node@v1
+              with:
+                  node-version: "18"
+            - name: Instalar dependências
+              run: npm install
+            - name: Build do projeto
+              run: npm run build
+            - name: Publicar novo pacote
+              run: npm publish --access public
+              env:
+              NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
