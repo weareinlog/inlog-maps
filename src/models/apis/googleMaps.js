@@ -1,646 +1,449 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var maps_api_loader_service_1 = require("../../utils/maps-api-loader.service");
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (g && (g = 0, op[0] && (_ = 0)), _) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
+import { MapsApiLoaderService } from "../../utils/maps-api-loader.service";
+import GoogleCircles from "./google/google-circles";
+import GoogleGeoJson from "./google/google-geojson";
+import GoogleMap from "./google/google-map";
+import GoogleMarkers from "./google/google-markers";
+import GoogleOverlays from "./google/google-overlay";
+import GooglePolygons from "./google/google-polygons";
+import GooglePolylines from "./google/google-polylines";
+import GooglePopups from "./google/google-popup";
 var GoogleMaps = /** @class */ (function () {
     function GoogleMaps() {
-        this.map = null;
-        this.google = null;
-        this.mapsApiLoader = new maps_api_loader_service_1.MapsApiLoaderService();
-        this.selectedPolyline = null;
-        this.selectedPath = null;
-        this.navigateInfoWindow = null;
-        this.directionForward = false;
-        this.multiSelectionForward = false;
-        this.multiSelection = false;
+        this.elementId = "";
+        this.googleMarkers = null;
+        this.googlePolygons = null;
+        this.googleCircles = null;
+        this.googlePolylines = null;
+        this.googlePopups = null;
+        this.googleMap = null;
+        this.googleOverlays = null;
+        this.googleGeoJson = null;
+        this.mapsApiLoader = new MapsApiLoaderService();
+        /* */
     }
-    GoogleMaps.prototype.initialize = function (mapType, params) {
-        var _this = this;
-        return this.mapsApiLoader.loadApi(mapType, params)
-            .then(function (api) {
-            _this.google = api;
-            _this.map = new _this.google.maps.Map(document.getElementById('inlog-map'), {
-                center: new _this.google.maps.LatLng(-14, -54),
-                fullscreenControl: false,
-                keyboardShortcuts: false,
-                mapTypeControl: true,
-                minZoom: 4,
-                rotateControl: false,
-                scaleControl: false,
-                streetViewControl: false,
-                zoom: 4,
-                zoomControl: true
+    GoogleMaps.prototype.initialize = function (mapType, params, elementId) {
+        return __awaiter(this, void 0, void 0, function () {
+            var api, google_1, options, key, imageMapTypes_1, ids_1, map_1, trafficLayer, err_1;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, this.mapsApiLoader.loadApi(mapType, params)];
+                    case 1:
+                        api = _a.sent();
+                        google_1 = api;
+                        options = {
+                            center: new google_1.maps.LatLng(-14, -54),
+                            fullscreenControl: false,
+                            keyboardShortcuts: false,
+                            mapTypeControl: true,
+                            minZoom: 4,
+                            rotateControl: false,
+                            scaleControl: false,
+                            streetViewControl: false,
+                            zoom: 4,
+                            zoomControl: true,
+                        };
+                        if (params.gestureHandling) {
+                            options.gestureHandling = "cooperative";
+                        }
+                        else {
+                            options.gestureHandling = "greedy";
+                        }
+                        if (params.options) {
+                            for (key in params.options) {
+                                if (params.options.hasOwnProperty(key)) {
+                                    options[key] = params.options[key];
+                                }
+                            }
+                        }
+                        imageMapTypes_1 = [];
+                        if (params.mapTiles) {
+                            ids_1 = [
+                                google_1.maps.MapTypeId.ROADMAP,
+                                google_1.maps.MapTypeId.SATELLITE,
+                            ];
+                            params.mapTiles.forEach(function (tile) {
+                                ids_1.push(tile.name);
+                                var mapTypeOptions = {
+                                    getTileUrl: function (coord, zoom) {
+                                        return "https://tile.openstreetmap.org/".concat(zoom, "/").concat(coord.x, "/").concat(coord.y, ".png");
+                                    },
+                                    isPng: true,
+                                    maxZoom: 19,
+                                    minZoom: 0,
+                                    name: "OpenStreetMap",
+                                    tileSize: new google_1.maps.Size(256, 256),
+                                };
+                                for (var key in tile) {
+                                    if (tile.hasOwnProperty(key)) {
+                                        mapTypeOptions[key] = tile[key];
+                                    }
+                                }
+                                var imageMapType = new google_1.maps.ImageMapType(mapTypeOptions);
+                                imageMapTypes_1.push({ id: tile.name, tile: imageMapType });
+                            });
+                            options.mapTypeControlOptions = {
+                                mapTypeIds: ids_1,
+                                style: google_1.maps.MapTypeControlStyle.HORIZONTAL_BAR,
+                            };
+                        }
+                        map_1 = new google_1.maps.Map(document.getElementById(elementId), options);
+                        this.elementId = elementId;
+                        this.googleMarkers = new GoogleMarkers(map_1, google_1);
+                        this.googlePolygons = new GooglePolygons(map_1, google_1);
+                        this.googleCircles = new GoogleCircles(map_1, google_1);
+                        this.googlePopups = new GooglePopups(map_1, google_1);
+                        this.googlePolylines = new GooglePolylines(map_1, google_1, this.googlePopups);
+                        this.googleMap = new GoogleMap(map_1, google_1);
+                        this.googleOverlays = new GoogleOverlays(map_1, google_1, this.googlePolygons);
+                        this.googleGeoJson = new GoogleGeoJson(map_1, google_1);
+                        if (imageMapTypes_1 && imageMapTypes_1.length) {
+                            imageMapTypes_1.forEach(function (image) {
+                                map_1.mapTypes.set(image.id, image.tile);
+                            });
+                        }
+                        if (params.showTraffic) {
+                            trafficLayer = new google_1.maps.TrafficLayer();
+                            trafficLayer.setMap(map_1);
+                        }
+                        return [2 /*return*/, this];
+                    case 2:
+                        err_1 = _a.sent();
+                        return [2 /*return*/, err_1];
+                    case 3: return [2 /*return*/];
+                }
             });
-            return _this;
-        })
-            .catch(function (err) { return err; });
+        });
     };
     /* GEOJson */
     GoogleMaps.prototype.loadGEOJson = function (data, options, eventClick) {
-        var self = this;
-        var objects = self.parseGeoJson(data, options);
-        objects.forEach(function (elem) {
-            if (eventClick) {
-                elem.addListener('click', function (event) {
-                    var param = { latlng: [event.latLng.lat(), event.latLng.lng()] };
-                    eventClick(param);
-                });
-            }
-            elem.setMap(self.map);
-        });
+        var _a;
+        (_a = this.googleGeoJson) === null || _a === void 0 ? void 0 : _a.loadGEOJson(data, options, eventClick);
     };
     /* Markers */
     GoogleMaps.prototype.drawMarker = function (options, eventClick) {
-        var newOptions = {
-            draggable: options.draggable,
-            icon: null,
-            object: options.object,
-            position: {
-                lat: options.latlng[0],
-                lng: options.latlng[1]
-            }
-        };
-        if (options.icon) {
-            newOptions.icon = {
-                url: options.icon.url
-            };
-            if (options.icon.size) {
-                newOptions.icon.size = new this.google.maps.Size(options.icon.size[0], options.icon.size[1]);
-            }
-        }
-        var marker = new this.google.maps.Marker(newOptions);
-        if (eventClick) {
-            this.google.maps.event.addListener(marker, 'click', function (event) {
-                var param = { latlng: [event.latLng.lat(), event.latLng.lng()] };
-                eventClick(marker, param, options.object);
-            });
-        }
-        if (options.addToMap) {
-            marker.setMap(this.map);
-        }
-        if (options.fitBounds) {
-            var bounds = new this.google.maps.LatLngBounds();
-            bounds.extend(marker.getPosition());
-            this.map.fitBounds(bounds);
-        }
-        return marker;
-    };
-    GoogleMaps.prototype.fitBoundsPositions = function (markers) {
-        var bounds = new this.google.maps.LatLngBounds();
-        markers.map(function (marker) { return marker.position; }).forEach(function (position) { return bounds.extend(position); });
-        this.map.fitBounds(bounds);
+        var _a;
+        return (_a = this.googleMarkers) === null || _a === void 0 ? void 0 : _a.drawMarker(options, eventClick);
     };
     GoogleMaps.prototype.drawCircleMarker = function (options, eventClick) {
-        var self = this;
-        var newOptions = {
-            icon: {
-                fillColor: options.style.fillColor,
-                fillOpacity: options.style.fillOpacity,
-                path: this.google.maps.SymbolPath.CIRCLE,
-                scale: options.style.radius,
-                strokeColor: options.style.color,
-                strokeWeight: options.style.weight
-            },
-            position: {
-                lat: options.latlng[0],
-                lng: options.latlng[1]
-            }
-        };
-        var marker = new this.google.maps.Marker(newOptions);
-        if (eventClick) {
-            this.google.maps.event.addListener(marker, 'click', function (event) {
-                var param = { latlng: [event.latLng.lat(), event.latLng.lng()] };
-                eventClick(marker, param, options.object);
-            });
-        }
-        if (options.addToMap) {
-            marker.setMap(self.map);
-        }
-        if (options.fitBounds) {
-            var bounds = new this.google.maps.LatLngBounds();
-            bounds.extend(marker.getPosition());
-            self.map.fitBounds(bounds);
-        }
-        return marker;
+        var _a;
+        return (_a = this.googleMarkers) === null || _a === void 0 ? void 0 : _a.drawCircleMarker(options, eventClick);
     };
-    GoogleMaps.prototype.toggleMarkers = function (markers, show) {
-        var self = this;
-        markers.forEach(function (marker) { return marker.setMap(show ? self.map : null); });
+    GoogleMaps.prototype.toggleMarkers = function (markers, show, markerClusterer) {
+        var _a;
+        (_a = this.googleMarkers) === null || _a === void 0 ? void 0 : _a.toggleMarkers(markers, show, markerClusterer);
     };
     GoogleMaps.prototype.alterMarkerOptions = function (markers, options) {
-        var _this = this;
-        var icon = null;
-        var position = null;
-        if (options.latlng) {
-            position = {
-                lat: options.latlng[0],
-                lng: options.latlng[1]
-            };
-        }
-        if (options.icon) {
-            icon = options.icon;
-        }
-        markers.forEach(function (marker) {
-            if (options.style) {
-                icon = {
-                    fillColor: options.style.fillColor !== null && options.style.fillColor !== undefined ?
-                        options.style.fillColor : marker.icon.fillColor,
-                    fillOpacity: options.style.fillOpacity !== null && options.style.fillOpacity !== undefined ?
-                        options.style.fillOpacity : marker.icon.fillOpacity,
-                    path: _this.google.maps.SymbolPath.CIRCLE,
-                    scale: options.style.radius !== null && options.style.radius !== undefined ?
-                        options.style.radius : marker.icon.scale,
-                    strokeColor: options.style.color !== null && options.style.color !== undefined ?
-                        options.style.color : marker.icon.strokeColor,
-                    strokeWeight: options.style.weight !== null && options.style.weight !== undefined ?
-                        options.style.weight : marker.icon.strokeWeight
-                };
-            }
-            var newOptions = null;
-            if (position && icon) {
-                newOptions = { icon: icon, position: position };
-            }
-            else if (position) {
-                newOptions = { position: position };
-            }
-            else {
-                newOptions = { icon: icon };
-            }
-            marker.setOptions(newOptions);
-        });
+        var _a;
+        (_a = this.googleMarkers) === null || _a === void 0 ? void 0 : _a.alterMarkerOptions(markers, options);
+    };
+    GoogleMaps.prototype.alterMarkerPosition = function (markers, position, addTransition) {
+        var _a;
+        (_a = this.googleMarkers) === null || _a === void 0 ? void 0 : _a.alterMarkerPosition(markers, position, addTransition);
+    };
+    GoogleMaps.prototype.fitBoundsPositions = function (markers) {
+        var _a;
+        (_a = this.googleMarkers) === null || _a === void 0 ? void 0 : _a.fitBoundsPositions(markers);
+    };
+    GoogleMaps.prototype.isMarkerOnMap = function (marker) {
+        var _a;
+        return (_a = this.googleMarkers) === null || _a === void 0 ? void 0 : _a.isMarkerOnMap(marker);
+    };
+    GoogleMaps.prototype.setCenterMarker = function (marker) {
+        var _a;
+        (_a = this.googleMarkers) === null || _a === void 0 ? void 0 : _a.setCenterMarker(marker);
+    };
+    GoogleMaps.prototype.addMarkerEvent = function (markers, eventType, eventFunction) {
+        var _a;
+        (_a = this.googleMarkers) === null || _a === void 0 ? void 0 : _a.addMarkerEvent(markers, eventType, eventFunction);
+    };
+    GoogleMaps.prototype.removeMarkerEvent = function (markers, event) {
+        var _a;
+        (_a = this.googleMarkers) === null || _a === void 0 ? void 0 : _a.removeMarkerEvent(markers, event);
+    };
+    /* Marker Clusterer */
+    GoogleMaps.prototype.addMarkerClusterer = function (config) {
+        var _a;
+        return (_a = this.googleMarkers) === null || _a === void 0 ? void 0 : _a.addMarkerClusterer(config);
+    };
+    GoogleMaps.prototype.alterMarkerClustererConfig = function (markerClusterer, config) {
+        var _a;
+        (_a = this.googleMarkers) === null || _a === void 0 ? void 0 : _a.alterMarkerClustererConfig(markerClusterer, config);
+    };
+    GoogleMaps.prototype.refreshClusterer = function (markerClusterer) {
+        var _a;
+        (_a = this.googleMarkers) === null || _a === void 0 ? void 0 : _a.refreshClusterer(markerClusterer);
+    };
+    GoogleMaps.prototype.addMarkerOnClusterer = function (marker, markerClusterer) {
+        var _a;
+        (_a = this.googleMarkers) === null || _a === void 0 ? void 0 : _a.addMarkerOnClusterer(marker, markerClusterer);
+    };
+    GoogleMaps.prototype.removeMarkerFromClusterer = function (marker, markerClusterer) {
+        var _a;
+        (_a = this.googleMarkers) === null || _a === void 0 ? void 0 : _a.removeMarkerFromClusterer(marker, markerClusterer);
+    };
+    GoogleMaps.prototype.clearMarkersClusterer = function (markerClusterer) {
+        var _a;
+        (_a = this.googleMarkers) === null || _a === void 0 ? void 0 : _a.clearMarkersClusterer(markerClusterer);
+    };
+    GoogleMaps.prototype.countMarkersOnCluster = function (markerClusterer) {
+        var _a;
+        return (_a = this.googleMarkers) === null || _a === void 0 ? void 0 : _a.countMarkersOnCluster(markerClusterer);
     };
     /* Polygons */
     GoogleMaps.prototype.drawPolygon = function (options, eventClick) {
-        var self = this;
-        var paths = [];
-        options.path.forEach(function (path) {
-            paths.push({
-                lat: path[0],
-                lng: path[1]
-            });
-        });
-        var newOptions = {
-            draggable: options.draggable,
-            editable: options.editable,
-            fillColor: options.fillColor,
-            fillOpacity: options.fillOpacity,
-            paths: paths,
-            strokeColor: options.color,
-            strokeOpacity: options.opacity,
-            strokeWeight: options.weight
-        };
-        var polygon = new this.google.maps.Polygon(newOptions);
-        if (eventClick) {
-            this.google.maps.event.addListener(polygon, 'click', function (event) {
-                var param = { latlng: [event.latLng.lat(), event.latLng.lng()] };
-                eventClick(polygon, param, options.object);
-            });
-        }
-        if (options.addToMap) {
-            polygon.setMap(self.map);
-        }
-        if (options.fitBounds) {
-            self.map.fitBounds(self.getPolygonBounds(polygon));
-        }
-        return polygon;
-    };
-    GoogleMaps.prototype.fitBoundsPolygon = function (polygon) {
-        var self = this;
-        self.map.fitBounds(self.getPolygonBounds(polygon));
+        var _a;
+        return (_a = this.googlePolygons) === null || _a === void 0 ? void 0 : _a.drawPolygon(options, eventClick);
     };
     GoogleMaps.prototype.togglePolygons = function (polygons, show) {
-        var self = this;
-        polygons.forEach(function (polygon) { return polygon.setMap(show ? self.map : null); });
+        var _a;
+        (_a = this.googlePolygons) === null || _a === void 0 ? void 0 : _a.togglePolygons(polygons, show);
     };
     GoogleMaps.prototype.alterPolygonOptions = function (polygons, options) {
-        var newOptions = {};
-        polygons.forEach(function (polygon) {
-            newOptions = {
-                fillColor: options.fillColor !== null && options.fillColor !== undefined ?
-                    options.fillColor : polygon.fillColor,
-                fillOpacity: options.fillOpacity !== null && options.fillOpacity !== undefined ?
-                    options.fillOpacity : polygon.fillOpacity,
-                strokeColor: options.color !== null && options.color !== undefined ?
-                    options.color : polygon.strokeColor,
-                strokeOpacity: options.opacity !== null && options.opacity !== undefined ?
-                    options.opacity : polygon.strokeOpacity,
-                strokeWeight: options.weight !== null && options.weight !== undefined ?
-                    options.weight : polygon.strokeWeight
-            };
-            polygon.setOptions(newOptions);
-        });
+        var _a;
+        (_a = this.googlePolygons) === null || _a === void 0 ? void 0 : _a.alterPolygonOptions(polygons, options);
+    };
+    GoogleMaps.prototype.fitBoundsPolygons = function (polygons) {
+        var _a;
+        (_a = this.googlePolygons) === null || _a === void 0 ? void 0 : _a.fitBoundsPolygons(polygons);
+    };
+    GoogleMaps.prototype.setCenterPolygons = function (polygons) {
+        var _a;
+        (_a = this.googlePolygons) === null || _a === void 0 ? void 0 : _a.setCenterPolygons(polygons);
+    };
+    GoogleMaps.prototype.isPolygonOnMap = function (polygon) {
+        var _a;
+        return (_a = this.googlePolygons) === null || _a === void 0 ? void 0 : _a.isPolygonOnMap(polygon);
+    };
+    GoogleMaps.prototype.getPolygonPath = function (polygon) {
+        var _a;
+        return (_a = this.googlePolygons) === null || _a === void 0 ? void 0 : _a.getPolygonPath(polygon);
+    };
+    GoogleMaps.prototype.addPolygonEvent = function (polygons, eventType, eventFunction) {
+        var _a;
+        return (_a = this.googlePolygons) === null || _a === void 0 ? void 0 : _a.addPolygonEvent(polygons, eventType, eventFunction);
+    };
+    GoogleMaps.prototype.removePolygonEvent = function (polygons, event) {
+        var _a;
+        (_a = this.googlePolygons) === null || _a === void 0 ? void 0 : _a.removePolygonEvent(polygons, event);
     };
     /* Circles */
     GoogleMaps.prototype.drawCircle = function (options, eventClick) {
-        var self = this;
-        var latlng = {
-            lat: options.center[0],
-            lng: options.center[1]
-        };
-        var newOptions = {
-            center: latlng,
-            draggable: options.draggable,
-            editable: options.editable,
-            fillColor: options.fillColor,
-            fillOpacity: options.fillOpacity,
-            radius: options.radius,
-            strokeColor: options.color,
-            strokeOpacity: options.opacity,
-            strokeWeight: options.weight
-        };
-        var circle = new this.google.maps.Circle(newOptions);
-        if (eventClick) {
-            this.google.maps.event.addListener(circle, 'click', function (event) {
-                var param = { latlng: [event.latLng.lat(), event.latLng.lng()] };
-                eventClick(circle, param, options.object);
-            });
-        }
-        if (options.addToMap) {
-            circle.setMap(self.map);
-        }
-        if (options.fitBounds) {
-            self.map.fitBounds(circle.getBounds());
-        }
-        return circle;
+        var _a;
+        return (_a = this.googleCircles) === null || _a === void 0 ? void 0 : _a.drawCircle(options, eventClick);
     };
     GoogleMaps.prototype.toggleCircles = function (circles, show) {
-        var self = this;
-        circles.forEach(function (circle) { return circle.setMap(show ? self.map : null); });
+        var _a;
+        (_a = this.googleCircles) === null || _a === void 0 ? void 0 : _a.toggleCircles(circles, show);
     };
     GoogleMaps.prototype.alterCircleOptions = function (circles, options) {
-        var newOptions = {};
-        circles.forEach(function (circle) {
-            newOptions = {
-                fillColor: options.fillColor !== null && options.fillColor !== undefined ?
-                    options.fillColor : circle.fillColor,
-                fillOpacity: options.fillOpacity !== null && options.fillOpacity !== undefined ?
-                    options.fillOpacity : circle.fillOpacity,
-                strokeColor: options.color !== null && options.color !== undefined ? options.color : circle.strokeColor,
-                strokeOpacity: options.opacity !== null && options.opacity !== undefined ?
-                    options.opacity : circle.strokeOpacity,
-                strokeWeight: options.weight !== null && options.weight !== undefined ?
-                    options.weight : circle.strokeWeight
-            };
-            circle.setOptions(newOptions);
-        });
+        var _a;
+        (_a = this.googleCircles) === null || _a === void 0 ? void 0 : _a.alterCircleOptions(circles, options);
+    };
+    GoogleMaps.prototype.fitBoundsCircles = function (circles) {
+        var _a;
+        (_a = this.googleCircles) === null || _a === void 0 ? void 0 : _a.fitBoundsCircles(circles);
+    };
+    GoogleMaps.prototype.isCircleOnMap = function (circle) {
+        var _a;
+        return (_a = this.googleCircles) === null || _a === void 0 ? void 0 : _a.isCircleOnMap(circle);
+    };
+    GoogleMaps.prototype.getCircleCenter = function (circle) {
+        var _a;
+        return (_a = this.googleCircles) === null || _a === void 0 ? void 0 : _a.getCircleCenter(circle);
+    };
+    GoogleMaps.prototype.getCircleRadius = function (circle) {
+        var _a;
+        return (_a = this.googleCircles) === null || _a === void 0 ? void 0 : _a.getCircleRadius(circle);
+    };
+    GoogleMaps.prototype.addCircleEvent = function (circles, eventType, eventFunction) {
+        var _a;
+        (_a = this.googleCircles) === null || _a === void 0 ? void 0 : _a.addCircleEvent(circles, eventType, eventFunction);
+    };
+    GoogleMaps.prototype.removeCircleEvent = function (circles, event) {
+        var _a;
+        (_a = this.googleCircles) === null || _a === void 0 ? void 0 : _a.removeCircleEvent(circles, event);
     };
     /* Polylines */
     GoogleMaps.prototype.drawPolyline = function (options, eventClick) {
-        var self = this;
-        var newOptions = {
-            draggable: options.draggable,
-            editable: options.editable,
-            infowindows: options.infowindows,
-            object: options.object,
-            path: null,
-            strokeColor: options.color,
-            strokeWeight: options.weight
-        };
-        newOptions.path = options.path ? options.path.map(function (x) {
-            return {
-                lat: x[0],
-                lng: x[1]
-            };
-        }) : [];
-        var polyline = new this.google.maps.Polyline(newOptions);
-        if (eventClick) {
-            this.google.maps.event.addListener(polyline, 'click', function (event) {
-                var param = { latlng: [event.latLng.lat(), event.latLng.lng()] };
-                eventClick(polyline, param, polyline.object);
-            });
-        }
-        if (options.addToMap) {
-            polyline.setMap(self.map);
-        }
-        if (options.fitBounds) {
-            self.map.fitBounds(self.getPolylineBounds(polyline));
-        }
-        return polyline;
-    };
-    GoogleMaps.prototype.togglePolyline = function (polyline, show) {
-        var self = this;
-        polyline.setMap(show ? self.map : null);
+        var _a;
+        return (_a = this.googlePolylines) === null || _a === void 0 ? void 0 : _a.drawPolyline(options, eventClick);
     };
     GoogleMaps.prototype.drawPolylineWithNavigation = function (options, eventClick) {
-        var self = this;
-        var polyline = self.drawPolyline(options, eventClick);
-        self.addNavigation(polyline, options.navigateOptions);
-        return polyline;
+        var _a;
+        return (_a = this.googlePolylines) === null || _a === void 0 ? void 0 : _a.drawPolylineWithNavigation(options, eventClick);
     };
-    GoogleMaps.prototype.clearListenersPolyline = function (polyline) {
-        this.google.maps.event.clearListeners(polyline, 'click');
+    GoogleMaps.prototype.togglePolylines = function (polylines, show) {
+        var _a;
+        (_a = this.googlePolylines) === null || _a === void 0 ? void 0 : _a.togglePolylines(polylines, show);
     };
-    GoogleMaps.prototype.addPolylinePath = function (polyline, position) {
-        var path = polyline.getPath();
-        path.push(new this.google.maps.LatLng(position[0], position[1]));
-        polyline.setPath(path);
+    GoogleMaps.prototype.alterPolylineOptions = function (polylines, options) {
+        var _a;
+        (_a = this.googlePolylines) === null || _a === void 0 ? void 0 : _a.alterPolylineOptions(polylines, options);
+    };
+    GoogleMaps.prototype.fitBoundsPolylines = function (polylines) {
+        var _a;
+        (_a = this.googlePolylines) === null || _a === void 0 ? void 0 : _a.fitBoundsPolylines(polylines);
+    };
+    GoogleMaps.prototype.isPolylineOnMap = function (polyline) {
+        var _a;
+        return (_a = this.googlePolylines) === null || _a === void 0 ? void 0 : _a.isPolylineOnMap(polyline);
+    };
+    GoogleMaps.prototype.addPolylinePath = function (polylines, position) {
+        var _a;
+        (_a = this.googlePolylines) === null || _a === void 0 ? void 0 : _a.addPolylinePath(polylines, position);
+    };
+    GoogleMaps.prototype.getPolylinePath = function (polyline) {
+        var _a;
+        return (_a = this.googlePolylines) === null || _a === void 0 ? void 0 : _a.getPolylinePath(polyline);
     };
     GoogleMaps.prototype.removePolylineHighlight = function () {
-        this.google.maps.event.clearListeners(document, 'keyup');
-        if (this.selectedPath) {
-            this.clearPolylinePath(this.selectedPath);
-        }
-        if (this.navigateInfoWindow) {
-            this.navigateInfoWindow.close();
-        }
+        var _a;
+        (_a = this.googlePolylines) === null || _a === void 0 ? void 0 : _a.removePolylineHighlight();
     };
-    GoogleMaps.prototype.alterPolylineOptions = function (polyline, options) {
-        var newOptions = {
-            draggable: options.draggable !== null && options.draggable !== undefined ?
-                options.draggable : polyline.draggable,
-            editable: options.editable !== null && options.editable !== undefined ?
-                options.editable : polyline.editable,
-            infowindows: options.infowindows !== null && options.infowindows !== undefined ?
-                options.infowindows : polyline.infowindows,
-            object: options.object !== null && options.object !== undefined ?
-                options.object : polyline.object,
-            strokeColor: options.color !== null && options.color !== undefined ?
-                options.color : polyline.strokeColor,
-            strokeWeight: options.weight !== null && options.weight !== undefined ?
-                options.weight : polyline.strokeWeight
-        };
-        polyline.setOptions(newOptions);
+    GoogleMaps.prototype.addPolylineEvent = function (polylines, eventType, eventFunction) {
+        var _a;
+        (_a = this.googlePolylines) === null || _a === void 0 ? void 0 : _a.addPolylineEvent(polylines, eventType, eventFunction);
+    };
+    GoogleMaps.prototype.removePolylineEvent = function (polylines, event) {
+        var _a;
+        (_a = this.googlePolylines) === null || _a === void 0 ? void 0 : _a.removePolylineEvent(polylines, event);
+    };
+    GoogleMaps.prototype.setIndexPolylineHighlight = function (polyline, index) {
+        var _a;
+        (_a = this.googlePolylines) === null || _a === void 0 ? void 0 : _a.setIndexPolylineHighlight(polyline, index);
+    };
+    GoogleMaps.prototype.getObjectPolyline = function (polyline) {
+        var _a;
+        return (_a = this.googlePolylines) === null || _a === void 0 ? void 0 : _a.getObjectPolyline(polyline);
+    };
+    GoogleMaps.prototype.getObjectPolylineHighlight = function () {
+        var _a;
+        return (_a = this.googlePolylines) === null || _a === void 0 ? void 0 : _a.getObjectPolylineHighlight();
+    };
+    GoogleMaps.prototype.addPolylineHighlightEvent = function (eventType, eventFunction) {
+        var _a;
+        (_a = this.googlePolylines) === null || _a === void 0 ? void 0 : _a.addPolylineHighlightEvent(eventType, eventFunction);
+    };
+    GoogleMaps.prototype.getPolylineHighlightIndex = function () {
+        var _a;
+        return (_a = this.googlePolylines) === null || _a === void 0 ? void 0 : _a.getPolylineHighlightIndex();
     };
     /* Info Windows */
-    GoogleMaps.prototype.drawPopup = function (options) {
-        var self = this;
-        var infowindow = new this.google.maps.InfoWindow({
-            content: options.content
-        });
-        infowindow.setPosition({
-            lat: options.latlng[0],
-            lng: options.latlng[1]
-        });
-        infowindow.open(self.map, options.marker || null);
-        return infowindow;
+    GoogleMaps.prototype.drawPopup = function (options, marker) {
+        var _a;
+        return (_a = this.googlePopups) === null || _a === void 0 ? void 0 : _a.drawPopup(options, marker);
     };
-    GoogleMaps.prototype.alterPopup = function (popup, options) {
-        var self = this;
-        if (options.content) {
-            popup.setContent(options.content);
-        }
-        if (options.latlng) {
-            popup.setPosition({
-                lat: options.latlng[0],
-                lng: options.latlng[1]
-            });
-        }
-        if (!popup.getMap()) {
-            popup.open(self.map, options.marker || null);
-        }
+    GoogleMaps.prototype.alterPopup = function (popup, options, marker) {
+        var _a;
+        return (_a = this.googlePopups) === null || _a === void 0 ? void 0 : _a.alterPopup(popup, options, marker);
+    };
+    GoogleMaps.prototype.alterPopupContent = function (popup, options, marker) {
+        var _a;
+        (_a = this.googlePopups) === null || _a === void 0 ? void 0 : _a.alterPopupContent(popup, options, marker);
+    };
+    GoogleMaps.prototype.closePopup = function (popup) {
+        var _a;
+        (_a = this.googlePopups) === null || _a === void 0 ? void 0 : _a.closePopup(popup);
     };
     /* Map */
-    GoogleMaps.prototype.addClickMap = function (eventClick) {
-        var self = this;
-        this.google.maps.event.addListener(self.map, 'click', function (event) {
-            var param = { latlng: [event.latLng.lat(), event.latLng.lng()] };
-            eventClick(param);
-        });
+    GoogleMaps.prototype.resizeMap = function () {
+        var _a;
+        (_a = this.googleMap) === null || _a === void 0 ? void 0 : _a.resizeMap();
     };
-    GoogleMaps.prototype.removeClickMap = function () {
-        var self = this;
-        this.google.maps.event.clearListeners(self.map, 'click');
+    GoogleMaps.prototype.addEventMap = function (eventType, eventFunction) {
+        var _a;
+        (_a = this.googleMap) === null || _a === void 0 ? void 0 : _a.addEventMap(eventType, eventFunction);
     };
-    /* Private Methods */
-    GoogleMaps.prototype.addNavigation = function (polyline, options) {
-        var self = this;
-        this.google.maps.event.clearListeners(polyline, 'click');
-        this.google.maps.event.addListener(polyline, 'click', self.onClickPolyline.bind(self, polyline, options));
+    GoogleMaps.prototype.removeEventMap = function (eventType) {
+        var _a;
+        (_a = this.googleMap) === null || _a === void 0 ? void 0 : _a.removeEventMap(eventType);
     };
-    GoogleMaps.prototype.onClickPolyline = function (polyline, options, event) {
-        var self = this;
-        var index = self.checkIdx(polyline, event.latLng);
-        polyline.idxInicial = index;
-        polyline.idxFinal = index + 1;
-        self.moveSelectedPath(polyline, options);
-        self.selectedPolyline = polyline;
-        this.google.maps.event.clearListeners(document, 'keyup');
-        this.google.maps.event.addDomListener(document, 'keyup', self.onKeyUp.bind(self));
+    GoogleMaps.prototype.getZoom = function () {
+        var _a;
+        return (_a = this.googleMap) === null || _a === void 0 ? void 0 : _a.getZoom();
     };
-    GoogleMaps.prototype.onKeyUp = function (event) {
-        var self = this;
-        if (self.selectedPath) {
-            switch (event.which ? event.which : event.keyCode) {
-                // seta para cima ou seta para direita ou W ou D
-                case 38:
-                case 39:
-                    self.moveForwards(event.shiftKey);
-                    break; // seta para esquerda ou seta para baixo ou S ou A
-                case 37:
-                case 40:
-                    self.moveBackwards(event.shiftKey);
-                    break;
-            }
-        }
+    GoogleMaps.prototype.setZoom = function (zoom) {
+        var _a;
+        (_a = this.googleMap) === null || _a === void 0 ? void 0 : _a.setZoom(zoom);
     };
-    GoogleMaps.prototype.moveForwards = function (multiSelection) {
-        var self = this;
-        var polyline = self.selectedPolyline;
-        if (self.directionForward && polyline.idxFinal < polyline.getPath().getArray().length - 1) {
-            self.navigateForward(multiSelection, polyline);
-        }
-        self.directionForward = true;
-        self.moveSelectedPath(polyline, null);
-    };
-    GoogleMaps.prototype.navigateForward = function (multiSelection, polyline) {
-        var self = this;
-        if (!multiSelection) {
-            polyline.idxFinal++;
-            polyline.idxInicial = self.multiSelection ? polyline.idxFinal - 1 : polyline.idxInicial + 1;
-            self.multiSelection = false;
-        }
-        else {
-            self.multiSelection = true;
-            if (self.multiSelectionForward) {
-                polyline.idxFinal++;
-            }
-            self.multiSelectionForward = true;
-        }
-    };
-    GoogleMaps.prototype.moveBackwards = function (multiSelection) {
-        var self = this;
-        var polyline = self.selectedPolyline;
-        if (!self.directionForward && polyline.idxInicial > 0) {
-            self.navigateBackward(multiSelection, polyline);
-        }
-        self.directionForward = false;
-        self.moveSelectedPath(polyline, null);
-    };
-    GoogleMaps.prototype.navigateBackward = function (multiSelection, polyline) {
-        var self = this;
-        if (!multiSelection) {
-            polyline.idxInicial--;
-            polyline.idxFinal = !self.multiSelection ? polyline.idxFinal - 1 : polyline.idxInicial + 1;
-            self.multiSelection = false;
-        }
-        else {
-            self.multiSelection = true;
-            if (!self.multiSelectionForward) {
-                polyline.idxInicial--;
-            }
-            self.multiSelectionForward = false;
-        }
-    };
-    GoogleMaps.prototype.moveSelectedPath = function (polyline, options) {
-        var pathSelected = polyline.getPath().getArray().slice(polyline.idxInicial, polyline.idxFinal + 1);
-        if (this.selectedPath) {
-            this.selectedPath.setPath(pathSelected);
-        }
-        else {
-            var newOptions = {
-                map: this.map,
-                path: pathSelected,
-                strokeColor: options && options.color || '#FF0000',
-                strokeWeight: options && options.weight || 10,
-                zIndex: 9999
-            };
-            this.selectedPath = new this.google.maps.Polyline(newOptions);
-        }
-        this.drawPopupNavigation(polyline);
-    };
-    GoogleMaps.prototype.drawPopupNavigation = function (polyline) {
-        var self = this;
-        var idx = self.directionForward ? polyline.idxFinal : polyline.idxInicial;
-        var infowindow = polyline.infowindows ? polyline.infowindows[idx] : null;
-        if (infowindow) {
-            var point = polyline.getPath().getArray()[idx];
-            if (self.navigateInfoWindow) {
-                self.alterPopup(self.navigateInfoWindow, {
-                    content: infowindow,
-                    latlng: [point.lat(), point.lng()]
-                });
-            }
-            else {
-                self.navigateInfoWindow = self.drawPopup({
-                    content: infowindow,
-                    latlng: [point.lat(), point.lng()]
-                });
-            }
-        }
-    };
-    GoogleMaps.prototype.checkIdx = function (polyline, point) {
-        var self = this;
-        var path = polyline.getPath();
-        var distance = 0;
-        var minDistance = Number.MAX_VALUE;
-        var returnValue = -1;
-        for (var i = 0; i < path.length - 1; i++) {
-            distance = self.distanceToLine(path.getAt(i), path.getAt(i + 1), point);
-            if (distance < minDistance) {
-                minDistance = distance;
-                returnValue = i;
-            }
-        }
-        return returnValue;
-    };
-    GoogleMaps.prototype.distanceToLine = function (pt1, pt2, pt) {
-        var self = this;
-        var deltaX = pt2.lng() - pt1.lng();
-        var deltaY = pt2.lat() - pt1.lat();
-        var incIntersect = (pt.lng() - pt1.lng()) * deltaX;
-        var deltaSum = (deltaX * deltaX) + (deltaY * deltaY);
-        incIntersect += (pt.lat() - pt1.lat()) * deltaY;
-        if (deltaSum > 0) {
-            incIntersect /= deltaSum;
-        }
-        else {
-            incIntersect = -1;
-        }
-        // A interseção ocorre fora do segmento de reta, "antes" do pt1.
-        if (incIntersect < 0) {
-            return self.kmTo(pt, pt1);
-        }
-        else if (incIntersect > 1) {
-            return self.kmTo(pt, pt2);
-        }
-        // Cálculo do ponto de interseção.
-        var intersect = new this.google.maps
-            .LatLng(pt1.lat() + incIntersect * deltaY, pt1.lng() + incIntersect * deltaX);
-        return self.kmTo(pt, intersect);
-    };
-    GoogleMaps.prototype.kmTo = function (pt1, pt2) {
-        var e = Math;
-        var ra = e.PI / 180;
-        var b = pt1.lat() * ra;
-        var c = pt2.lat() * ra;
-        var d = b - c;
-        var g = pt1.lng() * ra - pt2.lng() * ra;
-        var f = 2 * e.asin(e.sqrt(e.pow(e.sin(d / 2), 2) + e.cos(b) * e.cos(c) * e.pow(e.sin(g / 2), 2)));
-        return f * 6378.137 * 1000;
-    };
-    GoogleMaps.prototype.parseGeoJson = function (data, options) {
-        var self = this;
-        var parsedFeatures = [];
-        if (Array.isArray(data.features)) {
-            for (var _i = 0, _a = data.features; _i < _a.length; _i++) {
-                var feature = _a[_i];
-                parsedFeatures.push(self.parseGeoJsonToObject(feature, options));
-            }
-        }
-        else {
-            parsedFeatures.push(self.parseGeoJsonToObject(data, options));
-        }
-        return parsedFeatures;
-    };
-    GoogleMaps.prototype.parseGeoJsonToObject = function (data, objectOptions) {
-        var geometry = data.geometry;
-        if (data.properties) {
-            Object.assign(objectOptions, data.properties);
-        }
-        switch (geometry.type) {
-            case 'Point':
-                objectOptions.position = {
-                    lat: geometry.coordinates[1],
-                    lng: geometry.coordinates[0]
-                };
-                return new this.google.maps.Marker(objectOptions);
-            case 'Polygon':
-                objectOptions.paths = [];
-                geometry.coordinates.forEach(function (polygon) {
-                    return objectOptions.paths.push(polygon.map(function (elem) { return ({
-                        lat: elem[1],
-                        lng: elem[0]
-                    }); }));
-                });
-                return new this.google.maps.Polygon(objectOptions);
-            case 'LineString':
-                objectOptions.path = geometry.coordinates.map(function (elem) { return ({
-                    lat: elem[1],
-                    lng: elem[0]
-                }); });
-                return new this.google.maps.Polyline(objectOptions);
-            default:
-                throw new Error('Forma de objeto desconhecida.');
-        }
-    };
-    // --------------- HELPER FUNCTIONS
-    GoogleMaps.prototype.getPolygonBounds = function (polygon) {
-        var bounds = new this.google.maps.LatLngBounds();
-        var paths = polygon.getPaths().getArray();
-        paths.forEach(function (path) {
-            path.getArray().forEach(function (x) { return bounds.extend(x); });
-        });
-        return bounds;
-    };
-    GoogleMaps.prototype.getPolylineBounds = function (polyline) {
-        var bounds = new this.google.maps.LatLngBounds();
-        var paths = polyline.getPath().getArray();
-        paths.forEach(function (path) { return bounds.extend(path); });
-        return bounds;
-    };
-    GoogleMaps.prototype.getPolygonsBounds = function (polygons) {
-        var bounds = new this.google.maps.LatLngBounds();
-        polygons.forEach(function (polygon) {
-            var paths = polygon.getPaths().getArray();
-            paths.forEach(function (path) {
-                path.getArray().forEach(function (x) { return bounds.extend(x); });
+    GoogleMaps.prototype.takeMapScreenshot = function () {
+        var _a;
+        return __awaiter(this, void 0, void 0, function () {
+            var image;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0: return [4 /*yield*/, ((_a = this.googleMap) === null || _a === void 0 ? void 0 : _a.takeScreenShot(this.elementId))];
+                    case 1:
+                        image = _b.sent();
+                        return [2 /*return*/, image];
+                }
             });
         });
-        return bounds;
     };
-    GoogleMaps.prototype.clearPolylinePath = function (polyline) {
-        polyline.setPath([]);
+    GoogleMaps.prototype.getCenter = function () {
+        var _a;
+        return (_a = this.googleMap) === null || _a === void 0 ? void 0 : _a.getCenter();
+    };
+    GoogleMaps.prototype.setCenter = function (position) {
+        var _a;
+        (_a = this.googleMap) === null || _a === void 0 ? void 0 : _a.setCenter(position);
+    };
+    GoogleMaps.prototype.pixelsToLatLng = function (offsetx, offsety) {
+        var _a;
+        return (_a = this.googleMap) === null || _a === void 0 ? void 0 : _a.pixelsToLatLng(offsetx, offsety);
+    };
+    GoogleMaps.prototype.fitBoundsElements = function (markers, circles, polygons, polylines) {
+        var _a;
+        (_a = this.googleMap) === null || _a === void 0 ? void 0 : _a.fitBoundsElements(markers, circles, polygons, polylines);
+    };
+    /* Overlay */
+    GoogleMaps.prototype.drawOverlay = function (options, polygons) {
+        var _a;
+        return (_a = this.googleOverlays) === null || _a === void 0 ? void 0 : _a.drawOverlay(options, polygons);
+    };
+    GoogleMaps.prototype.toggleOverlay = function (overlays, show) {
+        var _a;
+        (_a = this.googleOverlays) === null || _a === void 0 ? void 0 : _a.toggleOverlay(overlays, show);
     };
     return GoogleMaps;
 }());
-exports.default = GoogleMaps;
+export default GoogleMaps;
 //# sourceMappingURL=googleMaps.js.map

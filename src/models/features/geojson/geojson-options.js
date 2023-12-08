@@ -1,5 +1,3 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 var GeoJsonOptions = /** @class */ (function () {
     function GeoJsonOptions(draggable, editable) {
         this.draggable = draggable;
@@ -7,5 +5,5 @@ var GeoJsonOptions = /** @class */ (function () {
     }
     return GeoJsonOptions;
 }());
-exports.default = GeoJsonOptions;
+export default GeoJsonOptions;
 //# sourceMappingURL=geojson-options.js.map

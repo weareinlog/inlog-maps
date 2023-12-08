@@ -1,15 +1,15 @@
-import { MarkerEventType } from '../../dto/event-type';
-import EventReturn from '../../features/events/event-return';
-import MarkerClustererConfig from '../../features/marker-clusterer/marker-clusterer-config';
-import CircleMarkerOptions from '../../features/marker/circle-marker-options';
-import MarkerAlterOptions from '../../features/marker/marker-alter-options';
-import MarkerOptions from '../../features/marker/marker-options';
+import { MarkerEventType } from "../../dto/event-type";
+import EventReturn from "../../features/events/event-return";
+import MarkerClustererConfig from "../../features/marker-clusterer/marker-clusterer-config";
+import CircleMarkerOptions from "../../features/marker/circle-marker-options";
+import MarkerAlterOptions from "../../features/marker/marker-alter-options";
+import MarkerOptions from "../../features/marker/marker-options";
 
-const MarkerClusterer = require('@google/markerclustererplus');
+const MarkerClusterer = require("@google/markerclustererplus");
 
 export default class GoogleMarkers {
-    private map = null;
-    private google = null;
+    private map: any | null = null;
+    private google: any | null = null;
 
     constructor(map: any, google: any) {
         this.map = map;
@@ -17,33 +17,43 @@ export default class GoogleMarkers {
     }
 
     public drawMarker(options: MarkerOptions, eventClick: any) {
-        const newOptions = {
+        const newOptions: any = {
             draggable: options.draggable,
             icon: null,
             object: options.object,
             position: {
                 lat: options.latlng[0],
-                lng: options.latlng[1]
-            }
+                lng: options.latlng[1],
+            },
         };
 
         if (options.icon) {
             newOptions.icon = {
-                url: options.icon.url
+                url: options.icon.url,
             };
 
             if (options.icon.size) {
-                newOptions.icon.size = new this.google.maps.Size(options.icon.size[0], options.icon.size[1]);
+                newOptions.icon.size = new this.google.maps.Size(
+                    options.icon.size[0],
+                    options.icon.size[1]
+                );
             }
         }
         const marker = new this.google.maps.Marker(newOptions);
 
         if (eventClick) {
-            this.google.maps.event.addListener(marker, 'click', (event: any) => {
-                const param = new EventReturn([event.latLng.lat(), event.latLng.lng()]);
+            this.google.maps.event.addListener(
+                marker,
+                "click",
+                (event: any) => {
+                    const param = new EventReturn([
+                        event.latLng.lat(),
+                        event.latLng.lng(),
+                    ]);
 
-                eventClick(param, options.object);
-            });
+                    eventClick(param, options.object);
+                }
+            );
         }
 
         if (options.addToMap) {
@@ -69,22 +79,29 @@ export default class GoogleMarkers {
                 path: this.google.maps.SymbolPath.CIRCLE,
                 scale: options.style.radius,
                 strokeColor: options.style.color,
-                strokeWeight: options.style.weight
+                strokeWeight: options.style.weight,
             },
             object: options.object,
             position: {
                 lat: options.latlng[0],
-                lng: options.latlng[1]
-            }
+                lng: options.latlng[1],
+            },
         };
 
         const marker = new this.google.maps.Marker(newOptions);
 
         if (eventClick) {
-            this.google.maps.event.addListener(marker, 'click', (event: any) => {
-                const param = new EventReturn([event.latLng.lat(), event.latLng.lng()]);
-                eventClick(param, options.object);
-            });
+            this.google.maps.event.addListener(
+                marker,
+                "click",
+                (event: any) => {
+                    const param = new EventReturn([
+                        event.latLng.lat(),
+                        event.latLng.lng(),
+                    ]);
+                    eventClick(param, options.object);
+                }
+            );
         }
 
         if (options.addToMap) {
@@ -116,13 +133,13 @@ export default class GoogleMarkers {
     }
 
     public alterMarkerOptions(markers: any[], options: MarkerAlterOptions) {
-        let icon = null;
-        let position = null;
+        let icon: any | null = null;
+        let position: any | null = null;
 
         if (options.latlng) {
             position = {
                 lat: options.latlng[0],
-                lng: options.latlng[1]
+                lng: options.latlng[1],
             };
         }
 
@@ -130,19 +147,32 @@ export default class GoogleMarkers {
             icon = options.icon;
 
             if (options.icon.size) {
-                icon.size = new this.google.maps.Size(options.icon.size[0], options.icon.size[1]);
+                icon.size = new this.google.maps.Size(
+                    options.icon.size[0],
+                    options.icon.size[1]
+                );
             }
         }
 
         markers.forEach((marker) => {
             if (options.style) {
                 icon = {
-                    fillColor: options.style.fillColor ? options.style.fillColor : marker.icon.fillColor,
-                    fillOpacity: options.style.fillOpacity ? options.style.fillOpacity : marker.icon.fillOpacity,
+                    fillColor: options.style.fillColor
+                        ? options.style.fillColor
+                        : marker.icon.fillColor,
+                    fillOpacity: options.style.fillOpacity
+                        ? options.style.fillOpacity
+                        : marker.icon.fillOpacity,
                     path: this.google.maps.SymbolPath.CIRCLE,
-                    scale: options.style.radius ? options.style.radius : marker.icon.scale,
-                    strokeColor: options.style.color ? options.style.color : marker.icon.strokeColor,
-                    strokeWeight: options.style.weight ? options.style.weight : marker.icon.strokeWeight
+                    scale: options.style.radius
+                        ? options.style.radius
+                        : marker.icon.scale,
+                    strokeColor: options.style.color
+                        ? options.style.color
+                        : marker.icon.strokeColor,
+                    strokeWeight: options.style.weight
+                        ? options.style.weight
+                        : marker.icon.strokeWeight,
                 };
             }
 
@@ -159,10 +189,14 @@ export default class GoogleMarkers {
         });
     }
 
-    public alterMarkerPosition(markers: any[], position: number[], addTransition: boolean) {
+    public alterMarkerPosition(
+        markers: any[],
+        position: number[],
+        addTransition: boolean
+    ) {
         const newPosition = {
             lat: position[0],
-            lng: position[1]
+            lng: position[1],
         };
 
         markers.forEach((marker) => {
@@ -176,11 +210,13 @@ export default class GoogleMarkers {
 
     public fitBoundsPositions(markers: any[]) {
         const bounds = new this.google.maps.LatLngBounds();
-        markers.map((marker) => marker.position).forEach((position) => bounds.extend(position));
+        markers
+            .map((marker) => marker.position)
+            .forEach((position) => bounds.extend(position));
         this.map.fitBounds(bounds);
     }
 
-    public isMarkerOnMap(marker: any): boolean {
+    public isMarkerOnMap(marker: any): boolean | undefined {
         return !!marker.map;
     }
 
@@ -188,44 +224,90 @@ export default class GoogleMarkers {
         this.map.setCenter(marker.getPosition());
     }
 
-    public addMarkerEvent(markers: any, eventType: MarkerEventType, eventFunction: any) {
+    public addMarkerEvent(
+        markers: any,
+        eventType: MarkerEventType,
+        eventFunction: any
+    ) {
         markers.forEach((marker: any) => {
             switch (eventType) {
                 case MarkerEventType.Click:
-                    this.google.maps.event.addListener(marker, 'click', (event: any) => {
-                        const param = new EventReturn([event.latLng.lat(), event.latLng.lng()]);
-                        eventFunction(param, marker.object);
-                    });
+                    this.google.maps.event.addListener(
+                        marker,
+                        "click",
+                        (event: any) => {
+                            const param = new EventReturn([
+                                event.latLng.lat(),
+                                event.latLng.lng(),
+                            ]);
+                            eventFunction(param, marker.object);
+                        }
+                    );
                     break;
                 case MarkerEventType.RightClick:
-                    this.google.maps.event.addListener(marker, 'rightclick', (event: any) => {
-                        const param = new EventReturn([event.latLng.lat(), event.latLng.lng()]);
-                        eventFunction(param, marker.object);
-                    });
+                    this.google.maps.event.addListener(
+                        marker,
+                        "rightclick",
+                        (event: any) => {
+                            const param = new EventReturn([
+                                event.latLng.lat(),
+                                event.latLng.lng(),
+                            ]);
+                            eventFunction(param, marker.object);
+                        }
+                    );
                     break;
                 case MarkerEventType.AfterDrag:
-                    this.google.maps.event.addListener(marker, 'dragend', (event: any) => {
-                        const param = new EventReturn([event.latLng.lat(), event.latLng.lng()]);
-                        eventFunction(param, marker.object);
-                    });
+                    this.google.maps.event.addListener(
+                        marker,
+                        "dragend",
+                        (event: any) => {
+                            const param = new EventReturn([
+                                event.latLng.lat(),
+                                event.latLng.lng(),
+                            ]);
+                            eventFunction(param, marker.object);
+                        }
+                    );
                     break;
                 case MarkerEventType.MouseOver:
-                    this.google.maps.event.addListener(marker, 'mouseover', (event: any) => {
-                        const param = new EventReturn([event.latLng.lat(), event.latLng.lng()]);
-                        eventFunction(param, marker.object);
-                    });
+                    this.google.maps.event.addListener(
+                        marker,
+                        "mouseover",
+                        (event: any) => {
+                            const param = new EventReturn([
+                                event.latLng.lat(),
+                                event.latLng.lng(),
+                            ]);
+                            eventFunction(param, marker.object);
+                        }
+                    );
                     break;
                 case MarkerEventType.MouseOut:
-                    this.google.maps.event.addListener(marker, 'mouseout', (event: any) => {
-                        const param = new EventReturn([event.latLng.lat(), event.latLng.lng()]);
-                        eventFunction(param, marker.object);
-                    });
+                    this.google.maps.event.addListener(
+                        marker,
+                        "mouseout",
+                        (event: any) => {
+                            const param = new EventReturn([
+                                event.latLng.lat(),
+                                event.latLng.lng(),
+                            ]);
+                            eventFunction(param, marker.object);
+                        }
+                    );
                     break;
                 case MarkerEventType.BeforeDrag:
-                    this.google.maps.event.addListener(marker, 'dragstart', (event: any) => {
-                        const param = new EventReturn([event.latLng.lat(), event.latLng.lng()]);
-                        eventFunction(param, marker.object);
-                    });
+                    this.google.maps.event.addListener(
+                        marker,
+                        "dragstart",
+                        (event: any) => {
+                            const param = new EventReturn([
+                                event.latLng.lat(),
+                                event.latLng.lng(),
+                            ]);
+                            eventFunction(param, marker.object);
+                        }
+                    );
                     break;
                 default:
                     break;
@@ -237,19 +319,19 @@ export default class GoogleMarkers {
         markers.forEach((marker: any) => {
             switch (event) {
                 case MarkerEventType.Click:
-                    this.google.maps.event.clearListeners(marker, 'click');
+                    this.google.maps.event.clearListeners(marker, "click");
                     break;
                 case MarkerEventType.RightClick:
-                    this.google.maps.event.clearListeners(marker, 'rightclick');
+                    this.google.maps.event.clearListeners(marker, "rightclick");
                     break;
                 case MarkerEventType.AfterDrag:
-                    this.google.maps.event.clearListeners(marker, 'dragend');
+                    this.google.maps.event.clearListeners(marker, "dragend");
                     break;
                 case MarkerEventType.MouseOver:
-                    this.google.maps.event.clearListeners(marker, 'mouseover');
+                    this.google.maps.event.clearListeners(marker, "mouseover");
                     break;
                 case MarkerEventType.MouseOut:
-                    this.google.maps.event.clearListeners(marker, 'mouseout');
+                    this.google.maps.event.clearListeners(marker, "mouseout");
                     break;
                 case MarkerEventType.BeforeDrag:
                     this.google.maps.event.clearListeners(marker, "dragstart");
@@ -265,11 +347,14 @@ export default class GoogleMarkers {
         return new MarkerClusterer(this.map, [], {
             maxZoom: config.clusterMaxZoom,
             minimumClusterSize: config.clusterMinSize,
-            zoomOnClick: config.clusterZoomOnClick
+            zoomOnClick: config.clusterZoomOnClick,
         });
     }
 
-    public alterMarkerClustererConfig(markerClusterer: any, config: MarkerClustererConfig): void {
+    public alterMarkerClustererConfig(
+        markerClusterer: any,
+        config: MarkerClustererConfig
+    ): void {
         markerClusterer.setZoomOnClick(config.clusterZoomOnClick);
         markerClusterer.setMinimumClusterSize(config.clusterMinSize);
         markerClusterer.setMaxZoom(config.clusterMaxZoom);
@@ -304,7 +389,7 @@ export default class GoogleMarkers {
             deltaLng: (position.lng - marker.getPosition().lng()) / numDeltas,
             i: 0,
             position: [marker.getPosition().lat(), marker.getPosition().lng()],
-            lastPosition: position
+            lastPosition: position,
         };
 
         this.moveMarker(marker, reference, numDeltas);
@@ -313,7 +398,9 @@ export default class GoogleMarkers {
     private moveMarker(marker: any, reference: any, numDeltas: number) {
         reference.position[0] += reference.deltaLat;
         reference.position[1] += reference.deltaLng;
-        marker.setPosition(new google.maps.LatLng(reference.position[0], reference.position[1]));
+        marker.setPosition(
+            new google.maps.LatLng(reference.position[0], reference.position[1])
+        );
         if (reference.i < numDeltas) {
             reference.i++;
             setTimeout(() => this.moveMarker(marker, reference, numDeltas), 20);

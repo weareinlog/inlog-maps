@@ -1,8 +1,8 @@
-import PopupOptions from '../../features/popup/popup-options';
+import PopupOptions from "../../features/popup/popup-options";
 
 export default class GooglePopups {
-    private map = null;
-    private google = null;
+    private map: any = {};
+    private google: any = {};
 
     constructor(map: any, google: any) {
         this.map = map;
@@ -12,13 +12,13 @@ export default class GooglePopups {
     public drawPopup(options: PopupOptions, marker?: any) {
         const self = this;
         const infowindow = new this.google.maps.InfoWindow({
-            content: options.content
+            content: options.content,
         });
 
         if (options.latlng) {
             infowindow.setPosition({
                 lat: options.latlng[0],
-                lng: options.latlng[1]
+                lng: options.latlng[1],
             });
         }
 
@@ -53,7 +53,7 @@ export default class GooglePopups {
         if (options.latlng) {
             popup.setPosition({
                 lat: options.latlng[0],
-                lng: options.latlng[1]
+                lng: options.latlng[1],
             });
         } else if (marker) {
             popup.setPosition(marker.getPosition());

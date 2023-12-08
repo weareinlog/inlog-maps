@@ -1,9 +1,9 @@
-import EventReturn from '../../features/events/event-return';
-import GeoJsonOptions from '../../features/geojson/geojson-options';
+import EventReturn from "../../features/events/event-return";
+import GeoJsonOptions from "../../features/geojson/geojson-options";
 
 export default class LeafletGeoJson {
-    private map = null;
-    private leaflet = null;
+    private map: any = {};
+    private leaflet: any = {};
 
     constructor(map: any, leaflet: any) {
         this.map = map;
@@ -24,10 +24,18 @@ export default class LeafletGeoJson {
                     }
 
                     if (eventClick) {
-                        obj.on('click', (event) => {
-                            const param = new EventReturn([event.latlng.lat, event.latlng.lng]);
-                            eventClick(param);
-                        });
+                        obj.on(
+                            "click",
+                            (event: {
+                                latlng: { lat: number; lng: number };
+                            }) => {
+                                const param = new EventReturn([
+                                    event.latlng.lat,
+                                    event.latlng.lng,
+                                ]);
+                                eventClick(param);
+                            }
+                        );
                     }
                 });
             }
@@ -40,7 +48,9 @@ export default class LeafletGeoJson {
 
         if (Array.isArray(data.features)) {
             for (const feature of data.features) {
-                parsedFeatures.push(self.parseGeoJsonToObject(feature, options));
+                parsedFeatures.push(
+                    self.parseGeoJsonToObject(feature, options)
+                );
             }
         } else {
             parsedFeatures.push(self.parseGeoJsonToObject(data, options));
@@ -51,25 +61,39 @@ export default class LeafletGeoJson {
 
     private parseGeoJsonToObject(data: any, objectOptions: any) {
         const geometry = data.geometry;
-        let parsedCoordinates = [];
+        let parsedCoordinates: any[] = [];
 
         if (data.properties) {
             Object.assign(objectOptions, data.properties);
         }
 
         switch (geometry.type) {
-            case 'Point':
+            case "Point":
                 parsedCoordinates = geometry.coordinates.reverse();
-                return new this.leaflet.Marker(parsedCoordinates, objectOptions);
-            case 'Polygon':
-                geometry.coordinates
-                    .forEach((polygon) => parsedCoordinates.push(polygon.map((elem) => elem.reverse())));
-                return new this.leaflet.Polygon(parsedCoordinates, objectOptions);
-            case 'LineString':
-                parsedCoordinates = geometry.coordinates.map((elem) => elem.reverse());
-                return new this.leaflet.Polyline(parsedCoordinates, objectOptions);
+                return new this.leaflet.Marker(
+                    parsedCoordinates,
+                    objectOptions
+                );
+            case "Polygon":
+                geometry.coordinates.forEach((polygon: any[]) =>
+                    parsedCoordinates.push(
+                        polygon.map((elem) => elem.reverse())
+                    )
+                );
+                return new this.leaflet.Polygon(
+                    parsedCoordinates,
+                    objectOptions
+                );
+            case "LineString":
+                parsedCoordinates = geometry.coordinates.map((elem: any[]) =>
+                    elem.reverse()
+                );
+                return new this.leaflet.Polyline(
+                    parsedCoordinates,
+                    objectOptions
+                );
             default:
-                throw new Error('Unknown object shape.');
+                throw new Error("Unknown object shape.");
         }
     }
 }

@@ -26,7 +26,7 @@ export default interface IMapFunctions {
     alterMarkerOptions(markers: any[], options: MarkerAlterOptions): void;
     alterMarkerPosition(markers: any[], position: number[], addTransition: boolean): void;
     fitBoundsPositions(markers: any[]): void;
-    isMarkerOnMap(marker: any): boolean;
+    isMarkerOnMap(marker: any): boolean | undefined;
     setCenterMarker(marker: any): void;
     addMarkerEvent(markers: any, event: MarkerEventType, eventFunction: any): void;
     removeMarkerEvent(markers: any, event: MarkerEventType): void;
@@ -100,4 +100,8 @@ export default interface IMapFunctions {
     /* Overlay */
     drawOverlay(options: OverlayOptions, polygons?: any): any;
     toggleOverlay(overlays: any[], show: boolean): void;
+
+
+    /* ScreenShot */
+    takeMapScreenshot(): Promise<string | null>;
 }

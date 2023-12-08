@@ -1,9 +1,9 @@
-import EventReturn from '../../features/events/event-return';
-import GeoJsonOptions from '../../features/geojson/geojson-options';
+import EventReturn from "../../features/events/event-return";
+import GeoJsonOptions from "../../features/geojson/geojson-options";
 
 export default class GoogleGeoJson {
-    private map = null;
-    private google = null;
+    private map: any = {};
+    private google: any = {};
 
     constructor(map: any, google: any) {
         this.map = map;
@@ -16,8 +16,11 @@ export default class GoogleGeoJson {
 
         objects.forEach((elem) => {
             if (eventClick) {
-                elem.addListener('click', (event: any) => {
-                    const param = new EventReturn([event.latLng.lat(), event.latLng.lng()]);
+                elem.addListener("click", (event: any) => {
+                    const param = new EventReturn([
+                        event.latLng.lat(),
+                        event.latLng.lng(),
+                    ]);
                     eventClick(param);
                 });
             }
@@ -31,7 +34,9 @@ export default class GoogleGeoJson {
 
         if (Array.isArray(data.features)) {
             for (const feature of data.features) {
-                parsedFeatures.push(self.parseGeoJsonToObject(feature, options));
+                parsedFeatures.push(
+                    self.parseGeoJsonToObject(feature, options)
+                );
             }
         } else {
             parsedFeatures.push(self.parseGeoJsonToObject(data, options));
@@ -48,29 +53,31 @@ export default class GoogleGeoJson {
         }
 
         switch (geometry.type) {
-            case 'Point':
+            case "Point":
                 objectOptions.position = {
                     lat: geometry.coordinates[1],
-                    lng: geometry.coordinates[0]
+                    lng: geometry.coordinates[0],
                 };
                 return new this.google.maps.Marker(objectOptions);
-            case 'Polygon':
+            case "Polygon":
                 objectOptions.paths = [];
-                geometry.coordinates.forEach((polygon) =>
-                    objectOptions.paths.push(polygon.map((elem) => ({
-                        lat: elem[1],
-                        lng: elem[0]
-                    })))
+                geometry.coordinates.forEach((polygon: any[]) =>
+                    objectOptions.paths.push(
+                        polygon.map((elem) => ({
+                            lat: elem[1],
+                            lng: elem[0],
+                        }))
+                    )
                 );
                 return new this.google.maps.Polygon(objectOptions);
-            case 'LineString':
-                objectOptions.path = geometry.coordinates.map((elem) => ({
+            case "LineString":
+                objectOptions.path = geometry.coordinates.map((elem: any[]) => ({
                     lat: elem[1],
-                    lng: elem[0]
+                    lng: elem[0],
                 }));
                 return new this.google.maps.Polyline(objectOptions);
             default:
-                throw new Error('Forma de objeto desconhecida.');
+                throw new Error("Forma de objeto desconhecida.");
         }
     }
 }

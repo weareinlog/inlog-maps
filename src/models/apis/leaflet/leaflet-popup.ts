@@ -1,8 +1,8 @@
 import PopupOptions from '../../features/popup/popup-options';
 
 export default class LeafletPopup {
-    private map = null;
-    private leaflet = null;
+    private map: any = {};
+    private leaflet: any = {};
 
     constructor(map: any, leaflet: any) {
         this.map = map;

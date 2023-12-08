@@ -1,26 +1,36 @@
-import NavigationOptions from './navigations-options';
-import { PolylineType } from '../../dto/polyline-type';
+import NavigationOptions from "./navigations-options";
+import { PolylineType } from "../../dto/polyline-type";
 
 export default class PolylineOptions {
-    public path: number[][];
+    public path?: number[][] | null;
+    public weight?: number | null;
+    public opacity?: number | null;
+    public zIndex?: number | null;
     public addToMap?: boolean;
     public fitBounds?: boolean;
     public editable?: boolean;
     public draggable?: boolean;
     public color?: string;
-    public weight: number;
     public object?: object;
     public infowindows?: string[];
     public style?: PolylineType;
     public navigateOptions?: NavigationOptions;
-    public opacity: number;
-    public zIndex: number;
 
-    constructor(path?: number[][], addToMap?: boolean, fitBounds?: boolean,
-        editable?: boolean, draggable?: boolean, color?: string, weight?: number,
-        object?: object, infowindows?: string[], navigateOptions?: NavigationOptions, style?: PolylineType,
-        opacity?: number, zIndex?: number) {
-
+    constructor(
+        path?: number[][] | null,
+        weight?: number | null,
+        opacity?: number | null,
+        zIndex?: number,
+        addToMap?: boolean,
+        fitBounds?: boolean,
+        editable?: boolean,
+        draggable?: boolean,
+        color?: string,
+        object?: object,
+        infowindows?: string[],
+        navigateOptions?: NavigationOptions,
+        style?: PolylineType
+    ) {
         this.path = path;
         this.addToMap = addToMap;
         this.fitBounds = fitBounds;

@@ -1,11 +1,16 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 var NavigationOptions = /** @class */ (function () {
-    function NavigationOptions(color, weight) {
+    function NavigationOptions(color, weight, navigateByPoint, opacity) {
+        if (navigateByPoint === void 0) { navigateByPoint = true; }
+        if (opacity === void 0) { opacity = 1; }
+        this.style = undefined;
+        this.editable = false;
         this.color = color;
         this.weight = weight;
+        this.opacity = opacity;
+        this.navigateByPoint = navigateByPoint;
+        this.navegateOnKeyPress = false;
     }
     return NavigationOptions;
 }());
-exports.default = NavigationOptions;
+export default NavigationOptions;
 //# sourceMappingURL=navigations-options.js.map

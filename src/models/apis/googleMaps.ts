@@ -1,43 +1,56 @@
-import { MapsApiLoaderService } from '../../utils/maps-api-loader.service';
-import { CircleEventType, MapEventType, MarkerEventType, PolygonEventType, PolylineEventType } from '../dto/event-type';
-import { MapType } from '../dto/map-type';
-import CircleAlterOptions from '../features/circle/circle-alter-options';
-import CircleOptions from '../features/circle/circle-options';
-import GeoJsonOptions from '../features/geojson/geojson-options';
-import MarkerClustererConfig from '../features/marker-clusterer/marker-clusterer-config';
-import CircleMarkerOptions from '../features/marker/circle-marker-options';
-import MarkerAlterOptions from '../features/marker/marker-alter-options';
-import MarkerOptions from '../features/marker/marker-options';
-import OverlayOptions from '../features/overlay/overlay-options';
-import PolygonAlterOptions from '../features/polygons/polygon-alter-options';
-import PolygonOptions from '../features/polygons/polygon-options';
-import PolylineOptions from '../features/polyline/polyline-options';
-import PopupOptions from '../features/popup/popup-options';
-import GoogleCircles from './google/google-circles';
-import GoogleGeoJson from './google/google-geojson';
-import GoogleMap from './google/google-map';
-import GoogleMarkers from './google/google-markers';
-import GoogleOverlays from './google/google-overlay';
-import GooglePolygons from './google/google-polygons';
-import GooglePolylines from './google/google-polylines';
-import GooglePopups from './google/google-popup';
-import IMapFunctions from './mapFunctions';
+import { MapsApiLoaderService } from "../../utils/maps-api-loader.service";
+import {
+    CircleEventType,
+    MapEventType,
+    MarkerEventType,
+    PolygonEventType,
+    PolylineEventType,
+} from "../dto/event-type";
+import { MapType } from "../dto/map-type";
+import CircleAlterOptions from "../features/circle/circle-alter-options";
+import CircleOptions from "../features/circle/circle-options";
+import GeoJsonOptions from "../features/geojson/geojson-options";
+import MarkerClustererConfig from "../features/marker-clusterer/marker-clusterer-config";
+import CircleMarkerOptions from "../features/marker/circle-marker-options";
+import MarkerAlterOptions from "../features/marker/marker-alter-options";
+import MarkerOptions from "../features/marker/marker-options";
+import OverlayOptions from "../features/overlay/overlay-options";
+import PolygonAlterOptions from "../features/polygons/polygon-alter-options";
+import PolygonOptions from "../features/polygons/polygon-options";
+import PolylineOptions from "../features/polyline/polyline-options";
+import PopupOptions from "../features/popup/popup-options";
+import GoogleCircles from "./google/google-circles";
+import GoogleGeoJson from "./google/google-geojson";
+import GoogleMap from "./google/google-map";
+import GoogleMarkers from "./google/google-markers";
+import GoogleOverlays from "./google/google-overlay";
+import GooglePolygons from "./google/google-polygons";
+import GooglePolylines from "./google/google-polylines";
+import GooglePopups from "./google/google-popup";
+import IMapFunctions from "./mapFunctions";
 
 export default class GoogleMaps implements IMapFunctions {
-    private googleMarkers: GoogleMarkers;
-    private googlePolygons: GooglePolygons;
-    private googleCircles: GoogleCircles;
-    private googlePolylines: GooglePolylines;
-    private googlePopups: GooglePopups;
-    private googleMap: GoogleMap;
-    private googleOverlays: GoogleOverlays;
-    private googleGeoJson: GoogleGeoJson;
+    private elementId: string = "";
+    private googleMarkers: GoogleMarkers | null = null;
+    private googlePolygons: GooglePolygons | null = null;
+    private googleCircles: GoogleCircles | null = null;
+    private googlePolylines: GooglePolylines | null = null;
+    private googlePopups: GooglePopups | null = null;
+    private googleMap: GoogleMap | null = null;
+    private googleOverlays: GoogleOverlays | null = null;
+    private googleGeoJson: GoogleGeoJson | null = null;
 
     private mapsApiLoader: MapsApiLoaderService = new MapsApiLoaderService();
 
-    constructor() { /* */ }
+    constructor() {
+        /* */
+    }
 
-    public async initialize(mapType: MapType, params: any, elementId: string): Promise<any> {
+    public async initialize(
+        mapType: MapType,
+        params: any,
+        elementId: string
+    ): Promise<any> {
         try {
             const api = await this.mapsApiLoader.loadApi(mapType, params);
             const google = api;
@@ -51,13 +64,13 @@ export default class GoogleMaps implements IMapFunctions {
                 scaleControl: false,
                 streetViewControl: false,
                 zoom: 4,
-                zoomControl: true
+                zoomControl: true,
             };
 
             if (params.gestureHandling) {
-                options.gestureHandling = 'cooperative';
+                options.gestureHandling = "cooperative";
             } else {
-                options.gestureHandling = 'greedy';
+                options.gestureHandling = "greedy";
             }
 
             if (params.options) {
@@ -68,20 +81,23 @@ export default class GoogleMaps implements IMapFunctions {
                 }
             }
 
-            const imageMapTypes = [];
+            const imageMapTypes: any[] = [];
             if (params.mapTiles) {
-                const ids = [google.maps.MapTypeId.ROADMAP, google.maps.MapTypeId.SATELLITE];
+                const ids = [
+                    google.maps.MapTypeId.ROADMAP,
+                    google.maps.MapTypeId.SATELLITE,
+                ];
 
                 params.mapTiles.forEach((tile: any) => {
                     ids.push(tile.name);
 
-                    const mapTypeOptions = {
+                    const mapTypeOptions: any = {
                         getTileUrl: (coord: any, zoom: any) =>
                             `https://tile.openstreetmap.org/${zoom}/${coord.x}/${coord.y}.png`,
                         isPng: true,
                         maxZoom: 19,
                         minZoom: 0,
-                        name: 'OpenStreetMap',
+                        name: "OpenStreetMap",
                         tileSize: new google.maps.Size(256, 256),
                     };
 
@@ -91,24 +107,38 @@ export default class GoogleMaps implements IMapFunctions {
                         }
                     }
 
-                    const imageMapType = new google.maps.ImageMapType(mapTypeOptions);
+                    const imageMapType = new google.maps.ImageMapType(
+                        mapTypeOptions
+                    );
                     imageMapTypes.push({ id: tile.name, tile: imageMapType });
                 });
 
                 options.mapTypeControlOptions = {
                     mapTypeIds: ids,
-                    style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR
+                    style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
                 };
             }
 
-            const map = new google.maps.Map(document.getElementById(elementId), options);
+            const map = new google.maps.Map(
+                document.getElementById(elementId),
+                options
+            );
+            this.elementId = elementId;
             this.googleMarkers = new GoogleMarkers(map, google);
             this.googlePolygons = new GooglePolygons(map, google);
             this.googleCircles = new GoogleCircles(map, google);
             this.googlePopups = new GooglePopups(map, google);
-            this.googlePolylines = new GooglePolylines(map, google, this.googlePopups);
+            this.googlePolylines = new GooglePolylines(
+                map,
+                google,
+                this.googlePopups
+            );
             this.googleMap = new GoogleMap(map, google);
-            this.googleOverlays = new GoogleOverlays(map, google, this.googlePolygons);
+            this.googleOverlays = new GoogleOverlays(
+                map,
+                google,
+                this.googlePolygons
+            );
             this.googleGeoJson = new GoogleGeoJson(map, google);
 
             if (imageMapTypes && imageMapTypes.length) {
@@ -130,278 +160,358 @@ export default class GoogleMaps implements IMapFunctions {
 
     /* GEOJson */
     public loadGEOJson(data: object, options: GeoJsonOptions, eventClick: any) {
-        this.googleGeoJson.loadGEOJson(data, options, eventClick);
+        this.googleGeoJson?.loadGEOJson(data, options, eventClick);
     }
 
     /* Markers */
     public drawMarker(options: MarkerOptions, eventClick: any): any {
-        return this.googleMarkers.drawMarker(options, eventClick);
+        return this.googleMarkers?.drawMarker(options, eventClick);
     }
 
-    public drawCircleMarker(options: CircleMarkerOptions, eventClick: any): any {
-        return this.googleMarkers.drawCircleMarker(options, eventClick);
+    public drawCircleMarker(
+        options: CircleMarkerOptions,
+        eventClick: any
+    ): any {
+        return this.googleMarkers?.drawCircleMarker(options, eventClick);
     }
 
-    public toggleMarkers(markers: any[], show: boolean, markerClusterer?: any): void {
-        this.googleMarkers.toggleMarkers(markers, show, markerClusterer);
+    public toggleMarkers(
+        markers: any[],
+        show: boolean,
+        markerClusterer?: any
+    ): void {
+        this.googleMarkers?.toggleMarkers(markers, show, markerClusterer);
     }
 
-    public alterMarkerOptions(markers: any[], options: MarkerAlterOptions): void {
-        this.googleMarkers.alterMarkerOptions(markers, options);
+    public alterMarkerOptions(
+        markers: any[],
+        options: MarkerAlterOptions
+    ): void {
+        this.googleMarkers?.alterMarkerOptions(markers, options);
     }
 
-    public alterMarkerPosition(markers: any[], position: number[], addTransition: boolean): void {
-        this.googleMarkers.alterMarkerPosition(markers, position, addTransition);
+    public alterMarkerPosition(
+        markers: any[],
+        position: number[],
+        addTransition: boolean
+    ): void {
+        this.googleMarkers?.alterMarkerPosition(
+            markers,
+            position,
+            addTransition
+        );
     }
 
     public fitBoundsPositions(markers: any[]): void {
-        this.googleMarkers.fitBoundsPositions(markers);
+        this.googleMarkers?.fitBoundsPositions(markers);
     }
 
-    public isMarkerOnMap(marker: any): boolean {
-        return this.googleMarkers.isMarkerOnMap(marker);
+    public isMarkerOnMap(marker: any): boolean | undefined {
+        return this.googleMarkers?.isMarkerOnMap(marker);
     }
 
     public setCenterMarker(marker: any): void {
-        this.googleMarkers.setCenterMarker(marker);
+        this.googleMarkers?.setCenterMarker(marker);
     }
 
-    public addMarkerEvent(markers: any, eventType: MarkerEventType, eventFunction: any): void {
-        this.googleMarkers.addMarkerEvent(markers, eventType, eventFunction);
+    public addMarkerEvent(
+        markers: any,
+        eventType: MarkerEventType,
+        eventFunction: any
+    ): void {
+        this.googleMarkers?.addMarkerEvent(markers, eventType, eventFunction);
     }
 
     public removeMarkerEvent(markers: any, event: MarkerEventType): void {
-        this.googleMarkers.removeMarkerEvent(markers, event);
+        this.googleMarkers?.removeMarkerEvent(markers, event);
     }
 
     /* Marker Clusterer */
     public addMarkerClusterer(config: MarkerClustererConfig): any {
-        return this.googleMarkers.addMarkerClusterer(config);
+        return this.googleMarkers?.addMarkerClusterer(config);
     }
 
-    public alterMarkerClustererConfig(markerClusterer: any, config: MarkerClustererConfig): void {
-        this.googleMarkers.alterMarkerClustererConfig(markerClusterer, config);
+    public alterMarkerClustererConfig(
+        markerClusterer: any,
+        config: MarkerClustererConfig
+    ): void {
+        this.googleMarkers?.alterMarkerClustererConfig(markerClusterer, config);
     }
 
     public refreshClusterer(markerClusterer: any): void {
-        this.googleMarkers.refreshClusterer(markerClusterer);
+        this.googleMarkers?.refreshClusterer(markerClusterer);
     }
 
     public addMarkerOnClusterer(marker: any, markerClusterer: any): void {
-        this.googleMarkers.addMarkerOnClusterer(marker, markerClusterer);
+        this.googleMarkers?.addMarkerOnClusterer(marker, markerClusterer);
     }
 
     public removeMarkerFromClusterer(marker: any, markerClusterer: any): void {
-        this.googleMarkers.removeMarkerFromClusterer(marker, markerClusterer);
+        this.googleMarkers?.removeMarkerFromClusterer(marker, markerClusterer);
     }
 
     public clearMarkersClusterer(markerClusterer: any): void {
-        this.googleMarkers.clearMarkersClusterer(markerClusterer);
+        this.googleMarkers?.clearMarkersClusterer(markerClusterer);
     }
 
     public countMarkersOnCluster(markerClusterer: any): number {
-        return this.googleMarkers.countMarkersOnCluster(markerClusterer);
+        return this.googleMarkers?.countMarkersOnCluster(markerClusterer)!;
     }
 
     /* Polygons */
     public drawPolygon(options: PolygonOptions, eventClick: any): any {
-        return this.googlePolygons.drawPolygon(options, eventClick);
+        return this.googlePolygons?.drawPolygon(options, eventClick);
     }
 
     public togglePolygons(polygons: any[], show: boolean): void {
-        this.googlePolygons.togglePolygons(polygons, show);
+        this.googlePolygons?.togglePolygons(polygons, show);
     }
 
-    public alterPolygonOptions(polygons: any[], options: PolygonAlterOptions): void {
-        this.googlePolygons.alterPolygonOptions(polygons, options);
+    public alterPolygonOptions(
+        polygons: any[],
+        options: PolygonAlterOptions
+    ): void {
+        this.googlePolygons?.alterPolygonOptions(polygons, options);
     }
 
     public fitBoundsPolygons(polygons: any): void {
-        this.googlePolygons.fitBoundsPolygons(polygons);
+        this.googlePolygons?.fitBoundsPolygons(polygons);
     }
 
     public setCenterPolygons(polygons: any): void {
-        this.googlePolygons.setCenterPolygons(polygons);
+        this.googlePolygons?.setCenterPolygons(polygons);
     }
 
     public isPolygonOnMap(polygon: any): boolean {
-        return this.googlePolygons.isPolygonOnMap(polygon);
+        return this.googlePolygons?.isPolygonOnMap(polygon)!;
     }
 
     public getPolygonPath(polygon: any): number[][] {
-        return this.googlePolygons.getPolygonPath(polygon);
+        return this.googlePolygons?.getPolygonPath(polygon)!;
     }
 
-    public addPolygonEvent(polygons: any, eventType: PolygonEventType, eventFunction: any): void {
-        return this.googlePolygons.addPolygonEvent(polygons, eventType, eventFunction);
+    public addPolygonEvent(
+        polygons: any,
+        eventType: PolygonEventType,
+        eventFunction: any
+    ): void {
+        return this.googlePolygons?.addPolygonEvent(
+            polygons,
+            eventType,
+            eventFunction
+        );
     }
 
     public removePolygonEvent(polygons: any, event: PolygonEventType): void {
-        this.googlePolygons.removePolygonEvent(polygons, event);
+        this.googlePolygons?.removePolygonEvent(polygons, event);
     }
 
     /* Circles */
     public drawCircle(options: CircleOptions, eventClick: any): any {
-        return this.googleCircles.drawCircle(options, eventClick);
+        return this.googleCircles?.drawCircle(options, eventClick);
     }
 
     public toggleCircles(circles: any[], show: boolean): void {
-        this.googleCircles.toggleCircles(circles, show);
+        this.googleCircles?.toggleCircles(circles, show);
     }
 
-    public alterCircleOptions(circles: any[], options: CircleAlterOptions): void {
-        this.googleCircles.alterCircleOptions(circles, options);
+    public alterCircleOptions(
+        circles: any[],
+        options: CircleAlterOptions
+    ): void {
+        this.googleCircles?.alterCircleOptions(circles, options);
     }
 
     public fitBoundsCircles(circles: any): void {
-        this.googleCircles.fitBoundsCircles(circles);
+        this.googleCircles?.fitBoundsCircles(circles);
     }
 
     public isCircleOnMap(circle: any): boolean {
-        return this.googleCircles.isCircleOnMap(circle);
+        return this.googleCircles?.isCircleOnMap(circle)!;
     }
 
     public getCircleCenter(circle: any): number[] {
-        return this.googleCircles.getCircleCenter(circle);
+        return this.googleCircles?.getCircleCenter(circle)!;
     }
 
     public getCircleRadius(circle: any): number {
-        return this.googleCircles.getCircleRadius(circle);
+        return this.googleCircles?.getCircleRadius(circle)!;
     }
 
-    public addCircleEvent(circles: any, eventType: CircleEventType, eventFunction: any): void {
-        this.googleCircles.addCircleEvent(circles, eventType, eventFunction);
+    public addCircleEvent(
+        circles: any,
+        eventType: CircleEventType,
+        eventFunction: any
+    ): void {
+        this.googleCircles?.addCircleEvent(circles, eventType, eventFunction);
     }
 
     public removeCircleEvent(circles: any, event: CircleEventType): void {
-        this.googleCircles.removeCircleEvent(circles, event);
+        this.googleCircles?.removeCircleEvent(circles, event);
     }
 
     /* Polylines */
     public drawPolyline(options: PolylineOptions, eventClick: any): any {
-        return this.googlePolylines.drawPolyline(options, eventClick);
+        return this.googlePolylines?.drawPolyline(options, eventClick);
     }
 
-    public drawPolylineWithNavigation(options: PolylineOptions, eventClick?: any): any {
-        return this.googlePolylines.drawPolylineWithNavigation(options, eventClick);
+    public drawPolylineWithNavigation(
+        options: PolylineOptions,
+        eventClick?: any
+    ): any {
+        return this.googlePolylines?.drawPolylineWithNavigation(
+            options,
+            eventClick
+        );
     }
 
     public togglePolylines(polylines: any, show: boolean): void {
-        this.googlePolylines.togglePolylines(polylines, show);
+        this.googlePolylines?.togglePolylines(polylines, show);
     }
 
-    public alterPolylineOptions(polylines: any, options: PolylineOptions): void {
-        this.googlePolylines.alterPolylineOptions(polylines, options);
+    public alterPolylineOptions(
+        polylines: any,
+        options: PolylineOptions
+    ): void {
+        this.googlePolylines?.alterPolylineOptions(polylines, options);
     }
 
     public fitBoundsPolylines(polylines: any): void {
-        this.googlePolylines.fitBoundsPolylines(polylines);
+        this.googlePolylines?.fitBoundsPolylines(polylines);
     }
 
     public isPolylineOnMap(polyline: any): boolean {
-        return this.googlePolylines.isPolylineOnMap(polyline);
+        return this.googlePolylines?.isPolylineOnMap(polyline)!;
     }
 
     public addPolylinePath(polylines: any, position: number[]): void {
-        this.googlePolylines.addPolylinePath(polylines, position);
+        this.googlePolylines?.addPolylinePath(polylines, position);
     }
 
     public getPolylinePath(polyline: any): number[][] {
-        return this.googlePolylines.getPolylinePath(polyline);
+        return this.googlePolylines?.getPolylinePath(polyline)!;
     }
 
     public removePolylineHighlight(): void {
-        this.googlePolylines.removePolylineHighlight();
+        this.googlePolylines?.removePolylineHighlight();
     }
 
-    public addPolylineEvent(polylines: any, eventType: PolylineEventType, eventFunction: any): void {
-        this.googlePolylines.addPolylineEvent(polylines, eventType, eventFunction);
+    public addPolylineEvent(
+        polylines: any,
+        eventType: PolylineEventType,
+        eventFunction: any
+    ): void {
+        this.googlePolylines?.addPolylineEvent(
+            polylines,
+            eventType,
+            eventFunction
+        );
     }
 
     public removePolylineEvent(polylines: any, event: PolylineEventType): void {
-        this.googlePolylines.removePolylineEvent(polylines, event);
+        this.googlePolylines?.removePolylineEvent(polylines, event);
     }
 
     public setIndexPolylineHighlight(polyline: any, index: number): void {
-        this.googlePolylines.setIndexPolylineHighlight(polyline, index);
+        this.googlePolylines?.setIndexPolylineHighlight(polyline, index);
     }
 
     public getObjectPolyline(polyline: any): object {
-        return this.googlePolylines.getObjectPolyline(polyline);
+        return this.googlePolylines?.getObjectPolyline(polyline)!;
     }
 
     public getObjectPolylineHighlight(): object {
-        return this.googlePolylines.getObjectPolylineHighlight();
+        return this.googlePolylines?.getObjectPolylineHighlight();
     }
 
-    public addPolylineHighlightEvent(eventType: PolylineEventType, eventFunction: any): void {
-        this.googlePolylines.addPolylineHighlightEvent(eventType, eventFunction);
+    public addPolylineHighlightEvent(
+        eventType: PolylineEventType,
+        eventFunction: any
+    ): void {
+        this.googlePolylines?.addPolylineHighlightEvent(
+            eventType,
+            eventFunction
+        );
     }
 
     public getPolylineHighlightIndex(): number[] {
-        return this.googlePolylines.getPolylineHighlightIndex();
+        return this.googlePolylines?.getPolylineHighlightIndex()!;
     }
 
     /* Info Windows */
     public drawPopup(options: PopupOptions, marker?: any): any {
-        return this.googlePopups.drawPopup(options, marker);
+        return this.googlePopups?.drawPopup(options, marker);
     }
 
     public alterPopup(popup: any, options: PopupOptions, marker?: any): any {
-        return this.googlePopups.alterPopup(popup, options, marker);
+        return this.googlePopups?.alterPopup(popup, options, marker);
     }
 
-    public alterPopupContent(popup: any, options: PopupOptions, marker?: any): void {
-        this.googlePopups.alterPopupContent(popup, options, marker);
+    public alterPopupContent(
+        popup: any,
+        options: PopupOptions,
+        marker?: any
+    ): void {
+        this.googlePopups?.alterPopupContent(popup, options, marker);
     }
 
     public closePopup(popup: any): void {
-        this.googlePopups.closePopup(popup);
+        this.googlePopups?.closePopup(popup);
     }
 
     /* Map */
     public resizeMap(): void {
-        this.googleMap.resizeMap();
+        this.googleMap?.resizeMap();
     }
 
     public addEventMap(eventType: MapEventType, eventFunction: any): void {
-        this.googleMap.addEventMap(eventType, eventFunction);
+        this.googleMap?.addEventMap(eventType, eventFunction);
     }
 
     public removeEventMap(eventType: MapEventType): void {
-        this.googleMap.removeEventMap(eventType);
+        this.googleMap?.removeEventMap(eventType);
     }
 
     public getZoom(): number {
-        return this.googleMap.getZoom();
+        return this.googleMap?.getZoom()!;
     }
 
     public setZoom(zoom: number): void {
-        this.googleMap.setZoom(zoom);
+        this.googleMap?.setZoom(zoom);
+    }
+
+    public async takeMapScreenshot(): Promise<string | null> {
+        const image = await this.googleMap?.takeScreenShot(this.elementId);
+        return image!;
     }
 
     public getCenter(): number[] {
-        return this.googleMap.getCenter();
+        return this.googleMap?.getCenter()!;
     }
 
     public setCenter(position: number[]): void {
-        this.googleMap.setCenter(position);
+        this.googleMap?.setCenter(position);
     }
 
     public pixelsToLatLng(offsetx: number, offsety: number): number[] {
-        return this.googleMap.pixelsToLatLng(offsetx, offsety);
+        return this.googleMap?.pixelsToLatLng(offsetx, offsety)!;
     }
 
-    public fitBoundsElements(markers: any, circles: any, polygons: any, polylines: any): void {
-        this.googleMap.fitBoundsElements(markers, circles, polygons, polylines);
+    public fitBoundsElements(
+        markers: any,
+        circles: any,
+        polygons: any,
+        polylines: any
+    ): void {
+        this.googleMap?.fitBoundsElements(markers, circles, polygons, polylines);
     }
 
     /* Overlay */
     public drawOverlay(options: OverlayOptions, polygons: any) {
-        return this.googleOverlays.drawOverlay(options, polygons);
+        return this.googleOverlays?.drawOverlay(options, polygons);
     }
 
     public toggleOverlay(overlays: any[], show: boolean): void {
-        this.googleOverlays.toggleOverlay(overlays, show);
+        this.googleOverlays?.toggleOverlay(overlays, show);
     }
 }

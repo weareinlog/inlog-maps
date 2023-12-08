@@ -1,7 +1,7 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 var CircleAlterOptions = /** @class */ (function () {
-    function CircleAlterOptions(weight, fillOpacity, fillColor, color, opacity) {
+    function CircleAlterOptions(center, radius, weight, fillOpacity, fillColor, color, opacity) {
+        this.center = center;
+        this.radius = radius;
         this.weight = weight;
         this.fillOpacity = fillOpacity;
         this.fillColor = fillColor;
@@ -10,5 +10,5 @@ var CircleAlterOptions = /** @class */ (function () {
     }
     return CircleAlterOptions;
 }());
-exports.default = CircleAlterOptions;
+export default CircleAlterOptions;
 //# sourceMappingURL=circle-alter-options.js.map

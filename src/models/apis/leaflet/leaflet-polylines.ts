@@ -1,24 +1,24 @@
-import { Polyline } from 'leaflet';
-import { PolylineEventType } from '../../dto/event-type';
-import { PolylineType } from '../../dto/polyline-type';
-import EventReturn from '../../features/events/event-return';
-import NavigationOptions from '../../features/polyline/navigations-options';
-import PolylineOptions from '../../features/polyline/polyline-options';
-import LeafletPopup from './leaflet-popup';
+// import { Polyline } from "leaflet";
+import { PolylineEventType } from "../../dto/event-type";
+import { PolylineType } from "../../dto/polyline-type";
+import EventReturn from "../../features/events/event-return";
+import NavigationOptions from "../../features/polyline/navigations-options";
+import PolylineOptions from "../../features/polyline/polyline-options";
+import LeafletPopup from "./leaflet-popup";
 
 export default class LeafletPolylines {
-    private map = null;
-    private leaflet = null;
+    private map: any = {};
+    private leaflet: any = {};
     private leafletPopup: LeafletPopup;
 
-    private selectedPolyline = null;
-    private selectedPath = null;
-    private navigateInfoWindow = null;
-    private directionForward = false;
-    private multiSelectionForward = false;
-    private multiSelection = false;
-    private navigateByPoint: boolean;
-    private navigationOptions: NavigationOptions;
+    private selectedPolyline: any | null = null;
+    private selectedPath: any | null = null;
+    private navigateInfoWindow: any | null = null;
+    private directionForward: boolean | null = false;
+    private multiSelectionForward: boolean | null = false;
+    private multiSelection: boolean | null = false;
+    private navigateByPoint: boolean = false;
+    private navigationOptions: NavigationOptions | any = {};
 
     constructor(map: any, leaflet: any, leafletPopup: LeafletPopup) {
         this.map = map;
@@ -28,66 +28,111 @@ export default class LeafletPolylines {
 
     public drawPolyline(options: PolylineOptions, eventClick: any) {
         const self = this;
-        const newOptions = {
-            color: options.color || '#000000',
+        const newOptions: any = {
+            color: options.color || "#000000",
             dashArray: null,
             draggable: options.draggable,
             editable: options.editable,
             infowindows: options.infowindows,
             opacity: options.opacity || 1,
             weight: options.weight || 3,
-            zIndex: options.zIndex
+            zIndex: options.zIndex,
         };
 
         if (options.style !== null) {
             switch (options.style) {
                 case PolylineType.Dotted:
-                    console.warn('PolylineType.Dotted is deprecated, instead use PolylineType.Dashed.');
+                    console.warn(
+                        "PolylineType.Dotted is deprecated, instead use PolylineType.Dashed."
+                    );
+                    break;
                 case PolylineType.Dashed:
-                    newOptions.opacity = .7;
-                    newOptions.dashArray = '20,15';
+                    newOptions.opacity = 0.7;
+                    newOptions.dashArray = "20,15";
                     break;
                 default:
                     break;
             }
         }
 
-        const polyline = new this.leaflet.Polyline(options.path || [], newOptions);
-        polyline.on('editable:vertex:rawclick', (e) => e.cancel());
+        const polyline = new this.leaflet.Polyline(
+            options.path || [],
+            newOptions
+        );
+        polyline.on("editable:vertex:rawclick", (e: { cancel: () => any }) =>
+            e.cancel()
+        );
 
         if (eventClick) {
-            polyline.on('click', (event: any) => {
+            polyline.on("click", (event: any) => {
                 self.leaflet.DomEvent.stopPropagation(event);
-                const param = new EventReturn([event.latlng.lat, event.latlng.lng]);
+                const param = new EventReturn([
+                    event.latlng.lat,
+                    event.latlng.lng,
+                ]);
                 eventClick(param, event.target.object);
             });
 
-            polyline.on('editable:vertex:rawclick', (event) => {
-                event.cancel()
-                const param = new EventReturn([event.latlng.lat, event.latlng.lng]);
-                eventClick(param, event.target.object);
-            });
-
+            polyline.on(
+                "editable:vertex:rawclick",
+                (event: {
+                    cancel: () => void;
+                    latlng: { lat: number; lng: number };
+                    target: { object: any };
+                }) => {
+                    event.cancel();
+                    const param = new EventReturn([
+                        event.latlng.lat,
+                        event.latlng.lng,
+                    ]);
+                    eventClick(param, event.target.object);
+                }
+            );
         }
 
         if (options.style && options.style === PolylineType.Arrow) {
-            const pathOptions = { fillOpacity: 1, weight: 0, color: polyline.options.color };
+            const pathOptions = {
+                fillOpacity: 1,
+                weight: 0,
+                color: polyline.options.color,
+            };
 
             polyline.decorator = self.leaflet.polylineDecorator(polyline, {
-                patterns: [{
-                    offset: '20%',
-                    repeat: '90px',
-                    symbol: self.leaflet.Symbol.arrowHead({ pixelSize: 20, pathOptions })
-                },
-                { offset: '0%', symbol: self.leaflet.Symbol.arrowHead({ pathOptions, pixelSize: 20 }) },
-                { offset: '100%', symbol: self.leaflet.Symbol.arrowHead({ pixelSize: 20, pathOptions }) }]
+                patterns: [
+                    {
+                        offset: "20%",
+                        repeat: "90px",
+                        symbol: self.leaflet.Symbol.arrowHead({
+                            pixelSize: 20,
+                            pathOptions,
+                        }),
+                    },
+                    {
+                        offset: "0%",
+                        symbol: self.leaflet.Symbol.arrowHead({
+                            pathOptions,
+                            pixelSize: 20,
+                        }),
+                    },
+                    {
+                        offset: "100%",
+                        symbol: self.leaflet.Symbol.arrowHead({
+                            pixelSize: 20,
+                            pathOptions,
+                        }),
+                    },
+                ],
             });
         }
 
         if (options.addToMap) {
             polyline.addTo(self.map);
-            if (polyline.decorator) { polyline.decorator.addTo(self.map); }
-            if (options.editable) { polyline.enableEdit(); }
+            if (polyline.decorator) {
+                polyline.decorator.addTo(self.map);
+            }
+            if (options.editable) {
+                polyline.enableEdit();
+            }
         }
 
         if (options.object) {
@@ -101,12 +146,17 @@ export default class LeafletPolylines {
         return polyline;
     }
 
-    public drawPolylineWithNavigation(options: PolylineOptions, eventClick?: any) {
+    public drawPolylineWithNavigation(
+        options: PolylineOptions,
+        eventClick?: any
+    ) {
         const polyline = this.drawPolyline(options, null);
 
         polyline.navigationHandlerClick = eventClick;
         this.navigationOptions = options.navigateOptions;
-        this.navigateByPoint = this.navigationOptions ? this.navigationOptions.navigateByPoint : true;
+        this.navigateByPoint = this.navigationOptions
+            ? this.navigationOptions.navigateByPoint
+            : true;
         this.addNavigation(polyline);
         return polyline;
     }
@@ -119,13 +169,17 @@ export default class LeafletPolylines {
                 if (polyline.options.editable) {
                     polyline.enableEdit();
                 }
-                if (polyline.decorator) { self.map.addLayer(polyline.decorator); }
+                if (polyline.decorator) {
+                    self.map.addLayer(polyline.decorator);
+                }
             } else {
                 self.map.removeLayer(polyline);
                 if (polyline.options.editable) {
                     polyline.disableEdit();
                 }
-                if (polyline.decorator) { self.map.removeLayer(polyline.decorator); }
+                if (polyline.decorator) {
+                    self.map.removeLayer(polyline.decorator);
+                }
             }
         });
     }
@@ -136,10 +190,18 @@ export default class LeafletPolylines {
         polylines.forEach((polyline: any) => {
             const style: any = {
                 color: options.color ? options.color : polyline.options.color,
-                draggable: options.draggable ? options.draggable : polyline.options.draggable,
-                opacity: options.opacity ? options.opacity : polyline.options.opacity,
-                weight: options.weight ? options.weight : polyline.options.weight,
-                zIndex: options.zIndex ? options.zIndex : polyline.options.zIndex
+                draggable: options.draggable
+                    ? options.draggable
+                    : polyline.options.draggable,
+                opacity: options.opacity
+                    ? options.opacity
+                    : polyline.options.opacity,
+                weight: options.weight
+                    ? options.weight
+                    : polyline.options.weight,
+                zIndex: options.zIndex
+                    ? options.zIndex
+                    : polyline.options.zIndex,
             };
 
             if (options.path) {
@@ -148,26 +210,53 @@ export default class LeafletPolylines {
 
             switch (options.style) {
                 case PolylineType.Dotted:
-                    console.warn('PolylineType.Dotted is deprecated, instead use PolylineType.Dashed.');
+                    console.warn(
+                        "PolylineType.Dotted is deprecated, instead use PolylineType.Dashed."
+                    );
+                    break;
                 case PolylineType.Dashed:
-                    style.dashArray = '20,15';
+                    style.dashArray = "20,15";
                     break;
                 case PolylineType.Arrow:
-                    const pathOptions = { fillOpacity: 1, weight: 0, color: style.color };
+                    const pathOptions = {
+                        fillOpacity: 1,
+                        weight: 0,
+                        color: style.color,
+                    };
 
                     if (polyline.decorator) {
                         self.map.removeLayer(polyline.decorator);
                     }
 
-                    polyline.decorator = self.leaflet.polylineDecorator(polyline, {
-                        patterns: [{
-                            offset: '20%',
-                            repeat: '90px',
-                            symbol: self.leaflet.Symbol.arrowHead({ pixelSize: 20, pathOptions })
-                        },
-                        { offset: '0%', symbol: self.leaflet.Symbol.arrowHead({ pixelSize: 20, pathOptions }) },
-                        { offset: '100%', symbol: self.leaflet.Symbol.arrowHead({ pixelSize: 20, pathOptions }) }]
-                    });
+                    polyline.decorator = self.leaflet.polylineDecorator(
+                        polyline,
+                        {
+                            patterns: [
+                                {
+                                    offset: "20%",
+                                    repeat: "90px",
+                                    symbol: self.leaflet.Symbol.arrowHead({
+                                        pixelSize: 20,
+                                        pathOptions,
+                                    }),
+                                },
+                                {
+                                    offset: "0%",
+                                    symbol: self.leaflet.Symbol.arrowHead({
+                                        pixelSize: 20,
+                                        pathOptions,
+                                    }),
+                                },
+                                {
+                                    offset: "100%",
+                                    symbol: self.leaflet.Symbol.arrowHead({
+                                        pixelSize: 20,
+                                        pathOptions,
+                                    }),
+                                },
+                            ],
+                        }
+                    );
 
                     if (self.map.hasLayer(polyline)) {
                         polyline.decorator.addTo(self.map);
@@ -241,14 +330,18 @@ export default class LeafletPolylines {
         document.onkeydown = null;
     }
 
-    public addPolylineEvent(polylines: any, eventType: PolylineEventType, eventFunction: any) {
+    public addPolylineEvent(
+        polylines: any,
+        eventType: PolylineEventType,
+        eventFunction: any
+    ) {
         polylines.forEach((polyline: any) => {
             switch (eventType) {
                 case PolylineEventType.SetAt:
                     this.addPolylineEventMove(polyline, eventFunction);
                     break;
                 case PolylineEventType.RightClick:
-                    this.addPolylineEventRightClick(polyline, eventFunction)
+                    this.addPolylineEventRightClick(polyline, eventFunction);
                     break;
                 case PolylineEventType.InsertAt:
                     this.addPolylineEventInsertAt(polyline, eventFunction);
@@ -275,26 +368,26 @@ export default class LeafletPolylines {
         polylines.forEach((polyline: any) => {
             switch (event) {
                 case PolylineEventType.SetAt:
-                    polyline.off('editable:vertex:dragstart');
+                    polyline.off("editable:vertex:dragstart");
                     break;
                 case PolylineEventType.RightClick:
-                    polyline.off('contextmenu');
-                    polyline.off('editable:vertex:contextmenu');
+                    polyline.off("contextmenu");
+                    polyline.off("editable:vertex:contextmenu");
                     break;
                 case PolylineEventType.InsertAt:
-                    polyline.off('editable:vertex:new');
+                    polyline.off("editable:vertex:new");
                     break;
                 case PolylineEventType.RemoveAt:
-                    polyline.off('editable:vertex:deleted');
+                    polyline.off("editable:vertex:deleted");
                     break;
                 case PolylineEventType.DragPolyline:
-                    polyline.off('dragend');
+                    polyline.off("dragend");
                     break;
                 case PolylineEventType.MouseOver:
-                    polyline.off('mouseover');
+                    polyline.off("mouseover");
                     break;
                 case PolylineEventType.MouseOut:
-                    polyline.off('mouseout');
+                    polyline.off("mouseout");
                     break;
                 default:
                     break;
@@ -315,14 +408,13 @@ export default class LeafletPolylines {
         } else {
             document.onkeyup = this.onKeyUp.bind(this);
         }
-
     }
 
     public getObjectPolyline(polyline: any): object {
         return polyline.object;
     }
 
-    public getObjectPolylineHighlight(): object {
+    public getObjectPolylineHighlight(): object | null {
         if (this.selectedPath) {
             return this.selectedPath.object;
         }
@@ -330,9 +422,16 @@ export default class LeafletPolylines {
         return null;
     }
 
-    public addPolylineHighlightEvent(eventType: PolylineEventType, eventFunction: any) {
+    public addPolylineHighlightEvent(
+        eventType: PolylineEventType,
+        eventFunction: any
+    ) {
         if (this.selectedPolyline) {
-            this.addPolylineEvent([this.selectedPath], eventType, eventFunction);
+            this.addPolylineEvent(
+                [this.selectedPath],
+                eventType,
+                eventFunction
+            );
         }
     }
 
@@ -347,7 +446,7 @@ export default class LeafletPolylines {
     /* Private methods */
     private addNavigation(polyline: any) {
         polyline.clearAllEventListeners();
-        polyline.on('click', this.onClickPolyline.bind(this, polyline));
+        polyline.on("click", this.onClickPolyline.bind(this, polyline));
     }
 
     private onClickPolyline(polyline: any, event: any) {
@@ -376,15 +475,19 @@ export default class LeafletPolylines {
 
         if (self.selectedPath) {
             if (event.ctrlKey) {
-                console.warn('Deprecated: CTRL is not needed in navigation anymore');
+                console.warn(
+                    "Deprecated: CTRL is not needed in navigation anymore"
+                );
             }
 
             switch (event.which ? event.which : event.keyCode) {
-                case 38: case 39:
+                case 38:
+                case 39:
                     // up arrow or right arrow
                     self.moveFowards(event.shiftKey);
                     break;
-                case 37: case 40:
+                case 37:
+                case 40:
                     // left arrow or down arrow
                     self.moveBackwards(event.shiftKey);
                     break;
@@ -395,7 +498,10 @@ export default class LeafletPolylines {
     private moveFowards(multiselection: boolean) {
         const polyline = this.selectedPolyline;
 
-        if ((!this.navigateByPoint || this.directionForward) && polyline.finalIdx < polyline.getLatLngs().length - 1) {
+        if (
+            (!this.navigateByPoint || this.directionForward) &&
+            polyline.finalIdx < polyline.getLatLngs().length - 1
+        ) {
             this.navigateFoward(multiselection, polyline);
         }
         this.directionForward = true;
@@ -405,7 +511,9 @@ export default class LeafletPolylines {
     private navigateFoward(multiSelection: boolean, polyline: any) {
         if (!multiSelection) {
             polyline.finalIdx++;
-            polyline.initialIdx = this.multiSelection ? polyline.finalIdx - 1 : polyline.initialIdx + 1;
+            polyline.initialIdx = this.multiSelection
+                ? polyline.finalIdx - 1
+                : polyline.initialIdx + 1;
             this.multiSelection = false;
         } else {
             this.multiSelection = true;
@@ -419,7 +527,10 @@ export default class LeafletPolylines {
     private moveBackwards(multiSelection: boolean) {
         const polyline = this.selectedPolyline;
 
-        if ((!this.navigateByPoint || !this.directionForward) && polyline.initialIdx > 0) {
+        if (
+            (!this.navigateByPoint || !this.directionForward) &&
+            polyline.initialIdx > 0
+        ) {
             this.navigateBackward(multiSelection, polyline);
         }
         this.directionForward = false;
@@ -430,7 +541,9 @@ export default class LeafletPolylines {
         const self = this;
         if (!multiSelection) {
             polyline.initialIdx--;
-            polyline.finalIdx = !self.multiSelection ? polyline.finalIdx - 1 : polyline.initialIdx + 1;
+            polyline.finalIdx = !self.multiSelection
+                ? polyline.finalIdx - 1
+                : polyline.initialIdx + 1;
             self.multiSelection = false;
         } else {
             self.multiSelection = true;
@@ -441,9 +554,11 @@ export default class LeafletPolylines {
         }
     }
 
-    private moveSelectedPath(polyline: any, options: NavigationOptions) {
+    private moveSelectedPath(polyline: any, options: NavigationOptions | null) {
         const self = this;
-        const pathSelected = polyline.getLatLngs().map((x: any) => [x.lat, x.lng])
+        const pathSelected = polyline
+            .getLatLngs()
+            .map((x: any) => [x.lat, x.lng])
             .slice(polyline.initialIdx, polyline.finalIdx + 1);
 
         if (self.selectedPath) {
@@ -459,8 +574,10 @@ export default class LeafletPolylines {
             this.setArrowSelectedPath();
         }
 
-        if ((options && options.editable) ||
-            (this.selectedPath.editEnabled && this.selectedPath.editEnabled())) {
+        if (
+            (options && options.editable) ||
+            (this.selectedPath.editEnabled && this.selectedPath.editEnabled())
+        ) {
             this.selectedPath.disableEdit();
             this.selectedPath.enableEdit();
         }
@@ -468,55 +585,84 @@ export default class LeafletPolylines {
         this.selectedPath.initialIdx = polyline.initialIdx;
         this.selectedPath.finalIdx = polyline.finalIdx;
 
-        let idx = self.directionForward ? polyline.finalIdx : polyline.initialIdx;
+        let idx = self.directionForward
+            ? polyline.finalIdx
+            : polyline.initialIdx;
         if (!this.navigateByPoint) {
-            idx = polyline.finalIdx > polyline.initialIdx ? polyline.finalIdx : polyline.initialIdx;
+            idx =
+                polyline.finalIdx > polyline.initialIdx
+                    ? polyline.finalIdx
+                    : polyline.initialIdx;
         }
 
-        const infowindow = polyline.options.infowindows ? polyline.options.infowindows[idx] : null;
+        const infowindow = polyline.options.infowindows
+            ? polyline.options.infowindows[idx]
+            : null;
         if (infowindow) {
             const point = polyline.getLatLngs()[idx];
 
             if (self.navigateInfoWindow) {
                 self.leafletPopup.alterPopup(self.navigateInfoWindow, {
                     content: infowindow,
-                    latlng: [point.lat, point.lng]
+                    latlng: [point.lat, point.lng],
                 });
             } else {
                 self.navigateInfoWindow = self.leafletPopup.drawPopup({
                     content: infowindow,
-                    latlng: [point.lat, point.lng]
+                    latlng: [point.lat, point.lng],
                 });
             }
         }
     }
 
     private setArrowSelectedPath() {
-        const pathOptions = { fillOpacity: 1, weight: 0, color: this.selectedPath.options.color };
-        this.selectedPath.decorator = this.leaflet.polylineDecorator(this.selectedPath, {
-            patterns: [{ offset: '100%', symbol: this.leaflet.Symbol.arrowHead({ pixelSize: 20, pathOptions }) }]
-        });
+        const pathOptions = {
+            fillOpacity: 1,
+            weight: 0,
+            color: this.selectedPath.options.color,
+        };
+        this.selectedPath.decorator = this.leaflet.polylineDecorator(
+            this.selectedPath,
+            {
+                patterns: [
+                    {
+                        offset: "100%",
+                        symbol: this.leaflet.Symbol.arrowHead({
+                            pixelSize: 20,
+                            pathOptions,
+                        }),
+                    },
+                ],
+            }
+        );
 
         this.selectedPath.decorator.addTo(this.map);
     }
 
-    private addNewSelectedPath(pathSelected, options, object) {
+    private addNewSelectedPath(
+        pathSelected: any,
+        options: NavigationOptions | null,
+        object: any
+    ) {
         const newOptions: any = {
-            color: options && options.color || '#FF0000',
+            color: (options && options.color) || "#FF0000",
             draggable: false,
-            editable: options.editable,
-            opacity: options && options.opacity || 1,
-            weight: options && options.weight || 10,
-            zIndex: 9999
+            editable: options?.editable,
+            opacity: (options && options.opacity) || 1,
+            weight: (options && options.weight) || 10,
+            zIndex: 9999,
         };
 
-        if (options.style !== null) {
-            switch (options.style) {
+        if (options?.style !== null) {
+            switch (options?.style) {
                 case PolylineType.Dotted:
-                    console.warn('PolylineType.Dotted is deprecated, instead use PolylineType.Dashed.');
+                    console.warn(
+                        "PolylineType.Dotted is deprecated, instead use PolylineType.Dashed."
+                    );
+                    break;
                 case PolylineType.Dashed:
-                    newOptions.opacity = .7;
-                    newOptions.dashArray = '20,15';
+                    newOptions.opacity = 0.7;
+                    newOptions.dashArray = "20,15";
                     break;
                 default:
                     break;
@@ -524,9 +670,11 @@ export default class LeafletPolylines {
         }
 
         this.selectedPath = new this.leaflet.Polyline(pathSelected, newOptions);
-        this.selectedPath.on('editable:vertex:rawclick', (e: any) => e.cancel());
+        this.selectedPath.on("editable:vertex:rawclick", (e: any) =>
+            e.cancel()
+        );
 
-        if (options.style && options.style === PolylineType.Arrow) {
+        if (options?.style && options.style === PolylineType.Arrow) {
             this.setArrowSelectedPath();
         }
 
@@ -557,7 +705,7 @@ export default class LeafletPolylines {
         const deltaX = pt2.lng - pt1.lng;
         const deltaY = pt2.lat - pt1.lat;
         let incIntersect = (pt.lng - pt1.lng) * deltaX;
-        const deltaSum = (deltaX * deltaX) + (deltaY * deltaY);
+        const deltaSum = deltaX * deltaX + deltaY * deltaY;
 
         incIntersect += (pt.lat - pt1.lat) * deltaY;
         if (deltaSum > 0) {
@@ -574,7 +722,10 @@ export default class LeafletPolylines {
         }
 
         // Intersection point calculation.
-        const intersect = new this.leaflet.LatLng(pt1.lat + incIntersect * deltaY, pt1.lng + incIntersect * deltaX);
+        const intersect = new this.leaflet.LatLng(
+            pt1.lat + incIntersect * deltaY,
+            pt1.lng + incIntersect * deltaX
+        );
 
         return self.kmTo(pt, intersect);
     }
@@ -586,7 +737,14 @@ export default class LeafletPolylines {
         const c = pt2.lat * ra;
         const d = b - c;
         const g = pt1.lng * ra - pt2.lng * ra;
-        const f = 2 * e.asin(e.sqrt(e.pow(e.sin(d / 2), 2) + e.cos(b) * e.cos(c) * e.pow(e.sin(g / 2), 2)));
+        const f =
+            2 *
+            e.asin(
+                e.sqrt(
+                    e.pow(e.sin(d / 2), 2) +
+                        e.cos(b) * e.cos(c) * e.pow(e.sin(g / 2), 2)
+                )
+            );
 
         return f * 6378.137 * 1000;
     }
@@ -598,77 +756,118 @@ export default class LeafletPolylines {
 
     private addPolylineEventMove(polyline: any, eventFunction: any) {
         const self = this;
-        polyline.on('editable:vertex:dragstart', (eventStart: any) => {
-            const lastPosition = new EventReturn([eventStart.vertex.latlng.lat, eventStart.vertex.latlng.lng]);
+        polyline.on("editable:vertex:dragstart", (eventStart: any) => {
+            const lastPosition = new EventReturn([
+                eventStart.vertex.latlng.lat,
+                eventStart.vertex.latlng.lng,
+            ]);
 
-            polyline.on('editable:vertex:dragend', (eventEnd: any) => {
+            polyline.on("editable:vertex:dragend", (eventEnd: any) => {
                 if (polyline.highlight && polyline.decorator) {
                     self.map.removeLayer(polyline.decorator);
                     self.setArrowSelectedPath();
                 }
 
-                const newPosition = new EventReturn([eventEnd.vertex.latlng.lat, eventEnd.vertex.latlng.lng]);
-                eventFunction(newPosition, lastPosition, eventEnd.target.object, eventEnd.vertex.getIndex(), polyline.getLatLngs().map((x: any) => new EventReturn([x.lat, x.lng])));
-                polyline.off('editable:vertex:dragend');
+                const newPosition = new EventReturn([
+                    eventEnd.vertex.latlng.lat,
+                    eventEnd.vertex.latlng.lng,
+                ]);
+                eventFunction(
+                    newPosition,
+                    lastPosition,
+                    eventEnd.target.object,
+                    eventEnd.vertex.getIndex(),
+                    polyline
+                        .getLatLngs()
+                        .map((x: any) => new EventReturn([x.lat, x.lng]))
+                );
+                polyline.off("editable:vertex:dragend");
             });
         });
     }
 
     private addPolylineEventInsertAt(polyline: any, eventFunction: any) {
         const self = this;
-        polyline.on('editable:vertex:new', (eventNew: any) => {
+        polyline.on("editable:vertex:new", (eventNew: any) => {
             const latlngs = eventNew.vertex.latlngs;
-            const previous = latlngs[latlngs.findIndex((x: any) => x === eventNew.vertex.latlng) - 1];
+            const previous =
+                latlngs[
+                    latlngs.findIndex(
+                        (x: any) => x === eventNew.vertex.latlng
+                    ) - 1
+                ];
             const previousPoint = new EventReturn([previous.lat, previous.lng]);
 
-            polyline.on('editable:vertex:dragend', (event: any) => {
+            polyline.on("editable:vertex:dragend", (event: any) => {
                 if (polyline.highlight && polyline.decorator) {
                     self.map.removeLayer(polyline.decorator);
                     self.setArrowSelectedPath();
                 }
 
-                const newPoint = new EventReturn([event.vertex.latlng.lat, event.vertex.latlng.lng]);
-                eventFunction(newPoint, previousPoint, event.target.object, event.vertex.getIndex(), polyline.getLatLngs().map((x: any) => new EventReturn([x.lat, x.lng])));
-                polyline.off('editable:vertex:dragend');
+                const newPoint = new EventReturn([
+                    event.vertex.latlng.lat,
+                    event.vertex.latlng.lng,
+                ]);
+                eventFunction(
+                    newPoint,
+                    previousPoint,
+                    event.target.object,
+                    event.vertex.getIndex(),
+                    polyline
+                        .getLatLngs()
+                        .map((x: any) => new EventReturn([x.lat, x.lng]))
+                );
+                polyline.off("editable:vertex:dragend");
             });
         });
     }
 
     private addPolylineEventRemoveAt(polyline: any, eventFunction: any) {
-        polyline.on('editable:vertex:deleted', (event: any) => {
-            const param = new EventReturn([event.vertex.latlng.lat, event.vertex.latlng.lng]);
-            eventFunction(param, event.target.object, polyline.getLatLngs().map((x: any) => new EventReturn([x.lat, x.lng])));
+        polyline.on("editable:vertex:deleted", (event: any) => {
+            const param = new EventReturn([
+                event.vertex.latlng.lat,
+                event.vertex.latlng.lng,
+            ]);
+            eventFunction(
+                param,
+                event.target.object,
+                polyline
+                    .getLatLngs()
+                    .map((x: any) => new EventReturn([x.lat, x.lng]))
+            );
         });
     }
 
     private addPolylineEventRightClick(polyline: any, eventFunction: any) {
-        polyline.on('contextmenu', (event: any) => {
+        polyline.on("contextmenu", (event: any) => {
             const param = new EventReturn([event.latlng.lat, event.latlng.lng]);
             eventFunction(param, polyline.object);
         });
-        polyline.on('editable:vertex:contextmenu', (event: any) => {
+        polyline.on("editable:vertex:contextmenu", (event: any) => {
             const param = new EventReturn([event.latlng.lat, event.latlng.lng]);
             eventFunction(param, polyline.object);
         });
     }
 
     private addPolylineEventMouseOver(polyline: any, eventFunction: any) {
-        polyline.on('mouseover', (event: any) => {
+        polyline.on("mouseover", (event: any) => {
             const param = new EventReturn([event.latlng.lat, event.latlng.lng]);
             eventFunction(param, event.target.object);
         });
     }
 
     private addPolylineEventMouseOut(polyline: any, eventFunction: any) {
-        polyline.on('mouseout', (event: any) => {
+        polyline.on("mouseout", (event: any) => {
             const param = new EventReturn([event.latlng.lat, event.latlng.lng]);
             eventFunction(param, event.target.object);
         });
     }
 
     private addPolylineEventDragPolyline(polyline: any, eventFunction: any) {
-        polyline.on('dragend', (event: any) => {
-            const param = event.target.getLatLngs().map((x: any) => new EventReturn([x.lat, x.lng]));
+        polyline.on("dragend", (event: any) => {
+            const param = event.target
+                .getLatLngs()
+                .map((x: any) => new EventReturn([x.lat, x.lng]));
             eventFunction(param, event.target.object);
         });
     }

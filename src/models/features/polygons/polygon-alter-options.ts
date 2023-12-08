@@ -1,5 +1,5 @@
 export default class PolygonAlterOptions {
-    public weight: number;
+    public weight?: number;
     public color?: string;
     public opacity?: number;
     public fillColor?: string;
@@ -18,5 +18,6 @@ export default class PolygonAlterOptions {
         this.fillColor = fillColor;
         this.fillOpacity = fillOpacity;
         this.weight = weight;
+        this.path = [];
     }
 }

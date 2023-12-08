@@ -1,5 +1,3 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 var MarkerAlterOptions = /** @class */ (function () {
     function MarkerAlterOptions(latlng, icon, style) {
         this.latlng = latlng;
@@ -8,5 +6,5 @@ var MarkerAlterOptions = /** @class */ (function () {
     }
     return MarkerAlterOptions;
 }());
-exports.default = MarkerAlterOptions;
+export default MarkerAlterOptions;
 //# sourceMappingURL=marker-alter-options.js.map

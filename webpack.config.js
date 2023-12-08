@@ -2,8 +2,8 @@ const path = require("path");
 const webpack = require("webpack");
 
 const PATHS = {
-    entryPoint: path.resolve(__dirname, 'src/index.ts'),
-    bundles: path.resolve(__dirname, '_bundles'),
+    entryPoint: path.resolve(__dirname, "src/index.ts"),
+    bundles: path.resolve(__dirname, "_bundles"),
 };
 
 const config = {
@@ -12,8 +12,8 @@ const config = {
     // the name to filter the second entry point for applying code
     // minification via UglifyJS
     entry: {
-        'inlog-maps': [PATHS.entryPoint],
-        'inlog-maps.min': [PATHS.entryPoint]
+        "inlog-maps": [PATHS.entryPoint],
+        "inlog-maps.min": [PATHS.entryPoint],
     },
     // The output defines how and where we want the bundles. The special
     // value `[name]` in `filename` tell Webpack to use the name we defined above.
@@ -21,47 +21,38 @@ const config = {
     // it will be accessible at `window.MyLib`
     output: {
         path: PATHS.bundles,
-        filename: '[name].js',
-        libraryTarget: 'umd',
-        library: 'InlogMaps',
-        umdNamedDefine: true
+        filename: "[name].js",
+        libraryTarget: "umd",
+        library: "InlogMaps",
+        umdNamedDefine: true,
     },
     // Add resolve for `tsx` and `ts` files, otherwise Webpack would
     // only look for common JavaScript file extension (.js)
     resolve: {
-        extensions: ['.ts', '.tsx', '.js']
+        extensions: [".ts", ".tsx", ".js"],
     },
     // Activate source maps for the bundles in order to preserve the original
     // source when the user debugs the application
-    devtool: 'source-map',
+    devtool: "source-map",
     plugins: [
         // Apply minification only on the second bundle by
         // using a RegEx on the name, which must end with `.min.js`
         // NB: Remember to activate sourceMaps in UglifyJsPlugin
         // since they are disabled by default!
-        new webpack.optimize.UglifyJsPlugin({
-            minimize: true,
-            sourceMap: true,
-            include: /\.min\.js$/,
-        })
     ],
     module: {
         // Webpack doesn't understand TypeScript files and a loader is needed.
         // `node_modules` folder is excluded in order to prevent problems with
         // the library dependencies, as well as `__tests__` folders that
         // contain the tests for the library
-        rules: [{
-            test: /\.tsx?$/,
-            loader: 'awesome-typescript-loader',
-            exclude: /node_modules/,
-            query: {
-                // we don't want any declaration file in the bundles
-                // folder since it wouldn't be of any use ans the source
-                // currentMap already include everything for debugging
-                declaration: false,
-            }
-        }]
-    }
+        rules: [
+            {
+                test: /\.tsx?$/,
+                loader: "ts-loader",
+                exclude: /node_modules/,
+            },
+        ],
+    },
 };
 
 module.exports = config;

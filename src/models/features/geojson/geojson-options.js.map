@@ -1,1 +1,1 @@
-{"version":3,"file":"geojson-options.js","sourceRoot":"","sources":["geojson-options.ts"],"names":[],"mappings":";;AACA;IAII,wBAAY,SAAmB,EAAE,QAAkB;QAC/C,IAAI,CAAC,SAAS,GAAG,SAAS,CAAC;QAC3B,IAAI,CAAC,QAAQ,GAAG,QAAQ,CAAC;IAC7B,CAAC;IACL,qBAAC;AAAD,CAAC,AARD,IAQC"}
+{"version":3,"file":"geojson-options.js","sourceRoot":"","sources":["geojson-options.ts"],"names":[],"mappings":"AACA;IAII,wBAAY,SAAmB,EAAE,QAAkB;QAC/C,IAAI,CAAC,SAAS,GAAG,SAAS,CAAC;QAC3B,IAAI,CAAC,QAAQ,GAAG,QAAQ,CAAC;IAC7B,CAAC;IACL,qBAAC;AAAD,CAAC,AARD,IAQC"}
