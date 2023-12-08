@@ -1,13 +1,13 @@
-import { MarkerEventType } from '../../dto/event-type';
-import EventReturn from '../../features/events/event-return';
-import MarkerClustererConfig from '../../features/marker-clusterer/marker-clusterer-config';
-import CircleMarkerOptions from '../../features/marker/circle-marker-options';
-import MarkerAlterOptions from '../../features/marker/marker-alter-options';
-import MarkerOptions from '../../features/marker/marker-options';
+import { MarkerEventType } from "../../dto/event-type";
+import EventReturn from "../../features/events/event-return";
+import MarkerClustererConfig from "../../features/marker-clusterer/marker-clusterer-config";
+import CircleMarkerOptions from "../../features/marker/circle-marker-options";
+import MarkerAlterOptions from "../../features/marker/marker-alter-options";
+import MarkerOptions from "../../features/marker/marker-options";
 
 export default class LeafletMarkers {
-    private map = null;
-    private leaflet = null;
+    private map: any = {};
+    private leaflet: any = {};
 
     constructor(map: any, leaflet: any) {
         this.map = map;
@@ -17,12 +17,12 @@ export default class LeafletMarkers {
     /* Markers */
     public drawMarker(options: MarkerOptions, eventClick: any) {
         const newOptions: any = {
-            draggable: options.draggable
+            draggable: options.draggable,
         };
 
         if (options.icon) {
             newOptions.icon = new this.leaflet.Icon({
-                iconUrl: options.icon.url
+                iconUrl: options.icon.url,
             });
 
             const size = options.icon.size;
@@ -40,8 +40,11 @@ export default class LeafletMarkers {
         }
 
         if (eventClick) {
-            marker.on('click', (event: any) => {
-                const param = new EventReturn([event.latlng.lat, event.latlng.lng]);
+            marker.on("click", (event: any) => {
+                const param = new EventReturn([
+                    event.latlng.lat,
+                    event.latlng.lng,
+                ]);
                 eventClick(param, event.target.object);
             });
         }
@@ -60,11 +63,17 @@ export default class LeafletMarkers {
 
     public drawCircleMarker(options: CircleMarkerOptions, eventClick: any) {
         const self = this;
-        const marker = new this.leaflet.circleMarker(options.latlng, options.style);
+        const marker = new this.leaflet.circleMarker(
+            options.latlng,
+            options.style
+        );
 
         if (eventClick) {
-            marker.on('click', (event: any) => {
-                const param = new EventReturn([event.latlng.lat, event.latlng.lng]);
+            marker.on("click", (event: any) => {
+                const param = new EventReturn([
+                    event.latlng.lat,
+                    event.latlng.lng,
+                ]);
                 eventClick(param, event.target.object);
             });
         }
@@ -103,20 +112,32 @@ export default class LeafletMarkers {
 
     public alterMarkerOptions(markers: any[], options: MarkerAlterOptions) {
         markers.forEach((marker) => {
-            if (marker.type === 'circle' && options.style) {
+            if (marker.type === "circle" && options.style) {
                 const style = {
-                    fillColor: options.style.fillColor ? options.style.fillColor : marker.options.fillColor,
-                    fillOpacity: options.style.fillOpacity ? options.style.fillOpacity : marker.options.fillOpacity,
-                    radius: options.style.radius ? options.style.radius : marker.options.radius,
-                    strokeColor: options.style.color ? options.style.color : marker.options.strokeColor,
-                    strokeWeight: options.style.weight ? options.style.weight : marker.options.strokeWeight
+                    fillColor: options.style.fillColor
+                        ? options.style.fillColor
+                        : marker.options.fillColor,
+                    fillOpacity: options.style.fillOpacity
+                        ? options.style.fillOpacity
+                        : marker.options.fillOpacity,
+                    radius: options.style.radius
+                        ? options.style.radius
+                        : marker.options.radius,
+                    strokeColor: options.style.color
+                        ? options.style.color
+                        : marker.options.strokeColor,
+                    strokeWeight: options.style.weight
+                        ? options.style.weight
+                        : marker.options.strokeWeight,
                 };
 
                 marker.setStyle(style);
             }
 
             if (options.icon) {
-                const icon = new this.leaflet.icon({ iconUrl: options.icon.url });
+                const icon = new this.leaflet.icon({
+                    iconUrl: options.icon.url,
+                });
                 const size = options.icon.size;
 
                 if (size) {
@@ -133,7 +154,11 @@ export default class LeafletMarkers {
         });
     }
 
-    public alterMarkerPosition(markers: any[], position: number[], addTransition: boolean) {
+    public alterMarkerPosition(
+        markers: any[],
+        position: number[],
+        addTransition: boolean
+    ) {
         markers.forEach((marker) => {
             if (addTransition) {
                 this.moveTransitionMarker(position, marker);
@@ -156,42 +181,64 @@ export default class LeafletMarkers {
         this.map.panTo(marker.getLatLng());
     }
 
-    public addMarkerEvent(markers: any, eventType: MarkerEventType, eventFunction: any) {
+    public addMarkerEvent(
+        markers: any,
+        eventType: MarkerEventType,
+        eventFunction: any
+    ) {
         markers.forEach((marker: any) => {
             switch (eventType) {
                 case MarkerEventType.Click:
-                    marker.on('click', (event: any) => {
-                        const param = new EventReturn([event.latlng.lat, event.latlng.lng]);
+                    marker.on("click", (event: any) => {
+                        const param = new EventReturn([
+                            event.latlng.lat,
+                            event.latlng.lng,
+                        ]);
                         eventFunction(param, marker.object);
                     });
                     break;
                 case MarkerEventType.RightClick:
-                    marker.on('contextmenu', (event: any) => {
-                        const param = new EventReturn([event.latlng.lat, event.latlng.lng]);
+                    marker.on("contextmenu", (event: any) => {
+                        const param = new EventReturn([
+                            event.latlng.lat,
+                            event.latlng.lng,
+                        ]);
                         eventFunction(param, marker.object);
                     });
                     break;
                 case MarkerEventType.AfterDrag:
-                    marker.on('dragend', (event: any) => {
-                        const param = new EventReturn([event.target.getLatLng().lat, event.target.getLatLng().lng]);
+                    marker.on("dragend", (event: any) => {
+                        const param = new EventReturn([
+                            event.target.getLatLng().lat,
+                            event.target.getLatLng().lng,
+                        ]);
                         eventFunction(param, marker.object);
                     });
                     break;
                 case MarkerEventType.MouseOver:
-                    marker.on('mouseover', (event: any) => {
-                        const param = new EventReturn([event.latlng.lat, event.latlng.lng]);
+                    marker.on("mouseover", (event: any) => {
+                        const param = new EventReturn([
+                            event.latlng.lat,
+                            event.latlng.lng,
+                        ]);
                         eventFunction(param, marker.object);
                     });
                     break;
                 case MarkerEventType.MouseOut:
-                    marker.on('mouseout', (event: any) => {
-                        const param = new EventReturn([event.latlng.lat, event.latlng.lng]);
+                    marker.on("mouseout", (event: any) => {
+                        const param = new EventReturn([
+                            event.latlng.lat,
+                            event.latlng.lng,
+                        ]);
                         eventFunction(param, marker.object);
                     });
                     break;
                 case MarkerEventType.BeforeDrag:
-                    marker.on('dragstart', (event: any) => {
-                        const param = new EventReturn([event.target.getLatLng().lat, event.target.getLatLng().lng]);
+                    marker.on("dragstart", (event: any) => {
+                        const param = new EventReturn([
+                            event.target.getLatLng().lat,
+                            event.target.getLatLng().lng,
+                        ]);
                         eventFunction(param, marker.object);
                     });
                     break;
@@ -205,22 +252,22 @@ export default class LeafletMarkers {
         markers.forEach((marker: any) => {
             switch (event) {
                 case MarkerEventType.Click:
-                    marker.off('click');
+                    marker.off("click");
                     break;
                 case MarkerEventType.RightClick:
-                    marker.off('contextmenu');
+                    marker.off("contextmenu");
                     break;
                 case MarkerEventType.AfterDrag:
-                    marker.off('dragend');
+                    marker.off("dragend");
                     break;
                 case MarkerEventType.MouseOver:
-                    marker.off('mouseover');
+                    marker.off("mouseover");
                     break;
                 case MarkerEventType.MouseOut:
-                    marker.off('mouseout');
+                    marker.off("mouseout");
                     break;
                 case MarkerEventType.BeforeDrag:
-                    marker.off('dragstart');
+                    marker.off("dragstart");
                     break;
                 default:
                     break;
@@ -233,14 +280,17 @@ export default class LeafletMarkers {
         const layer = this.leaflet.markerClusterGroup({
             maxClusterRadius: 50,
             showCoverageOnHover: false,
-            zoomToBoundsOnClick: config.clusterZoomOnClick
+            zoomToBoundsOnClick: config.clusterZoomOnClick,
         });
 
         this.map.addLayer(layer);
         return layer;
     }
 
-    public alterMarkerClustererConfig(markerClusterer: any, config: MarkerClustererConfig): void {
+    public alterMarkerClustererConfig(
+        markerClusterer: any,
+        config: MarkerClustererConfig
+    ): void {
         markerClusterer.options.zoomToBoundsOnClick = config.clusterZoomOnClick;
     }
 
@@ -271,7 +321,7 @@ export default class LeafletMarkers {
             deltaLng: (position[1] - marker.getLatLng().lng) / numDeltas,
             i: 0,
             position: [marker.getLatLng().lat, marker.getLatLng().lng],
-            lastPosition: position
+            lastPosition: position,
         };
 
         this.moveMarker(marker, reference, numDeltas);

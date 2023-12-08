@@ -1,5 +1,3 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 var CircleMarkerOptions = /** @class */ (function () {
     function CircleMarkerOptions(latlng, style, addToMap, fitBounds, object) {
         this.latlng = latlng;
@@ -10,5 +8,5 @@ var CircleMarkerOptions = /** @class */ (function () {
     }
     return CircleMarkerOptions;
 }());
-exports.default = CircleMarkerOptions;
+export default CircleMarkerOptions;
 //# sourceMappingURL=circle-marker-options.js.map

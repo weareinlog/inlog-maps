@@ -3,8 +3,8 @@ import OverlayOptions from '../../features/overlay/overlay-options';
 import LeafletPolygons from './leaflet-polygons';
 
 export default class LeafletOverlay {
-    private map = null;
-    private leaflet = null;
+    private map: any = {};
+    private leaflet: any = {};
     private leafletPolygons: LeafletPolygons;
 
     constructor(map: any, leaflet: any, leafletPolygons: LeafletPolygons) {

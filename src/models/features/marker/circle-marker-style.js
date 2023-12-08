@@ -1,5 +1,3 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 var CircleMarkerStyle = /** @class */ (function () {
     function CircleMarkerStyle(radius, weight, color, fillColor, fillOpacity) {
         this.radius = radius;
@@ -10,5 +8,5 @@ var CircleMarkerStyle = /** @class */ (function () {
     }
     return CircleMarkerStyle;
 }());
-exports.default = CircleMarkerStyle;
+export default CircleMarkerStyle;
 //# sourceMappingURL=circle-marker-style.js.map

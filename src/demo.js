@@ -1,34 +1,36 @@
 const googleMapsLibParams = {
-    libraries: ['drawing', 'places'],
-    apiKey: '',
+    libraries: ["drawing", "places"],
+    apiKey: "",
     options: {
         mapTypeControl: false,
-        zoomControl: false
+        zoomControl: false,
     },
-    showTraffic: false
+    showTraffic: false,
 };
 
 const leafletLibParams = {
     scriptsDependencies: [
-        '../node_modules/leaflet-editable/src/Leaflet.Editable.js',
-        '../node_modules/leaflet.path.drag/src/Path.Drag.js',
-        '../node_modules/leaflet-gesture-handling/dist/leaflet-gesture-handling.js',
-        '../node_modules/leaflet.markercluster/dist/leaflet.markercluster.js'
+        "../node_modules/leaflet-editable/src/Leaflet.Editable.js",
+        "../node_modules/leaflet.path.drag/src/Path.Drag.js",
+        "../node_modules/leaflet-gesture-handling/dist/leaflet-gesture-handling.js",
+        "../node_modules/leaflet.markercluster/dist/leaflet.markercluster.js",
     ],
     cssDependencies: [
-        '../node_modules/leaflet-gesture-handling/dist/leaflet-gesture-handling.css',
-        '../node_modules/leaflet.markercluster/dist/MarkerCluster.Default.css'
+        "../node_modules/leaflet-gesture-handling/dist/leaflet-gesture-handling.css",
+        "../node_modules/leaflet.markercluster/dist/MarkerCluster.Default.css",
     ],
-    wikimedia: false
-    // gestureHandling: true
+    wikimedia: false,
+    gestureHandling: true,
 };
 
 const inlogMaps = window.InlogMaps;
-const currentMap = new inlogMaps.Map;
+const currentMap = new inlogMaps.Map();
 
-// currentMap.initialize(inlogMaps.MapType.Google, googleMapsLibParams)
-currentMap.initialize(inlogMaps.MapType.Leaflet, leafletLibParams)
-    .then(() => console.log('map initialized!'));
+currentMap
+    .initialize(inlogMaps.MapType.Google, googleMapsLibParams)
+    // currentMap
+    //     .initialize(inlogMaps.MapType.Leaflet, leafletLibParams)
+    .then(() => console.log("map initialized!"));
 
 let simpleMarkerShow = null;
 let customMarkerShow = null;
@@ -47,71 +49,88 @@ function onClick(event) {
 
 function geojsonMarker() {
     let marker = {
-        'type': 'Feature',
-        'geometry': {
-            'type': 'Point',
-            'coordinates': [-49.2806026, -25.4327193]
-        }
+        type: "Feature",
+        geometry: {
+            type: "Point",
+            coordinates: [-49.2806026, -25.4327193],
+        },
     };
 
-    currentMap.loadGEOJson(marker, {
-        draggable: true,
-        editable: true
-    }, onClick);
+    currentMap.loadGEOJson(
+        marker,
+        {
+            draggable: true,
+            editable: true,
+        },
+        onClick
+    );
 }
 
 function geojsonPolyline() {
     let polylines = {
-        'type': 'FeatureCollection',
-        'features': [{
-            'type': 'Feature',
-            'properties': {
-                'id': 1
+        type: "FeatureCollection",
+        features: [
+            {
+                type: "Feature",
+                properties: {
+                    id: 1,
+                },
+                geometry: {
+                    type: "LineString",
+                    coordinates: [
+                        [-43.48283, -23.02487],
+                        [-43.48391, -23.02475],
+                        [-43.48233, -23.02486],
+                        [-43.48212, -23.02443],
+                        [-43.48243, -23.02429],
+                        [-43.48245, -23.02477],
+                    ],
+                },
             },
-            'geometry': {
-                'type': 'LineString',
-                'coordinates': [
-                    [-43.48283, -23.02487],
-                    [-43.48391, -23.02475],
-                    [-43.48233, -23.02486],
-                    [-43.48212, -23.02443],
-                    [-43.48243, -23.02429],
-                    [-43.48245, -23.02477]
-                ]
-            }
-        },
-        {
-            'type': 'Feature',
-            'properties': {
-                'id': 2
+            {
+                type: "Feature",
+                properties: {
+                    id: 2,
+                },
+                geometry: {
+                    type: "LineString",
+                    coordinates: [
+                        [-46.65953, -23.55865],
+                        [-46.65953, -23.5579],
+                        [-46.65972, -23.55809],
+                        [-46.65941, -23.55878],
+                        [-46.65953, -23.55896],
+                        [-46.65903, -23.55888],
+                    ],
+                },
             },
-            'geometry': {
-                'type': 'LineString',
-                'coordinates': [
-                    [-46.65953, -23.55865],
-                    [-46.65953, -23.5579],
-                    [-46.65972, -23.55809],
-                    [-46.65941, -23.55878],
-                    [-46.65953, -23.55896],
-                    [-46.65903, -23.55888]
-                ]
-            }
-        }
-        ]
+        ],
     };
 
-    currentMap.loadGEOJson(polylines, {
-        draggable: true,
-        editable: true
-    }, onClick);
+    currentMap.loadGEOJson(
+        polylines,
+        {
+            draggable: true,
+            editable: true,
+        },
+        onClick
+    );
+}
+
+function screenshot() {
+    console.log(currentMap);
+    const image = currentMap.takeMapScreenshot().then((el) => {
+        console.log("EL", el);
+    });
+    console.log("image", image);
 }
 
 function geojsonPolygon() {
     let polygon = {
-        'type': 'Feature',
-        'geometry': {
-            'type': 'Polygon',
-            'coordinates': [
+        type: "Feature",
+        geometry: {
+            type: "Polygon",
+            coordinates: [
                 [
                     [-67.13734351262877, 45.137451890638886],
                     [-66.96466, 44.8097],
@@ -132,34 +151,56 @@ function geojsonPolygon() {
                     [-68.23430497910454, 47.35462921812177],
                     [-67.79035274928509, 47.066248887716995],
                     [-67.79141211614706, 45.702585354182816],
-                    [-67.13734351262877, 45.137451890638886]
-                ]
-            ]
-        }
+                    [-67.13734351262877, 45.137451890638886],
+                ],
+            ],
+        },
     };
 
-    currentMap.loadGEOJson(polygon, {
-        draggable: true,
-        editable: true
-    }, onClick);
+    currentMap.loadGEOJson(
+        polygon,
+        {
+            draggable: true,
+            editable: true,
+        },
+        onClick
+    );
 }
 
 /* Marker tests */
 function onClickMarker(event) {
-    let options = new inlogMaps.PopupOptions(event.latlng, '<p>Hello world!<br />This is a nice popup.</p>', 'simple');
-    currentMap.drawPopup('marker', options);
+    let options = new inlogMaps.PopupOptions(
+        event.latlng,
+        "<p>Hello world!<br />This is a nice popup.</p>",
+        "simple"
+    );
+    currentMap.drawPopup("marker", options);
 }
 
 function addMarker() {
     if (simpleMarkerShow === null) {
-        let options = new inlogMaps.MarkerOptions([-25.4327193, -49.2806026], true, true, null, true);
-        currentMap.drawMarker('simple', options, onClickMarker);
-        currentMap.addMarkerEvent('simple', inlogMaps.MarkerEventType.MouseOver, onMouseOver);
-        currentMap.addMarkerEvent('simple', inlogMaps.MarkerEventType.RightClick, onRightClick);
+        let options = new inlogMaps.MarkerOptions(
+            [-25.4327193, -49.2806026],
+            true,
+            true,
+            null,
+            true
+        );
+        currentMap.drawMarker("simple", options, onClickMarker);
+        currentMap.addMarkerEvent(
+            "simple",
+            inlogMaps.MarkerEventType.MouseOver,
+            onMouseOver
+        );
+        currentMap.addMarkerEvent(
+            "simple",
+            inlogMaps.MarkerEventType.RightClick,
+            onRightClick
+        );
         simpleMarkerShow = true;
     } else {
         simpleMarkerShow = !simpleMarkerShow;
-        currentMap.toggleMarkers(simpleMarkerShow, 'simple');
+        currentMap.toggleMarkers(simpleMarkerShow, "simple");
     }
 }
 
@@ -172,15 +213,15 @@ function onRightClick(event) {
 
 function setCenterOnMarker() {
     if (simpleMarkerShow) {
-        currentMap.setCenterMarker('simple');
-    } else alert('wait');
+        currentMap.setCenterMarker("simple");
+    } else alert("wait");
 }
 
 function changeMarkerPosition() {
     if (simpleMarkerShow === null) {
-        alert('The marker was not created yet');
+        alert("The marker was not created yet");
     } else {
-        currentMap.alterMarkerPosition('simple', [-25.4328, -49.28059], true);
+        currentMap.alterMarkerPosition("simple", [-25.4328, -49.28059], true);
     }
 }
 
@@ -192,81 +233,117 @@ function onClickMarkerCustom(event, object) {
                     </h3>
                     <div class="section">
                         <div class="infowindow-table">
-                            <div><strong>Valor 1:</strong><span> ${object.valor1 || ''}</span> </div>
-                            <div><strong>Valor 2:</strong><span> ${object.valor2 || ''}</span></div>
-                            <div><strong>Valor 3:</strong><span> ${object.valor3 || ''}</span></div>
-                            <div><strong>Valor 4:</strong><span> ${object.valor4}</span></div>
-                            <div><strong>Valor 5:</strong><span> ${object.valor5}</span></div>
+                            <div><strong>Valor 1:</strong><span> ${
+                                object.valor1 || ""
+                            }</span> </div>
+                            <div><strong>Valor 2:</strong><span> ${
+                                object.valor2 || ""
+                            }</span></div>
+                            <div><strong>Valor 3:</strong><span> ${
+                                object.valor3 || ""
+                            }</span></div>
+                            <div><strong>Valor 4:</strong><span> ${
+                                object.valor4
+                            }</span></div>
+                            <div><strong>Valor 5:</strong><span> ${
+                                object.valor5
+                            }</span></div>
                         </div>
                     </div>
                 </div>`;
 
-    let options = new inlogMaps.PopupOptions(event.latlng, content, 'custom');
-    currentMap.drawPopup('markerCustom', options);
+    let options = new inlogMaps.PopupOptions(event.latlng, content, "custom");
+    currentMap.drawPopup("markerCustom", options);
 }
 
 function addMarkerCustom() {
     if (customMarkerShow === null) {
         let item = {
-            valor1: 'Um valor',
-            valor2: 'Dois valores',
-            valor3: 'Três valores',
-            valor4: 'Quatro valores',
-            valor5: 'Cinco valores'
+            valor1: "Um valor",
+            valor2: "Dois valores",
+            valor3: "Três valores",
+            valor4: "Quatro valores",
+            valor5: "Cinco valores",
         };
 
-        let icon = new inlogMaps.MarkerIcon('images/cursor_locate.png');
-        let options = new inlogMaps.MarkerOptions([-26, -50], true, false, icon, true, item);
+        let icon = new inlogMaps.MarkerIcon("images/cursor_locate.png");
+        let options = new inlogMaps.MarkerOptions(
+            [-26, -50],
+            true,
+            false,
+            icon,
+            true,
+            item
+        );
 
-        currentMap.drawMarker('custom', options, onClickMarkerCustom);
+        currentMap.drawMarker("custom", options, onClickMarkerCustom);
         customMarkerShow = true;
     } else {
         customMarkerShow = !customMarkerShow;
-        currentMap.toggleMarkers(customMarkerShow, 'custom');
+        currentMap.toggleMarkers(customMarkerShow, "custom");
     }
 }
 
 function changeCustomMarkerImage() {
     if (customMarkerShow === null) {
-        alert('The custom marker was not created yet');
+        alert("The custom marker was not created yet");
     } else {
-        let icon = new inlogMaps.MarkerIcon('images/inicio_rota.png');
+        let icon = new inlogMaps.MarkerIcon("images/inicio_rota.png");
         let options = new inlogMaps.MarkerAlterOptions(null, icon);
 
-        currentMap.alterMarkerOptions('custom', options);
+        currentMap.alterMarkerOptions("custom", options);
     }
 }
 
 function onClickCircleMarker(event) {
-    let options = new inlogMaps.PopupOptions(event.latlng, '<p>Hello world!<br />This is a nice popup.</p>', 'circleMarker');
-    currentMap.drawPopup('circleMarker', options);
+    let options = new inlogMaps.PopupOptions(
+        event.latlng,
+        "<p>Hello world!<br />This is a nice popup.</p>",
+        "circleMarker"
+    );
+    currentMap.drawPopup("circleMarker", options);
 }
 
 function addCircleMarker() {
     if (circleMarkerShow === null) {
-        let style = new inlogMaps.CircleMarkerStyle(5, 1, '#000000', '#FF0000', 0.8);
-        let options = new inlogMaps.CircleMarkerOptions([-24, -48], style, true, true);
+        let style = new inlogMaps.CircleMarkerStyle(
+            5,
+            1,
+            "#000000",
+            "#FF0000",
+            0.8
+        );
+        let options = new inlogMaps.CircleMarkerOptions(
+            [-24, -48],
+            style,
+            true,
+            true
+        );
 
-        currentMap.drawCircleMarker('circleMarker', options, onClickCircleMarker);
+        currentMap.drawCircleMarker(
+            "circleMarker",
+            options,
+            onClickCircleMarker
+        );
 
         circleMarkerShow = true;
     } else {
         circleMarkerShow = !circleMarkerShow;
-        currentMap.toggleMarkers(circleMarkerShow, 'circleMarker');
+        currentMap.toggleMarkers(circleMarkerShow, "circleMarker");
     }
 }
 
 function changeCircleMarkerColor() {
     if (circleMarkerShow === null) {
-        alert('The circle marker was not created yet!');
+        alert("The circle marker was not created yet!");
     } else {
         let style = new inlogMaps.CircleMarkerStyle();
 
-        style.fillColor = '#FFFF00';
+        style.fillColor = "#FFFF00";
         let options = new inlogMaps.MarkerAlterOptions();
 
         options.style = style;
-        currentMap.alterMarkerOptions('circleMarker', options);
+        currentMap.alterMarkerOptions("circleMarker", options);
     }
 }
 
@@ -291,14 +368,17 @@ function addMarkerClusterer() {
         [-23.025775881698536, -43.48496646095953],
         [-23.025542347567463, -43.48405234610573],
         [-23.02516960068853, -43.484262899513396],
-        [-23.024949270121056, -43.48403893506065]
+        [-23.024949270121056, -43.48403893506065],
     ];
 
-    currentMap.addMarkerClusterer('marker', new inlogMaps.MarkerClustererConfig(true, 13, 30));
-    path.forEach(p => {
+    currentMap.addMarkerClusterer(
+        "marker",
+        new inlogMaps.MarkerClustererConfig(true, 13, 30)
+    );
+    path.forEach((p) => {
         let options = new inlogMaps.MarkerOptions(p, true, true, null, true);
         options.addClusterer = true;
-        currentMap.drawMarker('marker', options);
+        currentMap.drawMarker("marker", options);
     });
 }
 
@@ -311,16 +391,22 @@ function toogleOnZoomChanged() {
         currentMap.removeEventMap(inlogMaps.MapEventType.ZoomChanged);
         zoomChanged = false;
     } else {
-        currentMap.addEventMap(inlogMaps.MapEventType.ZoomChanged, onZoomChanged);
+        currentMap.addEventMap(
+            inlogMaps.MapEventType.ZoomChanged,
+            onZoomChanged
+        );
         zoomChanged = true;
     }
 }
 
 /* Polyline tests */
 function onClickPolyline(event, object) {
-    let options = new inlogMaps.PopupOptions(event.latlng, `<p>${object.item}.</p>`);
+    let options = new inlogMaps.PopupOptions(
+        event.latlng,
+        `<p>${object.item}.</p>`
+    );
 
-    currentMap.drawPopup('polyline', options);
+    currentMap.drawPopup("polyline", options);
 }
 
 function addPolyline() {
@@ -333,40 +419,89 @@ function addPolyline() {
             [-23.02486, -43.48233],
             [-23.02443, -43.48212],
             [-23.02429, -43.48243],
-            [-23.02477, -43.48245]
+            [-23.02477, -43.48245],
         ];
         options.addToMap = true;
         options.fitBounds = true;
         options.draggable = true;
         options.editable = true;
         options.object = {
-            item: 'New'
+            item: "New",
         };
-        currentMap.drawPolyline('polyline', options, onClickPolyline);
+        currentMap.drawPolyline("polyline", options, onClickPolyline);
 
-        currentMap.addPolylineEvent('polyline', inlogMaps.PolylineEventType.SetAt, () => { debugger });
-        currentMap.addPolylineEvent('polyline', inlogMaps.PolylineEventType.InsertAt, () => { debugger });
-        currentMap.addPolylineEvent('polyline', inlogMaps.PolylineEventType.RemoveAt, () => { debugger });
-        currentMap.addPolylineEvent('polyline', inlogMaps.PolylineEventType.DragPolyline, () => { debugger });
-        currentMap.addPolylineEvent('polyline', inlogMaps.PolylineEventType.RightClick, () => onRightClick);
+        currentMap.addPolylineEvent(
+            "polyline",
+            inlogMaps.PolylineEventType.SetAt,
+            () => {
+                debugger;
+            }
+        );
+        currentMap.addPolylineEvent(
+            "polyline",
+            inlogMaps.PolylineEventType.InsertAt,
+            () => {
+                debugger;
+            }
+        );
+        currentMap.addPolylineEvent(
+            "polyline",
+            inlogMaps.PolylineEventType.RemoveAt,
+            () => {
+                debugger;
+            }
+        );
+        currentMap.addPolylineEvent(
+            "polyline",
+            inlogMaps.PolylineEventType.DragPolyline,
+            () => {
+                debugger;
+            }
+        );
+        currentMap.addPolylineEvent(
+            "polyline",
+            inlogMaps.PolylineEventType.RightClick,
+            () => onRightClick
+        );
 
         polylineShow = true;
     } else {
         polylineShow = !polylineShow;
-        currentMap.togglePolylines(polylineShow, 'polyline');
+        currentMap.togglePolylines(polylineShow, "polyline");
     }
 }
 
 function addMouseEvent() {
-    currentMap.addPolylineEvent('polyline', inlogMaps.PolylineEventType.MouseOver, onMouseOver);
-    currentMap.addPolylineEvent('polyline', inlogMaps.PolylineEventType.MouseOut, onMouseOver);
-    currentMap.addPolylineEvent('polyline', inlogMaps.PolylineEventType.RightClick, onRightClick);
+    currentMap.addPolylineEvent(
+        "polyline",
+        inlogMaps.PolylineEventType.MouseOver,
+        onMouseOver
+    );
+    currentMap.addPolylineEvent(
+        "polyline",
+        inlogMaps.PolylineEventType.MouseOut,
+        onMouseOver
+    );
+    currentMap.addPolylineEvent(
+        "polyline",
+        inlogMaps.PolylineEventType.RightClick,
+        onRightClick
+    );
 }
 
 function removeMouseEvent() {
-    currentMap.removePolylineEvent('polyline', inlogMaps.PolylineEventType.MouseOut)
-    currentMap.removePolylineEvent('polyline', inlogMaps.PolylineEventType.MouseOver)
-    currentMap.removePolylineEvent('polyline', inlogMaps.PolylineEventType.RightClick)
+    currentMap.removePolylineEvent(
+        "polyline",
+        inlogMaps.PolylineEventType.MouseOut
+    );
+    currentMap.removePolylineEvent(
+        "polyline",
+        inlogMaps.PolylineEventType.MouseOver
+    );
+    currentMap.removePolylineEvent(
+        "polyline",
+        inlogMaps.PolylineEventType.RightClick
+    );
 }
 
 function addPolylineWithNavigation() {
@@ -391,36 +526,36 @@ function addPolylineWithNavigation() {
         [-23.025775881698536, -43.48496646095953],
         [-23.025542347567463, -43.48405234610573],
         [-23.02516960068853, -43.484262899513396],
-        [-23.024949270121056, -43.48403893506065]
+        [-23.024949270121056, -43.48403893506065],
     ];
     options.infowindows = [
-        '<h1>1</h1>',
-        '<h1>2</h1>',
-        '<h1>3</h1>',
-        '<h1>4</h1>',
-        '<h1>5</h1>',
-        '<h1>6</h1>',
-        '<h1>7</h1>',
-        '<h1>8</h1>',
-        '<h1>9</h1>',
-        '<h1>10</h1>',
-        '<h1>11</h1>',
-        '<h1>12</h1>',
-        '<h1>13</h1>',
-        '<h1>14</h1>',
-        '<h1>15</h1>',
-        '<h1>16</h1>',
-        '<h1>17</h1>',
-        '<h1>18</h1>',
-        '<h1>19</h1>'
+        "<h1>1</h1>",
+        "<h1>2</h1>",
+        "<h1>3</h1>",
+        "<h1>4</h1>",
+        "<h1>5</h1>",
+        "<h1>6</h1>",
+        "<h1>7</h1>",
+        "<h1>8</h1>",
+        "<h1>9</h1>",
+        "<h1>10</h1>",
+        "<h1>11</h1>",
+        "<h1>12</h1>",
+        "<h1>13</h1>",
+        "<h1>14</h1>",
+        "<h1>15</h1>",
+        "<h1>16</h1>",
+        "<h1>17</h1>",
+        "<h1>18</h1>",
+        "<h1>19</h1>",
     ];
     options.addToMap = true;
     options.weight = 8;
     options.fitBounds = true;
-    options.navigateOptions = new inlogMaps.NavigationOptions('#0000FF');
+    options.navigateOptions = new inlogMaps.NavigationOptions("#0000FF");
     options.navigateOptions.navigateByPoint = false;
     options.navigateOptions.navegateOnKeyPress = true;
-    currentMap.drawPolylineWithNavigation('polylineNavigation', options);
+    currentMap.drawPolylineWithNavigation("polylineNavigation", options);
 }
 
 function removePolylineHighlight() {
@@ -428,18 +563,21 @@ function removePolylineHighlight() {
 }
 
 function updatePolyline(event) {
-    currentMap.addPolylinePath('polyline', event.latlng);
+    currentMap.addPolylinePath("polyline", event.latlng);
 }
 
 function drawPolyline() {
     if (!polylineShow) {
-        alert('The polyline is not on the currentMap!');
+        alert("The polyline is not on the currentMap!");
     } else {
         if (drawing) {
             currentMap.removeEventMap(inlogMaps.MapEventType.Click);
             drawing = false;
         } else {
-            currentMap.addEventMap(inlogMaps.MapEventType.Click, updatePolyline);
+            currentMap.addEventMap(
+                inlogMaps.MapEventType.Click,
+                updatePolyline
+            );
             drawing = true;
         }
     }
@@ -449,29 +587,32 @@ function changePolyline() {
     let options = new inlogMaps.PolylineOptions();
     options.addToMap = true;
     options.fitBounds = true;
-    options.color = '#00FF00';
+    options.color = "#00FF00";
     options.weight = 12;
     options.object = {
-        item: 'Edited'
+        item: "Edited",
     };
 
-    currentMap.alterPolylineOptions('polyline', options);
+    currentMap.alterPolylineOptions("polyline", options);
 }
 
 /* Polygon tests */
 function onClickPolygon(event) {
-    let options = new inlogMaps.PopupOptions(event.latlng, '<p>Hello world!<br />This is a nice popup.</p>');
+    let options = new inlogMaps.PopupOptions(
+        event.latlng,
+        "<p>Hello world!<br />This is a nice popup.</p>"
+    );
 
-    currentMap.drawPopup('polygon', options);
+    currentMap.drawPopup("polygon", options);
 }
 
 function addPolygon() {
     if (polygonShow === null) {
         let path = [
-            [25.774, -80.190],
+            [25.774, -80.19],
             [18.466, -66.118],
             [32.321, -64.757],
-            [25.774, -80.190]
+            [25.774, -80.19],
         ];
 
         let path2 = [
@@ -1030,7 +1171,7 @@ function addPolygon() {
                     [-23.5549196028862, -46.606057260471104],
                     [-23.554926880246096, -46.60605399060589],
                     [-23.5549343926346, -46.6060514212027],
-                    [-23.5549420828776, -46.6060495718164]
+                    [-23.5549420828776, -46.6060495718164],
                 ],
                 [
                     [-23.556614539940398, -46.607656136744396],
@@ -1060,7 +1201,7 @@ function addPolygon() {
                     [-23.555109764221303, -46.607423153127],
                     [-23.5565589249668, -46.6076663157257],
                     [-23.556607350708397, -46.607660103977295],
-                    [-23.556614539940398, -46.607656136744396]
+                    [-23.556614539940398, -46.607656136744396],
                 ],
                 [
                     [-23.5562218863205, -46.6042901781095],
@@ -1081,7 +1222,7 @@ function addPolygon() {
                     [-23.555267147075096, -46.6039225941299],
                     [-23.555250279531897, -46.604158013135],
                     [-23.5562209247128, -46.604290041615194],
-                    [-23.5562218863205, -46.6042901781095]
+                    [-23.5562218863205, -46.6042901781095],
                 ],
                 [
                     [-23.559242063304602, -46.6063725004685],
@@ -1096,7 +1237,7 @@ function addPolygon() {
                     [-23.5582660120266, -46.6068527718829],
                     [-23.559235820277003, -46.6063753535348],
                     [-23.5592369354151, -46.6063748179907],
-                    [-23.559242063304602, -46.6063725004685]
+                    [-23.559242063304602, -46.6063725004685],
                 ],
                 [
                     [-23.5600510329409, -46.604721932546894],
@@ -1108,14 +1249,14 @@ function addPolygon() {
                     [-23.559825668984004, -46.60359305556759],
                     [-23.559820530360202, -46.6035947318912],
                     [-23.5596331508623, -46.6036493280336],
-                    [-23.5600510329409, -46.604721932546894]
+                    [-23.5600510329409, -46.604721932546894],
                 ],
                 [
                     [-23.560938204728004, -46.604535427021496],
                     [-23.5601278294607, -46.604899321112],
                     [-23.560526304642202, -46.6057533446319],
                     [-23.5613092054295, -46.6053681153191],
-                    [-23.560938204728004, -46.604535427021496]
+                    [-23.560938204728004, -46.604535427021496],
                 ],
                 [
                     [-23.5611035221653, -46.604456783682394],
@@ -1126,88 +1267,126 @@ function addPolygon() {
                     [-23.5621473322615, -46.6039390950497],
                     [-23.5621459011598, -46.6039397552692],
                     [-23.562141824968602, -46.603941664943505],
-                    [-23.5611035221653, -46.604456783682394]
+                    [-23.5611035221653, -46.604456783682394],
                 ],
                 [
                     [-23.5626766338185, -46.6036917505543],
                     [-23.563034178299898, -46.6045225391353],
                     [-23.563963288124498, -46.604040792615095],
                     [-23.563618585952, -46.6032027420635],
-                    [-23.5626766338185, -46.6036917505543]
-                ]
-            ]
+                    [-23.5626766338185, -46.6036917505543],
+                ],
+            ],
         ];
-        let options = new inlogMaps.PolygonOptions(path2, 1, true, '#000000', 1, '#FFFFFF', 0.8);
+        let options = new inlogMaps.PolygonOptions(
+            path2,
+            1,
+            true,
+            "#000000",
+            1,
+            "#FFFFFF",
+            0.8
+        );
 
         isPolygonEditable = false;
         options.fitBounds = true;
         options.draggable = true;
         options.editable = isPolygonEditable;
-        currentMap.drawPolygon('polygon', options, onClickPolygon);
+        currentMap.drawPolygon("polygon", options, onClickPolygon);
 
-        currentMap.addPolygonEvent('polygon', inlogMaps.PolygonEventType.SetAt, (old, novo, object, e, path) => { console.log(path); });
-        currentMap.addPolygonEvent('polygon', inlogMaps.PolygonEventType.InsertAt, (old, novo, object, e, path) => { console.log(path) });
-        currentMap.addPolygonEvent('polygon', inlogMaps.PolygonEventType.RemoveAt, (e, path, object) => { console.log(path) });
-        currentMap.addPolygonEvent('polygon', inlogMaps.PolygonEventType.DragPolygon, (event, object) => { console.log(event, object) });
+        currentMap.addPolygonEvent(
+            "polygon",
+            inlogMaps.PolygonEventType.SetAt,
+            (old, novo, object, e, path) => {
+                console.log(path);
+            }
+        );
+        currentMap.addPolygonEvent(
+            "polygon",
+            inlogMaps.PolygonEventType.InsertAt,
+            (old, novo, object, e, path) => {
+                console.log(path);
+            }
+        );
+        currentMap.addPolygonEvent(
+            "polygon",
+            inlogMaps.PolygonEventType.RemoveAt,
+            (e, path, object) => {
+                console.log(path);
+            }
+        );
+        currentMap.addPolygonEvent(
+            "polygon",
+            inlogMaps.PolygonEventType.DragPolygon,
+            (event, object) => {
+                console.log(event, object);
+            }
+        );
 
         polygonShow = true;
 
-        const div = document.createElement('div');
-        div.style.fontSize = '13px';
-        div.style.position = 'absolute';
-        div.style.minWidth = '90px';
+        const div = document.createElement("div");
+        div.style.fontSize = "13px";
+        div.style.position = "absolute";
+        div.style.minWidth = "90px";
 
-        const span = document.createElement('span');
-        span.textContent = 'Eu to aqui!';
+        const span = document.createElement("span");
+        span.textContent = "Eu to aqui!";
         div.appendChild(span);
 
         const overlayOptions = new inlogMaps.OverlayOptions(div, true);
-        overlayOptions.polygon = 'polygon';
-        currentMap.drawOverlay('ocupacao', overlayOptions);
+        overlayOptions.polygon = "polygon";
+        currentMap.drawOverlay("ocupacao", overlayOptions);
     } else {
         polygonShow = !polygonShow;
-        currentMap.togglePolygons(polygonShow, 'polygon');
+        currentMap.togglePolygons(polygonShow, "polygon");
     }
 }
 
 function changePolygonColor() {
     if (polygonShow === null) {
-        alert('The polygon was not created yet!');
+        alert("The polygon was not created yet!");
     } else {
         let options = new inlogMaps.PolygonAlterOptions();
 
-        options.fillColor = '#FFFF00';
-        currentMap.alterPolygonOptions('polygon', options);
+        options.fillColor = "#FFFF00";
+        currentMap.alterPolygonOptions("polygon", options);
     }
 }
 
 function changePolygonEditable() {
     if (polygonShow === null) {
-        alert('The polygon was not created yet!');
+        alert("The polygon was not created yet!");
     } else {
         let options = new inlogMaps.PolygonAlterOptions();
 
-        isPolygonEditable = !isPolygonEditable
+        isPolygonEditable = !isPolygonEditable;
         options.editable = isPolygonEditable;
-        currentMap.alterPolygonOptions('polygon', options);
+        currentMap.alterPolygonOptions("polygon", options);
     }
 }
 
 function changePopupValue() {
     if (polygonShow === null) {
-        alert('The polygon was not created yet!');
+        alert("The polygon was not created yet!");
     } else {
-        let options = new inlogMaps.PopupOptions([25.774, -80.190], '<p>This popup content has changed.</p>');
+        let options = new inlogMaps.PopupOptions(
+            [25.774, -80.19],
+            "<p>This popup content has changed.</p>"
+        );
 
-        currentMap.drawPopup('polygon', options);
+        currentMap.drawPopup("polygon", options);
     }
 }
 
 /* Circle tests */
 function onClickCircle(event) {
-    let options = new inlogMaps.PopupOptions(event.latlng, '<p>Hello world!<br />This is a nice popup.</p>');
+    let options = new inlogMaps.PopupOptions(
+        event.latlng,
+        "<p>Hello world!<br />This is a nice popup.</p>"
+    );
 
-    currentMap.drawPopup('circle', options);
+    currentMap.drawPopup("circle", options);
 }
 
 function addCircle() {
@@ -1219,26 +1398,26 @@ function addCircle() {
         options.radius = 100;
         options.weight = 1;
         options.fillOpacity = 0.8;
-        options.fillColor = '#FF0000';
-        options.color = '#000000';
+        options.fillColor = "#FF0000";
+        options.color = "#000000";
         options.fitBounds = true;
         options.draggable = false;
         options.editable = false;
-        currentMap.drawCircle('circle', options, onClickCircle);
+        currentMap.drawCircle("circle", options, onClickCircle);
         circleShow = true;
     } else {
         circleShow = !circleShow;
-        currentMap.toggleCircles(circleShow, 'circle');
+        currentMap.toggleCircles(circleShow, "circle");
     }
 }
 
 function changeCircleColor() {
     if (circleShow === null) {
-        alert('The circle was not created yet!');
+        alert("The circle was not created yet!");
     } else {
         let options = new inlogMaps.CircleAlterOptions();
 
-        options.fillColor = '#FFFF00';
-        currentMap.alterCircleOptions('circle', options);
+        options.fillColor = "#FFFF00";
+        currentMap.alterCircleOptions("circle", options);
     }
 }

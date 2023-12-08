@@ -27,5 +27,6 @@ export default class PolygonOptions {
         this.editable = editable;
         this.fitBounds = fitBounds;
         this.object = object;
+        this.zIndex = 0
     }
 }

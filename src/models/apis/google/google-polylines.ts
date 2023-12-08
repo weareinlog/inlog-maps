@@ -1,23 +1,23 @@
-import { PolylineEventType } from '../../dto/event-type';
-import { PolylineType } from '../../dto/polyline-type';
-import EventReturn from '../../features/events/event-return';
-import NavigationOptions from '../../features/polyline/navigations-options';
-import PolylineOptions from '../../features/polyline/polyline-options';
-import GooglePopups from './google-popup';
+import { PolylineEventType } from "../../dto/event-type";
+import { PolylineType } from "../../dto/polyline-type";
+import EventReturn from "../../features/events/event-return";
+import NavigationOptions from "../../features/polyline/navigations-options";
+import PolylineOptions from "../../features/polyline/polyline-options";
+import GooglePopups from "./google-popup";
 
 export default class GooglePolylines {
-    private map = null;
-    private google = null;
-    private googlePopups: GooglePopups;
+    private map: any | null = null;
+    private google: any | null = null;
+    private googlePopups: GooglePopups | null = null;
 
-    private selectedPolyline = null;
-    private selectedPath = null;
-    private navigateInfoWindow = null;
-    private directionForward = false;
-    private multiSelectionForward = false;
-    private multiSelection = false;
-    private navigateByPoint: boolean;
-    private navigationOptions: NavigationOptions;
+    private selectedPolyline: any | null = null;
+    private selectedPath: any | null = null;
+    private navigateInfoWindow: any | null = null;
+    private directionForward: boolean | null = false;
+    private multiSelectionForward: boolean | null = false;
+    private multiSelection: boolean | null = false;
+    private navigateByPoint: boolean | null = false;
+    private navigationOptions: NavigationOptions | any = {};
 
     constructor(map: any, google: any, googlePopups: GooglePopups) {
         this.map = map;
@@ -27,7 +27,7 @@ export default class GooglePolylines {
 
     public drawPolyline(options: PolylineOptions, eventClick: any) {
         const self = this;
-        const newOptions = {
+        const newOptions: any = {
             draggable: options.draggable,
             editable: options.editable,
             icons: null,
@@ -38,58 +38,84 @@ export default class GooglePolylines {
             strokeOpacity: options.opacity || 1,
             strokeWeight: options.weight,
             suppressUndo: true,
-            zIndex: options.zIndex
+            zIndex: options.zIndex,
         };
 
         if (options.style !== null) {
             switch (options.style) {
                 case PolylineType.Dotted:
-                    console.warn('PolylineType.Dotted is deprecated, instead use PolylineType.Dashed.');
+                    console.warn(
+                        "PolylineType.Dotted is deprecated, instead use PolylineType.Dashed."
+                    );
+                    break;
                 case PolylineType.Dashed:
                     newOptions.strokeOpacity = 0;
-                    newOptions.icons = [{
-                        icon: {
-                            path: 'M 0,-1 0,1',
-                            scale: 2,
-                            strokeOpacity: 1,
-                            strokeWeight: options.weight
+                    newOptions.icons = [
+                        {
+                            icon: {
+                                path: "M 0,-1 0,1",
+                                scale: 2,
+                                strokeOpacity: 1,
+                                strokeWeight: options.weight,
+                            },
+                            offset: "0",
+                            repeat: "10px",
                         },
-                        offset: '0',
-                        repeat: '10px'
-                    }];
+                    ];
                     break;
                 case PolylineType.Arrow:
-                    newOptions.icons = [{
-                        icon: {
-                            path: google.maps.SymbolPath.FORWARD_OPEN_ARROW,
-                            scaledSize: new google.maps.Size(20, 20),
-                            size: new google.maps.Size(20, 20)
+                    newOptions.icons = [
+                        {
+                            icon: {
+                                path: google.maps.SymbolPath.FORWARD_OPEN_ARROW,
+                                scaledSize: new google.maps.Size(20, 20),
+                                size: new google.maps.Size(20, 20),
+                            },
+                            offset: "100%",
+                            repeat: "100px",
                         },
-                        offset: '100%',
-                        repeat: '100px'
-                    },
-                    { icon: { path: google.maps.SymbolPath.FORWARD_OPEN_ARROW }, offset: '0%' },
-                    { icon: { path: google.maps.SymbolPath.FORWARD_OPEN_ARROW }, offset: '100%' }];
+                        {
+                            icon: {
+                                path: google.maps.SymbolPath.FORWARD_OPEN_ARROW,
+                            },
+                            offset: "0%",
+                        },
+                        {
+                            icon: {
+                                path: google.maps.SymbolPath.FORWARD_OPEN_ARROW,
+                            },
+                            offset: "100%",
+                        },
+                    ];
                     break;
                 default:
                     break;
             }
         }
 
-        newOptions.path = options.path ? options.path.map((x) => {
-            return {
-                lat: x[0],
-                lng: x[1]
-            };
-        }) : [];
+        newOptions.path = options.path
+            ? options.path.map((x) => {
+                  return {
+                      lat: x[0],
+                      lng: x[1],
+                  };
+              })
+            : [];
 
         const polyline = new this.google.maps.Polyline(newOptions);
 
         if (eventClick) {
-            this.google.maps.event.addListener(polyline, 'click', (event: any) => {
-                const param = new EventReturn([event.latLng.lat(), event.latLng.lng()]);
-                eventClick(param, polyline.object);
-            });
+            this.google.maps.event.addListener(
+                polyline,
+                "click",
+                (event: any) => {
+                    const param = new EventReturn([
+                        event.latLng.lat(),
+                        event.latLng.lng(),
+                    ]);
+                    eventClick(param, polyline.object);
+                }
+            );
         }
 
         if (options.addToMap) {
@@ -103,12 +129,17 @@ export default class GooglePolylines {
         return polyline;
     }
 
-    public drawPolylineWithNavigation(options: PolylineOptions, eventClick?: any) {
+    public drawPolylineWithNavigation(
+        options: PolylineOptions,
+        eventClick?: any
+    ) {
         const polyline = this.drawPolyline(options, null);
 
         polyline.navigationHandlerClick = eventClick;
         this.navigationOptions = options.navigateOptions;
-        this.navigateByPoint = this.navigationOptions ? this.navigationOptions.navigateByPoint : true;
+        this.navigateByPoint = this.navigationOptions
+            ? this.navigationOptions.navigateByPoint
+            : true;
         this.addNavigation(polyline);
 
         return polyline;
@@ -121,50 +152,81 @@ export default class GooglePolylines {
         });
     }
 
-    public alterPolylineOptions(polylines, options: PolylineOptions) {
+    public alterPolylineOptions(polylines: any[], options: PolylineOptions) {
         polylines.forEach((polyline: any) => {
             const newOptions: any = {
-                draggable: options.draggable ? options.draggable : polyline.draggable,
-                editable: options.editable ? options.editable : polyline.editable,
-                infowindows: options.infowindows ? options.infowindows : polyline.infowindows,
+                draggable: options.draggable
+                    ? options.draggable
+                    : polyline.draggable,
+                editable: options.editable
+                    ? options.editable
+                    : polyline.editable,
+                infowindows: options.infowindows
+                    ? options.infowindows
+                    : polyline.infowindows,
                 object: options.object ? options.object : polyline.object,
-                strokeColor: options.color ? options.color : polyline.strokeColor,
-                strokeOpacity: options.opacity ? options.opacity : polyline.strokeOpacity,
-                strokeWeight: options.weight ? options.weight : polyline.strokeWeight,
-                zIndex: options.zIndex ? options.zIndex : polyline.zIndex
+                strokeColor: options.color
+                    ? options.color
+                    : polyline.strokeColor,
+                strokeOpacity: options.opacity
+                    ? options.opacity
+                    : polyline.strokeOpacity,
+                strokeWeight: options.weight
+                    ? options.weight
+                    : polyline.strokeWeight,
+                zIndex: options.zIndex ? options.zIndex : polyline.zIndex,
             };
 
             if (options.path) {
-                polyline.setPath(options.path.map((x) => new google.maps.LatLng(x[0], x[1])));
+                polyline.setPath(
+                    options.path.map((x) => new google.maps.LatLng(x[0], x[1]))
+                );
             }
 
             switch (options.style) {
                 case PolylineType.Dotted:
-                    console.warn('PolylineType.Dotted is deprecated, instead use PolylineType.Dashed.');
+                    console.warn(
+                        "PolylineType.Dotted is deprecated, instead use PolylineType.Dashed."
+                    );
+                    break;
                 case PolylineType.Dashed:
                     newOptions.strokeOpacity = 0;
-                    newOptions.icons = [{
-                        icon: {
-                            path: 'M 0,-1 0,1',
-                            scale: 2,
-                            strokeOpacity: 1
+                    newOptions.icons = [
+                        {
+                            icon: {
+                                path: "M 0,-1 0,1",
+                                scale: 2,
+                                strokeOpacity: 1,
+                            },
+                            offset: "0",
+                            repeat: "10px",
                         },
-                        offset: '0',
-                        repeat: '10px'
-                    }];
+                    ];
                     break;
                 case PolylineType.Arrow:
-                    newOptions.icons = [{
-                        icon: {
-                            path: google.maps.SymbolPath.FORWARD_OPEN_ARROW,
-                            scaledSize: new google.maps.Size(20, 20),
-                            size: new google.maps.Size(20, 20)
+                    newOptions.icons = [
+                        {
+                            icon: {
+                                path: google.maps.SymbolPath.FORWARD_OPEN_ARROW,
+                                scaledSize: new google.maps.Size(20, 20),
+                                size: new google.maps.Size(20, 20),
+                            },
+                            offset: "90%",
+                            repeat: "20%",
                         },
-                        offset: '90%',
-                        repeat: '20%'
-                    },
-                    { icon: { path: google.maps.SymbolPath.FORWARD_OPEN_ARROW }, offset: '0%' },
-                    { icon: { path: google.maps.SymbolPath.FORWARD_OPEN_ARROW }, offset: '100%' }];
+                        {
+                            icon: {
+                                path: google.maps.SymbolPath.FORWARD_OPEN_ARROW,
+                            },
+                            offset: "0%",
+                        },
+                        {
+                            icon: {
+                                path: google.maps.SymbolPath.FORWARD_OPEN_ARROW,
+                            },
+                            offset: "100%",
+                        },
+                    ];
                     break;
                 default:
                     newOptions.icons = null;
@@ -194,12 +256,15 @@ export default class GooglePolylines {
     }
 
     public getPolylinePath(polyline: any): number[][] {
-        return polyline.getPath().getArray().map((x: any) => [x.lat(), x.lng()]);
+        return polyline
+            .getPath()
+            .getArray()
+            .map((x: any) => [x.lat(), x.lng()]);
     }
 
     public removePolylineHighlight() {
-        this.google.maps.event.clearListeners(document, 'keyup');
-        this.google.maps.event.clearListeners(document, 'keydown');
+        this.google.maps.event.clearListeners(document, "keyup");
+        this.google.maps.event.clearListeners(document, "keydown");
         if (this.selectedPath) {
             this.selectedPath.setMap(null);
             this.selectedPath = null;
@@ -209,14 +274,18 @@ export default class GooglePolylines {
         }
     }
 
-    public addPolylineEvent(polylines: any, eventType: PolylineEventType, eventFunction: any) {
+    public addPolylineEvent(
+        polylines: any,
+        eventType: PolylineEventType,
+        eventFunction: any
+    ) {
         polylines.forEach((polyline: any) => {
             switch (eventType) {
                 case PolylineEventType.SetAt:
                     this.addPolylineEventMove(polyline, eventFunction);
                     break;
                 case PolylineEventType.RightClick:
-                    this.addPolylineEventRightClick(polyline, eventFunction)
+                    this.addPolylineEventRightClick(polyline, eventFunction);
                     break;
                 case PolylineEventType.InsertAt:
                     this.addPolylineEventInsertAt(polyline, eventFunction);
@@ -240,31 +309,51 @@ export default class GooglePolylines {
     }
 
     public removePolylineEvent(polylines: any, event: PolylineEventType) {
-        polylines.forEach((polyline: any) => this.google.maps.event.clearListeners(polyline, 'click'));
+        polylines.forEach((polyline: any) =>
+            this.google.maps.event.clearListeners(polyline, "click")
+        );
 
         polylines.forEach((polyline: any) => {
             switch (event) {
                 case PolylineEventType.SetAt:
-                    this.google.maps.event.clearListeners(polyline.getPath(), 'set_at');
+                    this.google.maps.event.clearListeners(
+                        polyline.getPath(),
+                        "set_at"
+                    );
                     break;
                 case PolylineEventType.RightClick:
-                    this.google.maps.event.clearListeners(polyline, 'rightclick');
+                    this.google.maps.event.clearListeners(
+                        polyline,
+                        "rightclick"
+                    );
                     break;
                 case PolylineEventType.InsertAt:
-                    this.google.maps.event.clearListeners(polyline.getPath(), 'insert_at');
+                    this.google.maps.event.clearListeners(
+                        polyline.getPath(),
+                        "insert_at"
+                    );
                     break;
                 case PolylineEventType.RemoveAt:
-                    this.google.maps.event.clearListeners(polyline.getPath(), 'remove_at');
+                    this.google.maps.event.clearListeners(
+                        polyline.getPath(),
+                        "remove_at"
+                    );
                     break;
                 case PolylineEventType.DragPolyline:
-                    this.google.maps.event.clearListeners(polyline, 'dragstart');
-                    this.google.maps.event.clearListeners(polyline, 'dragend');
+                    this.google.maps.event.clearListeners(
+                        polyline,
+                        "dragstart"
+                    );
+                    this.google.maps.event.clearListeners(polyline, "dragend");
                     break;
                 case PolylineEventType.MouseOver:
-                    this.google.maps.event.clearListeners(polyline, 'mouseover');
+                    this.google.maps.event.clearListeners(
+                        polyline,
+                        "mouseover"
+                    );
                     break;
                 case PolylineEventType.MouseOut:
-                    this.google.maps.event.clearListeners(polyline, 'mouseout');
+                    this.google.maps.event.clearListeners(polyline, "mouseout");
                     break;
                 default:
                     break;
@@ -281,11 +370,19 @@ export default class GooglePolylines {
         this.selectedPolyline = polyline;
 
         if (this.navigationOptions.navegateOnKeyPress) {
-            this.google.maps.event.clearListeners(document, 'keydown');
-            this.google.maps.event.addDomListener(document, 'keydown', this.onKeyUp.bind(this));
+            this.google.maps.event.clearListeners(document, "keydown");
+            this.google.maps.event.addDomListener(
+                document,
+                "keydown",
+                this.onKeyUp.bind(this)
+            );
         } else {
-            this.google.maps.event.clearListeners(document, 'keyup');
-            this.google.maps.event.addDomListener(document, 'keyup', this.onKeyUp.bind(this));
+            this.google.maps.event.clearListeners(document, "keyup");
+            this.google.maps.event.addDomListener(
+                document,
+                "keyup",
+                this.onKeyUp.bind(this)
+            );
         }
     }
 
@@ -301,9 +398,16 @@ export default class GooglePolylines {
         return null;
     }
 
-    public addPolylineHighlightEvent(eventType: PolylineEventType, eventFunction: any) {
+    public addPolylineHighlightEvent(
+        eventType: PolylineEventType,
+        eventFunction: any
+    ) {
         if (this.selectedPath) {
-            this.addPolylineEvent([this.selectedPath], eventType, eventFunction);
+            this.addPolylineEvent(
+                [this.selectedPath],
+                eventType,
+                eventFunction
+            );
         }
     }
 
@@ -319,8 +423,12 @@ export default class GooglePolylines {
     private addNavigation(polyline: any) {
         const self = this;
 
-        this.google.maps.event.clearListeners(polyline, 'click');
-        this.google.maps.event.addListener(polyline, 'click', self.onClickPolyline.bind(self, polyline));
+        this.google.maps.event.clearListeners(polyline, "click");
+        this.google.maps.event.addListener(
+            polyline,
+            "click",
+            self.onClickPolyline.bind(self, polyline)
+        );
     }
 
     private onClickPolyline(polyline: any, event: any) {
@@ -333,15 +441,26 @@ export default class GooglePolylines {
         this.selectedPolyline = polyline;
 
         if (this.navigationOptions.navegateOnKeyPress) {
-            this.google.maps.event.clearListeners(document, 'keydown');
-            this.google.maps.event.addDomListener(document, 'keydown', this.onKeyUp.bind(this));
+            this.google.maps.event.clearListeners(document, "keydown");
+            this.google.maps.event.addDomListener(
+                document,
+                "keydown",
+                this.onKeyUp.bind(this)
+            );
         } else {
-            this.google.maps.event.clearListeners(document, 'keyup');
-            this.google.maps.event.addDomListener(document, 'keyup', this.onKeyUp.bind(this));
+            this.google.maps.event.clearListeners(document, "keyup");
+            this.google.maps.event.addDomListener(
+                document,
+                "keyup",
+                this.onKeyUp.bind(this)
+            );
         }
 
         if (polyline.navigationHandlerClick) {
-            const param = new EventReturn([event.latLng.lat(), event.latLng.lng()]);
+            const param = new EventReturn([
+                event.latLng.lat(),
+                event.latLng.lng(),
+            ]);
             polyline.navigationHandlerClick(param, polyline.object);
         }
     }
@@ -351,11 +470,13 @@ export default class GooglePolylines {
 
         if (self.selectedPath) {
             switch (event.which ? event.which : event.keyCode) {
-                case 38: case 39:
+                case 38:
+                case 39:
                     // up arrow or right arrow
                     self.moveForwards(event.shiftKey);
                     break;
-                case 37: case 40:
+                case 37:
+                case 40:
                     // left arrow or down arrow
                     self.moveBackwards(event.shiftKey);
                     break;
@@ -367,8 +488,10 @@ export default class GooglePolylines {
         const self = this;
         const polyline = self.selectedPolyline;
 
-        if ((!self.navigateByPoint || self.directionForward) &&
-            polyline.finalIdx < polyline.getPath().getArray().length - 1) {
+        if (
+            (!self.navigateByPoint || self.directionForward) &&
+            polyline.finalIdx < polyline.getPath().getArray().length - 1
+        ) {
             self.navigateForward(multiSelection, polyline);
         }
         self.directionForward = true;
@@ -379,7 +502,9 @@ export default class GooglePolylines {
         const self = this;
         if (!multiSelection) {
             polyline.finalIdx++;
-            polyline.initialIdx = self.multiSelection ? polyline.finalIdx - 1 : polyline.initialIdx + 1;
+            polyline.initialIdx = self.multiSelection
+                ? polyline.finalIdx - 1
+                : polyline.initialIdx + 1;
             self.multiSelection = false;
         } else {
             self.multiSelection = true;
@@ -394,18 +519,26 @@ export default class GooglePolylines {
         const self = this;
         const polyline = self.selectedPolyline;
 
-        if ((!self.navigateByPoint || !self.directionForward) && polyline.initialIdx > 0) {
+        if (
+            (!self.navigateByPoint || !self.directionForward) &&
+            polyline.initialIdx > 0
+        ) {
             self.navigateBackward(multiSelection, polyline);
         }
         self.directionForward = false;
         self.moveSelectedPath(polyline, null);
     }
 
-    private navigateBackward(multiSelection: boolean, polyline) {
+    private navigateBackward(
+        multiSelection: boolean,
+        polyline: { initialIdx: number; finalIdx: number }
+    ) {
         const self = this;
         if (!multiSelection) {
             polyline.initialIdx--;
-            polyline.finalIdx = !self.multiSelection ? polyline.finalIdx - 1 : polyline.initialIdx + 1;
+            polyline.finalIdx = !self.multiSelection
+                ? polyline.finalIdx - 1
+                : polyline.initialIdx + 1;
             self.multiSelection = false;
         } else {
             self.multiSelection = true;
@@ -416,8 +549,11 @@ export default class GooglePolylines {
         }
     }
 
-    private moveSelectedPath(polyline: any, options: NavigationOptions) {
-        const pathSelected = polyline.getPath().getArray().slice(polyline.initialIdx, polyline.finalIdx + 1);
+    private moveSelectedPath(polyline: any, options: NavigationOptions | null) {
+        const pathSelected = polyline
+            .getPath()
+            .getArray()
+            .slice(polyline.initialIdx, polyline.finalIdx + 1);
 
         if (this.selectedPath) {
             this.selectedPath.setPath(pathSelected);
@@ -425,46 +561,55 @@ export default class GooglePolylines {
             this.updateSelectedPathListeners();
         } else {
             const newOptions: any = {
-                editable: options.editable,
+                editable: options?.editable,
                 keyboardShortcuts: false,
                 map: this.map,
                 object: polyline.object,
                 path: pathSelected,
-                strokeColor: options && options.color || '#FF0000',
-                strokeOpacity: options && options.opacity || 1,
-                strokeWeight: options && options.weight || 10,
-                zIndex: 9999
+                strokeColor: (options && options.color) || "#FF0000",
+                strokeOpacity: (options && options.opacity) || 1,
+                strokeWeight: (options && options.weight) || 10,
+                zIndex: 9999,
             };
 
-            if (options.style !== null) {
-                switch (options.style) {
+            if (options?.style !== null) {
+                switch (options?.style) {
                     case PolylineType.Dotted:
-                        console.warn('PolylineType.Dotted is deprecated, instead use PolylineType.Dashed.');
+                        console.warn(
+                            "PolylineType.Dotted is deprecated, instead use PolylineType.Dashed."
+                        );
+
+                        break;
                     case PolylineType.Dashed:
                         newOptions.strokeOpacity = 0;
-                        newOptions.icons = [{
-                            icon: {
-                                path: 'M 0,-1 0,1',
-                                scale: 2,
-                                strokeOpacity: 1
+                        newOptions.icons = [
+                            {
+                                icon: {
+                                    path: "M 0,-1 0,1",
+                                    scale: 2,
+                                    strokeOpacity: 1,
+                                },
+                                offset: "0",
+                                repeat: "10px",
                             },
-                            offset: '0',
-                            repeat: '10px'
-                        }];
+                        ];
                         break;
                     case PolylineType.Arrow:
-                        newOptions.icons = [{
-                            icon: {
-                                anchor: new google.maps.Point(0, 2),
-                                fillColor: '#000',
-                                fillOpacity: 0.7,
-                                path: google.maps.SymbolPath.FORWARD_OPEN_ARROW,
-                                scale: 4,
-                                strokeColor: '#000',
-                                strokeWeight: 5,
+                        newOptions.icons = [
+                            {
+                                icon: {
+                                    anchor: new google.maps.Point(0, 2),
+                                    fillColor: "#000",
+                                    fillOpacity: 0.7,
+                                    path: google.maps.SymbolPath
+                                        .FORWARD_OPEN_ARROW,
+                                    scale: 4,
+                                    strokeColor: "#000",
+                                    strokeWeight: 5,
+                                },
+                                offset: "100%",
                             },
-                            offset: '100%'
-                        }];
+                        ];
                         break;
                     default:
                         break;
@@ -482,16 +627,31 @@ export default class GooglePolylines {
 
     private addPolylineEventMove(polyline: any, eventFunction: any) {
         polyline.moveListener = (newEvent: any, lastEvent: any) => {
-            if (polyline.dragging)
-                return;
+            if (polyline.dragging) return;
 
             const path = polyline.getPath().getAt(newEvent);
             const newPosition = new EventReturn([path.lat(), path.lng()]);
-            const lastPosition = new EventReturn([lastEvent.lat(), lastEvent.lng()]);
+            const lastPosition = new EventReturn([
+                lastEvent.lat(),
+                lastEvent.lng(),
+            ]);
 
-            eventFunction(newPosition, lastPosition, polyline.object, newEvent, polyline.getPath().getArray().map((x: any) => new EventReturn([x.lat(), x.lng()])));
+            eventFunction(
+                newPosition,
+                lastPosition,
+                polyline.object,
+                newEvent,
+                polyline
+                    .getPath()
+                    .getArray()
+                    .map((x: any) => new EventReturn([x.lat(), x.lng()]))
+            );
         };
-        this.google.maps.event.addListener(polyline.getPath(), 'set_at', polyline.moveListener);
+        this.google.maps.event.addListener(
+            polyline.getPath(),
+            "set_at",
+            polyline.moveListener
+        );
     }
 
     private addPolylineEventInsertAt(polyline: any, eventFunction: any) {
@@ -501,101 +661,188 @@ export default class GooglePolylines {
             const newPoint = new EventReturn([newPath.lat(), newPath.lng()]);
 
             const previousPath = path.getAt(event - 1);
-            const previousPoint = previousPath ? new EventReturn([previousPath.lat(), previousPath.lng()]) : null;
-            eventFunction(newPoint, previousPoint, polyline.object, event, polyline.getPath().getArray().map((x: any) => new EventReturn([x.lat(), x.lng()])));
+            const previousPoint = previousPath
+                ? new EventReturn([previousPath.lat(), previousPath.lng()])
+                : null;
+            eventFunction(
+                newPoint,
+                previousPoint,
+                polyline.object,
+                event,
+                polyline
+                    .getPath()
+                    .getArray()
+                    .map((x: any) => new EventReturn([x.lat(), x.lng()]))
+            );
         };
-        this.google.maps.event.addListener(polyline.getPath(), 'insert_at', polyline.insertAtListener);
+        this.google.maps.event.addListener(
+            polyline.getPath(),
+            "insert_at",
+            polyline.insertAtListener
+        );
     }
 
     private addPolylineEventRemoveAt(polyline: any, eventFunction: any) {
         polyline.removeAtListener = (event: any) => {
-            const param = new EventReturn([polyline.getPath().getAt(event).lat(), polyline.getPath().getAt(event).lng()]);
-            eventFunction(param, polyline.object, polyline.getPath().getArray().map((x: any) => new EventReturn([x.lat(), x.lng()])));
+            const param = new EventReturn([
+                polyline.getPath().getAt(event).lat(),
+                polyline.getPath().getAt(event).lng(),
+            ]);
+            eventFunction(
+                param,
+                polyline.object,
+                polyline
+                    .getPath()
+                    .getArray()
+                    .map((x: any) => new EventReturn([x.lat(), x.lng()]))
+            );
         };
-        this.google.maps.event.addListener(polyline.getPath(), 'remove_at', polyline.removeAtListener);
+        this.google.maps.event.addListener(
+            polyline.getPath(),
+            "remove_at",
+            polyline.removeAtListener
+        );
     }
 
     private addPolylineEventRightClick(polyline: any, eventFunction: any) {
         polyline.rightClickPolylineListener = (event: any) => {
             polyline.dragging = false;
-            const param = new EventReturn([event.latLng.lat(), event.latLng.lng()]);
+            const param = new EventReturn([
+                event.latLng.lat(),
+                event.latLng.lng(),
+            ]);
             eventFunction(param, polyline.object);
         };
 
-        this.google.maps.event.addListener(polyline, 'rightclick', polyline.rightClickPolylineListener);
+        this.google.maps.event.addListener(
+            polyline,
+            "rightclick",
+            polyline.rightClickPolylineListener
+        );
     }
 
     private addPolylineEventMouseOver(polyline: any, eventFunction: any) {
         polyline.overPolylineListener = (event: any) => {
             polyline.dragging = false;
-            const param = new EventReturn([event.latLng.lat(), event.latLng.lng()]);
+            const param = new EventReturn([
+                event.latLng.lat(),
+                event.latLng.lng(),
+            ]);
             eventFunction(param, polyline.object);
         };
 
-        this.google.maps.event.addListener(polyline, 'mouseover', polyline.overPolylineListener);
+        this.google.maps.event.addListener(
+            polyline,
+            "mouseover",
+            polyline.overPolylineListener
+        );
     }
 
     private addPolylineEventMouseOut(polyline: any, eventFunction: any) {
         polyline.outPolylineListener = (event: any) => {
             polyline.dragging = false;
-            const param = new EventReturn([event.latLng.lat(), event.latLng.lng()]);
+            const param = new EventReturn([
+                event.latLng.lat(),
+                event.latLng.lng(),
+            ]);
             eventFunction(param, polyline.object);
         };
 
-        this.google.maps.event.addListener(polyline, 'mouseout', polyline.outPolylineListener);
+        this.google.maps.event.addListener(
+            polyline,
+            "mouseout",
+            polyline.outPolylineListener
+        );
     }
 
     private addPolylineEventDragPolyline(polyline: any, eventFunction: any) {
         polyline.dragPolylineListener = () => {
             polyline.dragging = false;
-            const param = polyline.getPath().getArray().map((x: any) => new EventReturn([x.lat(), x.lng()]));
+            const param = polyline
+                .getPath()
+                .getArray()
+                .map((x: any) => new EventReturn([x.lat(), x.lng()]));
             eventFunction(param, polyline.object);
         };
 
-        this.google.maps.event.addListener(polyline, 'dragend', polyline.dragPolylineListener);
-        this.google.maps.event.addListener(polyline, 'dragstart', () => polyline.dragging = true);
+        this.google.maps.event.addListener(
+            polyline,
+            "dragend",
+            polyline.dragPolylineListener
+        );
+        this.google.maps.event.addListener(
+            polyline,
+            "dragstart",
+            () => (polyline.dragging = true)
+        );
     }
 
     private updateSelectedPathListeners() {
         if (this.selectedPath.moveListener) {
-            this.google.maps.event.clearListeners(this.selectedPath.getPath(), 'set_at');
-            this.google.maps.event.addListener(this.selectedPath.getPath(), 'set_at', this.selectedPath.moveListener);
+            this.google.maps.event.clearListeners(
+                this.selectedPath.getPath(),
+                "set_at"
+            );
+            this.google.maps.event.addListener(
+                this.selectedPath.getPath(),
+                "set_at",
+                this.selectedPath.moveListener
+            );
         }
 
         if (this.selectedPath.insertAtListener) {
-            this.google.maps.event.clearListeners(this.selectedPath.getPath(), 'insert_at');
-            this.google.maps.event.addListener(this.selectedPath.getPath(), 'insert_at',
-                this.selectedPath.insertAtListener);
+            this.google.maps.event.clearListeners(
+                this.selectedPath.getPath(),
+                "insert_at"
+            );
+            this.google.maps.event.addListener(
+                this.selectedPath.getPath(),
+                "insert_at",
+                this.selectedPath.insertAtListener
+            );
         }
 
         if (this.selectedPath.removeAtListener) {
-            this.google.maps.event.clearListeners(this.selectedPath.getPath(), 'remove_at');
-            this.google.maps.event.addListener(this.selectedPath.getPath(), 'remove_at',
-                this.selectedPath.removeAtListener);
+            this.google.maps.event.clearListeners(
+                this.selectedPath.getPath(),
+                "remove_at"
+            );
+            this.google.maps.event.addListener(
+                this.selectedPath.getPath(),
+                "remove_at",
+                this.selectedPath.removeAtListener
+            );
         }
     }
 
     private drawPopupNavigation(polyline: any) {
         const self = this;
-        let idx = self.directionForward ? polyline.finalIdx : polyline.initialIdx;
+        let idx = self.directionForward
+            ? polyline.finalIdx
+            : polyline.initialIdx;
         if (!self.navigateByPoint) {
-            idx = polyline.finalIdx > polyline.initialIdx ? polyline.finalIdx : polyline.initialIdx;
+            idx =
+                polyline.finalIdx > polyline.initialIdx
+                    ? polyline.finalIdx
+                    : polyline.initialIdx;
         }
 
-        const infowindow = polyline.infowindows ? polyline.infowindows[idx] : null;
+        const infowindow = polyline.infowindows
+            ? polyline.infowindows[idx]
+            : null;
 
         if (infowindow) {
             const point = polyline.getPath().getArray()[idx];
 
             if (self.navigateInfoWindow) {
-                this.googlePopups.alterPopup(self.navigateInfoWindow, {
+                this.googlePopups?.alterPopup(self.navigateInfoWindow, {
                     content: infowindow,
-                    latlng: [point.lat(), point.lng()]
+                    latlng: [point.lat(), point.lng()],
                 });
             } else {
-                self.navigateInfoWindow = this.googlePopups.drawPopup({
+                self.navigateInfoWindow = this.googlePopups?.drawPopup({
                     content: infowindow,
-                    latlng: [point.lat(), point.lng()]
+                    latlng: [point.lat(), point.lng()],
                 });
             }
         }
@@ -609,7 +856,11 @@ export default class GooglePolylines {
         let returnValue = -1;
 
         for (let i = 0; i < path.length - 1; i++) {
-            distance = self.distanceToLine(path.getAt(i), path.getAt(i + 1), point);
+            distance = self.distanceToLine(
+                path.getAt(i),
+                path.getAt(i + 1),
+                point
+            );
 
             if (distance < minDistance) {
                 minDistance = distance;
@@ -624,7 +875,7 @@ export default class GooglePolylines {
         const deltaX = pt2.lng() - pt1.lng();
         const deltaY = pt2.lat() - pt1.lat();
         let incIntersect = (pt.lng() - pt1.lng()) * deltaX;
-        const deltaSum = (deltaX * deltaX) + (deltaY * deltaY);
+        const deltaSum = deltaX * deltaX + deltaY * deltaY;
 
         incIntersect += (pt.lat() - pt1.lat()) * deltaY;
         if (deltaSum > 0) {
@@ -641,8 +892,10 @@ export default class GooglePolylines {
         }
 
         // Intersection point calculation.
-        const intersect = new this.google.maps
-            .LatLng(pt1.lat() + incIntersect * deltaY, pt1.lng() + incIntersect * deltaX);
+        const intersect = new this.google.maps.LatLng(
+            pt1.lat() + incIntersect * deltaY,
+            pt1.lng() + incIntersect * deltaX
+        );
 
         return self.kmTo(pt, intersect);
     }
@@ -654,7 +907,14 @@ export default class GooglePolylines {
         const c = pt2.lat() * ra;
         const d = b - c;
         const g = pt1.lng() * ra - pt2.lng() * ra;
-        const f = 2 * e.asin(e.sqrt(e.pow(e.sin(d / 2), 2) + e.cos(b) * e.cos(c) * e.pow(e.sin(g / 2), 2)));
+        const f =
+            2 *
+            e.asin(
+                e.sqrt(
+                    e.pow(e.sin(d / 2), 2) +
+                        e.cos(b) * e.cos(c) * e.pow(e.sin(g / 2), 2)
+                )
+            );
 
         return f * 6378.137 * 1000;
     }
@@ -674,7 +934,7 @@ export default class GooglePolylines {
         const bounds = new this.google.maps.LatLngBounds();
         const paths = polyline.getPath().getArray();
 
-        paths.forEach((path) => bounds.extend(path));
+        paths.forEach((path: any) => bounds.extend(path));
         return bounds;
     }
 }

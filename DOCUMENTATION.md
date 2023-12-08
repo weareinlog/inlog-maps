@@ -1,9 +1,9 @@
-# [@inlog/inlog-maps](https://github.com/weareinlog/inlog-maps#readme) *5.0.6*
+# [@inlog/inlog-maps](https://github.com/weareinlog/inlog-maps#readme) *6.0.0*
 
 > A library for using generic layer maps 
 
 
-### lib/map.js
+### lib-esm/map.js
 
 
 #### Map.initialize(mapType, options, elementId) 
@@ -1613,6 +1613,23 @@ Set the current zoom level of the map view
 
 
 - `Void`
+
+
+
+#### Map.takeMapScreenshot() 
+
+Takes a screenshot with all the context included in it (visible area)
+Returns the image as a base64 string or null
+
+
+
+
+
+
+##### Returns
+
+
+- `Promise.&lt;string|null&gt;`  
 
 
 

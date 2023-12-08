@@ -1,5 +1,3 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 var CircleOptions = /** @class */ (function () {
     function CircleOptions(center, radius, weight, addToMap, fillOpacity, fillColor, color, opacity, draggable, editable, fitBounds, object) {
         this.center = center;
@@ -17,5 +15,5 @@ var CircleOptions = /** @class */ (function () {
     }
     return CircleOptions;
 }());
-exports.default = CircleOptions;
+export default CircleOptions;
 //# sourceMappingURL=circle-options.js.map

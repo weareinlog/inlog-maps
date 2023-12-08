@@ -4,8 +4,8 @@ import PolygonAlterOptions from '../../features/polygons/polygon-alter-options';
 import PolygonOptions from '../../features/polygons/polygon-options';
 
 export default class LeafletPolygons {
-    private map = null;
-    private leaflet = null;
+    private map: any = {};
+    private leaflet: any = {};
 
     constructor(map: any, leaflet: any) {
         this.map = map;
@@ -151,7 +151,7 @@ export default class LeafletPolygons {
         });
     }
 
-    public getBoundsPolygons(polygons) {
+    public getBoundsPolygons(polygons: any) {
         const group = new this.leaflet.FeatureGroup(polygons);
         return group.getBounds();
     }
@@ -164,7 +164,7 @@ export default class LeafletPolygons {
                 const newPosition = new EventReturn([eventEnd.vertex.latlng.lat, eventEnd.vertex.latlng.lng]);
                 const path = polygon.getLatLngs().map((x: any) => {
                     if (Array.isArray(x[0])) {
-                        return x.map((y: any) => y.map(z => new EventReturn([z.lat, z.lng])));
+                        return x.map((y: any) => y.map((z: { lat: number; lng: number; }) => new EventReturn([z.lat, z.lng])));
                     } else {
                         return [x.map((y: any) => new EventReturn([y.lat, y.lng]))];
                     }
@@ -188,7 +188,7 @@ export default class LeafletPolygons {
                     const newPoint = new EventReturn([event.vertex.latlng.lat, event.vertex.latlng.lng]);
                     const path = polygon.getLatLngs().map((x: any) => {
                         if (Array.isArray(x[0])) {
-                            return x.map((y: any) => y.map(z => new EventReturn([z.lat, z.lng])));
+                            return x.map((y: any) => y.map((z: { lat: number; lng: number; }) => new EventReturn([z.lat, z.lng])));
                         } else {
                             return [x.map((y: any) => new EventReturn([y.lat, y.lng]))];
                         }
@@ -207,7 +207,7 @@ export default class LeafletPolygons {
 
             const path = polygon.getLatLngs().map((x: any) => {
                 if (Array.isArray(x[0])) {
-                    return x.map((y: any) => y.map(z => new EventReturn([z.lat, z.lng])));
+                    return x.map((y: any) => y.map((z: { lat: number; lng: number; }) => new EventReturn([z.lat, z.lng])));
                 } else {
                     return [x.map((y: any) => new EventReturn([y.lat, y.lng]))];
                 }
@@ -221,7 +221,7 @@ export default class LeafletPolygons {
         polygon.on('dragend', (event: any) => {
             const path = polygon.getLatLngs().map((x: any) => {
                 if (Array.isArray(x[0])) {
-                    return x.map((y: any) => y.map(z => new EventReturn([z.lat, z.lng])));
+                    return x.map((y: any) => y.map((z: { lat: number; lng: number; }) => new EventReturn([z.lat, z.lng])));
                 } else {
                     return [x.map((y: any) => new EventReturn([y.lat, y.lng]))];
                 }

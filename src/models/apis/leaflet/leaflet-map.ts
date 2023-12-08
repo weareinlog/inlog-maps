@@ -1,9 +1,9 @@
-import { MapEventType } from '../../dto/event-type';
-import EventReturn from '../../features/events/event-return';
+import { MapEventType } from "../../dto/event-type";
+import EventReturn from "../../features/events/event-return";
 
 export default class LeafletMap {
-    private map = null;
-    private leaflet = null;
+    private map: any = {};
+    private leaflet: any = {};
 
     constructor(map: any, leaflet: any) {
         this.map = map;
@@ -19,16 +19,23 @@ export default class LeafletMap {
 
         switch (eventType) {
             case MapEventType.Click:
-                self.map.on('click', (event: any) => {
-                    const param = new EventReturn([event.latlng.lat, event.latlng.lng]);
+                self.map.on("click", (event: any) => {
+                    const param = new EventReturn([
+                        event.latlng.lat,
+                        event.latlng.lng,
+                    ]);
                     eventFunction(param);
                 });
                 break;
             case MapEventType.ZoomChanged:
-                self.map.on('zoomend', (event: any) => {
-                    const param = new EventReturn([event.target.getCenter().lat, event.target.getCenter().lng]);
+                self.map.on("zoomend", (event: any) => {
+                    const param = new EventReturn([
+                        event.target.getCenter().lat,
+                        event.target.getCenter().lng,
+                    ]);
                     eventFunction(param);
                 });
+                break;
             default:
                 break;
         }
@@ -37,9 +44,14 @@ export default class LeafletMap {
     public removeEventMap(eventType: MapEventType) {
         const self = this;
         switch (eventType) {
-            case MapEventType.Click: self.map.off('click'); break;
-            case MapEventType.ZoomChanged: self.map.off('zoomend');
-            default: break;
+            case MapEventType.Click:
+                self.map.off("click");
+                break;
+            case MapEventType.ZoomChanged:
+                self.map.off("zoomend");
+                break;
+            default:
+                break;
         }
     }
 
@@ -49,6 +61,9 @@ export default class LeafletMap {
 
     public setZoom(zoom: number) {
         this.map.setZoom(zoom);
+    }
+    public async takeScreenShot() {
+        return await this.leaflet.takeMapScreenshot();
     }
 
     public getCenter(): number[] {
@@ -62,20 +77,32 @@ export default class LeafletMap {
 
     public pixelsToLatLng(offsetx: number, offsety: number) {
         const scale = Math.pow(2, this.map.getZoom());
-        const worldCoordinateCenter = this.leaflet.CRS.Simple.project(this.map.getCenter())
-        const pixelOffset = new this.leaflet.Point(offsetx / scale || 0, offsety / scale || 0);
+        const worldCoordinateCenter = this.leaflet.CRS.Simple.project(
+            this.map.getCenter()
+        );
+        const pixelOffset = new this.leaflet.Point(
+            offsetx / scale || 0,
+            offsety / scale || 0
+        );
 
         const worldCoordinateNewCenter = new this.leaflet.Point(
             worldCoordinateCenter.x - pixelOffset.x,
             worldCoordinateCenter.y + pixelOffset.y
         );
 
-        const latlng = this.leaflet.CRS.Simple.unproject(worldCoordinateNewCenter);
+        const latlng = this.leaflet.CRS.Simple.unproject(
+            worldCoordinateNewCenter
+        );
         return [latlng.lat, latlng.lng];
     }
 
-    public fitBoundsElements(markers: any, circles: any, polygons: any, polylines: any): void {
-        const group = [];
+    public fitBoundsElements(
+        markers: any,
+        circles: any,
+        polygons: any,
+        polylines: any
+    ): void {
+        const group: any[] = [];
 
         if (markers && markers.length) {
             markers.forEach((marker: any) => group.push(marker));

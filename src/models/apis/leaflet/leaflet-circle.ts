@@ -1,11 +1,11 @@
-import { CircleEventType } from '../../dto/event-type';
-import CircleAlterOptions from '../../features/circle/circle-alter-options';
-import CircleOptions from '../../features/circle/circle-options';
-import EventReturn from '../../features/events/event-return';
+import { CircleEventType } from "../../dto/event-type";
+import CircleAlterOptions from "../../features/circle/circle-alter-options";
+import CircleOptions from "../../features/circle/circle-options";
+import EventReturn from "../../features/events/event-return";
 
 export default class LeafletCircles {
-    private map = null;
-    private leaflet = null;
+    private map: any = {};
+    private leaflet: any = {};
 
     constructor(map: any, leaflet: any) {
         this.map = map;
@@ -22,14 +22,17 @@ export default class LeafletCircles {
             fillOpacity: options.fillOpacity,
             opacity: options.opacity,
             radius: options.radius,
-            weight: options.weight
+            weight: options.weight,
         };
         const circle = new this.leaflet.Circle(options.center, newOptions);
 
         if (eventClick) {
-            circle.on('click', (event: any) => {
+            circle.on("click", (event: any) => {
                 self.leaflet.DomEvent.stopPropagation(event);
-                const param = new EventReturn([event.latlng.lat, event.latlng.lng]);
+                const param = new EventReturn([
+                    event.latlng.lat,
+                    event.latlng.lng,
+                ]);
                 eventClick(param, event.target.object);
             });
         }
@@ -55,19 +58,31 @@ export default class LeafletCircles {
 
     public toggleCircles(circles: any[], show: boolean) {
         const self = this;
-        circles.forEach((circle) => show ? self.map.addLayer(circle) : self.map.removeLayer(circle));
+        circles.forEach((circle) =>
+            show ? self.map.addLayer(circle) : self.map.removeLayer(circle)
+        );
     }
 
     public alterCircleOptions(circles: any[], options: CircleAlterOptions) {
         circles.forEach((circle) => {
             const style = {
                 color: options.color ? options.color : circle.options.color,
-                draggable: options.draggable ? options.draggable : circle.options.draggable,
-                editable: options.editable ? options.editable : circle.options.editable,
-                fillColor: options.fillColor ? options.fillColor : circle.options.fillColor,
-                fillOpacity: options.fillOpacity ? options.fillOpacity : circle.options.fillOpacity,
-                opacity: options.opacity ? options.opacity : circle.options.opacity,
-                weight: options.weight ? options.weight : circle.options.weight
+                draggable: options.draggable
+                    ? options.draggable
+                    : circle.options.draggable,
+                editable: options.editable
+                    ? options.editable
+                    : circle.options.editable,
+                fillColor: options.fillColor
+                    ? options.fillColor
+                    : circle.options.fillColor,
+                fillOpacity: options.fillOpacity
+                    ? options.fillOpacity
+                    : circle.options.fillOpacity,
+                opacity: options.opacity
+                    ? options.opacity
+                    : circle.options.opacity,
+                weight: options.weight ? options.weight : circle.options.weight,
             };
 
             circle.setStyle(style);
@@ -108,24 +123,40 @@ export default class LeafletCircles {
         return circle.getRadius();
     }
 
-    public addCircleEvent(circles: any, eventType: CircleEventType, eventFunction: any): void {
+    public addCircleEvent(
+        circles: any,
+        eventType: CircleEventType,
+        eventFunction: any
+    ): void {
         circles.forEach((circle: any) => {
             switch (eventType) {
                 case CircleEventType.Click:
-                    circle.on('click', (event: any) => {
-                        const param = new EventReturn([event.latlng.lat, event.latlng.lng]);
+                    circle.on("click", (event: any) => {
+                        const param = new EventReturn([
+                            event.latlng.lat,
+                            event.latlng.lng,
+                        ]);
                         eventFunction(param, circle.object);
                     });
+                    break;
                 case CircleEventType.CenterChanged:
-                    circle.on('dragend', (event: any) => {
-                        const param = new EventReturn([event.target.getLatLng().lat, event.target.getLatLng().lng]);
+                    circle.on("dragend", (event: any) => {
+                        const param = new EventReturn([
+                            event.target.getLatLng().lat,
+                            event.target.getLatLng().lng,
+                        ]);
                         eventFunction(param, circle.object);
                     });
+                    break;
                 case CircleEventType.RadiusChanged:
-                    circle.on('editable:vertex:dragend', (event: any) => {
-                        const param = new EventReturn([event.vertex.latlng.lat, event.vertex.latlng.lng]);
+                    circle.on("editable:vertex:dragend", (event: any) => {
+                        const param = new EventReturn([
+                            event.vertex.latlng.lat,
+                            event.vertex.latlng.lng,
+                        ]);
                         eventFunction(param, circle.object, circle.getRadius());
                     });
+                    break;
                 default:
                     break;
             }
@@ -136,11 +167,14 @@ export default class LeafletCircles {
         circles.forEach((circle: any) => {
             switch (event) {
                 case CircleEventType.Click:
-                    circle.off('click');
+                    circle.off("click");
+                    break;
                 case CircleEventType.CenterChanged:
-                    circle.off('dragend');
+                    circle.off("dragend");
+                    break;
                 case CircleEventType.RadiusChanged:
-                    circle.off('editable:vertex:dragend');
+                    circle.off("editable:vertex:dragend");
+                    break;
                 default:
                     break;
             }

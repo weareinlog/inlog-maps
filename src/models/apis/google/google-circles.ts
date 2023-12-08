@@ -4,8 +4,8 @@ import CircleOptions from '../../features/circle/circle-options';
 import EventReturn from '../../features/events/event-return';
 
 export default class GoogleCircles {
-    private map = null;
-    private google = null;
+    private map: any = {};
+    private google: any = {};
 
     constructor(map: any, google: any) {
         this.map = map;
@@ -112,11 +112,13 @@ export default class GoogleCircles {
                         const param = new EventReturn([circle.getCenter().lat(), circle.getCenter().lng()]);
                         eventFunction(param, circle.object);
                     });
+                    break;
                 case CircleEventType.RadiusChanged:
                     this.google.maps.event.addListener(circle, 'radius_changed', (event: any) => {
                         const param = new EventReturn([circle.getCenter().lat(), circle.getCenter().lng()]);
                         eventFunction(param, circle.object, circle.getRadius());
                     });
+                    break;
                 default:
                     break;
             }
@@ -128,10 +130,13 @@ export default class GoogleCircles {
             switch (event) {
                 case CircleEventType.Click:
                     this.google.maps.event.clearListeners(circle, 'click');
+                    break;
                 case CircleEventType.CenterChanged:
                     this.google.maps.event.clearListeners(circle, 'center_changed');
+                    break;
                 case CircleEventType.RadiusChanged:
                     this.google.maps.event.clearListeners(circle, 'radius_changed');
+                    break;
                 default:
                     break;
             }

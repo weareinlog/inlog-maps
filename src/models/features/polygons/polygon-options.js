@@ -1,5 +1,3 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 var PolygonOptions = /** @class */ (function () {
     function PolygonOptions(path, weight, addToMap, color, opacity, fillColor, fillOpacity, draggable, editable, fitBounds, object) {
         this.path = path;
@@ -13,8 +11,9 @@ var PolygonOptions = /** @class */ (function () {
         this.editable = editable;
         this.fitBounds = fitBounds;
         this.object = object;
+        this.zIndex = 0;
     }
     return PolygonOptions;
 }());
-exports.default = PolygonOptions;
+export default PolygonOptions;
 //# sourceMappingURL=polygon-options.js.map

@@ -1,32 +1,40 @@
-import GoogleMaps from './models/apis/googleMaps';
-import Leaflet from './models/apis/leaflet';
-import IMapFunctions from './models/apis/mapFunctions';
-import { MarkerEventType, CircleEventType, PolygonEventType, PolylineEventType, MapEventType } from './models/dto/event-type';
-import { MapType } from './models/dto/map-type';
-import CircleAlterOptions from './models/features/circle/circle-alter-options';
-import CircleOptions from './models/features/circle/circle-options';
-import GeoJsonOptions from './models/features/geojson/geojson-options';
-import MarkerClustererConfig from './models/features/marker-clusterer/marker-clusterer-config';
-import CircleMarkerOptions from './models/features/marker/circle-marker-options';
-import MarkerAlterOptions from './models/features/marker/marker-alter-options';
-import MarkerOptions from './models/features/marker/marker-options';
-import OverlayOptions from './models/features/overlay/overlay-options';
-import PolygonAlterOptions from './models/features/polygons/polygon-alter-options';
-import PolygonOptions from './models/features/polygons/polygon-options';
-import PolylineOptions from './models/features/polyline/polyline-options';
-import PopupOptions from './models/features/popup/popup-options';
+import GoogleMaps from "./models/apis/googleMaps";
+import Leaflet from "./models/apis/leaflet";
+import IMapFunctions from "./models/apis/mapFunctions";
+import {
+    MarkerEventType,
+    CircleEventType,
+    PolygonEventType,
+    PolylineEventType,
+    MapEventType,
+} from "./models/dto/event-type";
+import { MapType } from "./models/dto/map-type";
+import CircleAlterOptions from "./models/features/circle/circle-alter-options";
+import CircleOptions from "./models/features/circle/circle-options";
+import GeoJsonOptions from "./models/features/geojson/geojson-options";
+import MarkerClustererConfig from "./models/features/marker-clusterer/marker-clusterer-config";
+import CircleMarkerOptions from "./models/features/marker/circle-marker-options";
+import MarkerAlterOptions from "./models/features/marker/marker-alter-options";
+import MarkerOptions from "./models/features/marker/marker-options";
+import OverlayOptions from "./models/features/overlay/overlay-options";
+import PolygonAlterOptions from "./models/features/polygons/polygon-alter-options";
+import PolygonOptions from "./models/features/polygons/polygon-options";
+import PolylineOptions from "./models/features/polyline/polyline-options";
+import PopupOptions from "./models/features/popup/popup-options";
 
 export default class Map {
-    private markersList = {};
-    private polygonsList = {};
-    private circlesList = {};
-    private polylinesList = {};
-    private infoWindowList = {};
-    private overlayList = {};
-    private map: IMapFunctions;
-    private markerClusterer = {};
+    private markersList: any = {};
+    private polygonsList: any = {};
+    private circlesList: any = {};
+    private polylinesList: any = {};
+    private infoWindowList: any = {};
+    private overlayList: any = {};
+    private map: any = {};
+    private markerClusterer: any = {};
 
-    constructor() { /**/ }
+    constructor() {
+        /**/
+    }
 
     /**
      * Use this to initialize map
@@ -35,9 +43,14 @@ export default class Map {
      * @param {string} elementId default: 'inlog-map' [nullable]
      * @returns {Promisse<any>}
      */
-    public initialize(mapType: MapType, options: any, elementId: string = 'inlog-map'): Promise<any> {
-        this.map = mapType === MapType.Google ? new GoogleMaps() : new Leaflet();
-        return this.map.initialize(mapType, options, elementId);
+    public initialize(
+        mapType: MapType,
+        options: any,
+        elementId: string = "inlog-map"
+    ): Promise<any> {
+        this.map =
+            mapType === MapType.Google ? new GoogleMaps() : new Leaflet();
+        return this.map?.initialize(mapType, options, elementId);
     }
 
     /* GEOJson */
@@ -47,8 +60,12 @@ export default class Map {
      * @param {InlogMaps.GeoJsonOptions} options
      * @param {any} eventClick is a function callback on click [nullable]
      */
-    public loadGEOJson(data: object, options: GeoJsonOptions, eventClick?: any): void {
-        this.map.loadGEOJson(data, options, eventClick);
+    public loadGEOJson(
+        data: object,
+        options: GeoJsonOptions,
+        eventClick?: any
+    ): void {
+        this.map?.loadGEOJson(data, options, eventClick);
     }
 
     /* Markers */
@@ -58,21 +75,28 @@ export default class Map {
      * @param {InlogMaps.MarkerOptions} options
      * @param {any} eventClick is a function callback on click [nullable]
      */
-    public drawMarker(type: string, options: MarkerOptions, eventClick?: any): void {
-        const marker = this.map.drawMarker(options, eventClick);
+    public drawMarker(
+        type: string,
+        options: MarkerOptions,
+        eventClick?: any
+    ): void {
+        const marker = this.map?.drawMarker(options, eventClick);
 
         if (!this.markersList[type]) {
             this.markersList[type] = [];
         }
-        marker.type = 'simple';
+        marker.type = "simple";
         this.markersList[type].push(marker);
 
         if (options.addClusterer) {
             if (!this.markerClusterer[type]) {
-                this.addMarkerClusterer(type, new MarkerClustererConfig(true, 1, 10));
+                this.addMarkerClusterer(
+                    type,
+                    new MarkerClustererConfig(true, 1, 10)
+                );
             }
 
-            this.map.addMarkerOnClusterer(marker, this.markerClusterer[type]);
+            this.map?.addMarkerOnClusterer(marker, this.markerClusterer[type]);
         }
     }
 
@@ -82,13 +106,17 @@ export default class Map {
      * @param {InlogMaps.CircleMarkerOptions} options
      * @param {any} eventClick is a function callback on click [nullable]
      */
-    public drawCircleMarker(type: string, options: CircleMarkerOptions, eventClick?: any): void {
-        const marker = this.map.drawCircleMarker(options, eventClick);
+    public drawCircleMarker(
+        type: string,
+        options: CircleMarkerOptions,
+        eventClick?: any
+    ): void {
+        const marker = this.map?.drawCircleMarker(options, eventClick);
 
         if (!this.markersList[type]) {
             this.markersList[type] = [];
         }
-        marker.type = 'circle';
+        marker.type = "circle";
         this.markersList[type].push(marker);
     }
 
@@ -102,7 +130,7 @@ export default class Map {
         const markers = this.getMarkers(type, condition);
 
         if (markers && markers.length) {
-            this.map.toggleMarkers(markers, show, this.markerClusterer[type]);
+            this.map?.toggleMarkers(markers, show, this.markerClusterer[type]);
         }
     }
 
@@ -116,13 +144,19 @@ export default class Map {
             const markers = this.getMarkers(type, condition);
 
             // Hide markers with the condition
-            this.map.toggleMarkers(markers, false, this.markerClusterer[type]);
+            this.map?.toggleMarkers(markers, false, this.markerClusterer[type]);
 
             // Keep markers that doesn't have the condition
-            this.markersList[type] = this.markersList[type].filter((marker: any) => !condition(marker.object));
+            this.markersList[type] = this.markersList[type].filter(
+                (marker: any) => !condition(marker.object)
+            );
         } else {
             if (this.markersList[type]) {
-                this.map.toggleMarkers(this.markersList[type], false, this.markerClusterer[type]);
+                this.map?.toggleMarkers(
+                    this.markersList[type],
+                    false,
+                    this.markerClusterer[type]
+                );
             }
             this.markersList[type] = [];
         }
@@ -149,11 +183,15 @@ export default class Map {
      * @param {InlogMaps.MarkerAlterOptions} options
      * @param {any} condition alter markers with the condition [nullable]
      */
-    public alterMarkerOptions(type: string, options: MarkerAlterOptions, condition?: any): void {
+    public alterMarkerOptions(
+        type: string,
+        options: MarkerAlterOptions,
+        condition?: any
+    ): void {
         const markers = this.getMarkers(type, condition);
 
         if (markers && markers.length) {
-            this.map.alterMarkerOptions(markers, options);
+            this.map?.alterMarkerOptions(markers, options);
         }
     }
 
@@ -164,11 +202,20 @@ export default class Map {
      * @param {boolean} addTransition [nullable]
      * @param {any} condition [nullable]
      */
-    public alterMarkerPosition(type: string, position: number[], addTransition?: boolean, condition?: any): void {
+    public alterMarkerPosition(
+        type: string,
+        position: number[],
+        addTransition?: boolean,
+        condition?: any
+    ): void {
         const markers = this.getMarkers(type, condition);
 
         if (markers && markers.length) {
-            this.map.alterMarkerPosition(markers, position, addTransition);
+            this.map?.alterMarkerPosition(
+                markers,
+                position,
+                addTransition ?? false
+            );
         }
     }
 
@@ -178,15 +225,19 @@ export default class Map {
      * @param {any} condition [nullable]
      * @param {boolean} onlyMarkersOnMap default true
      */
-    public fitBoundsMarkers(type: string, condition?: any, onlyMarkersOnMap: boolean = true): void {
+    public fitBoundsMarkers(
+        type: string,
+        condition?: any,
+        onlyMarkersOnMap: boolean = true
+    ): void {
         let markers = this.getMarkers(type, condition);
 
         if (onlyMarkersOnMap) {
-            markers = markers.filter((x: any) => this.map.isMarkerOnMap(x));
+            markers = markers.filter((x: any) => this.map?.isMarkerOnMap(x));
         }
 
         if (markers && markers.length) {
-            this.map.fitBoundsPositions(markers);
+            this.map?.fitBoundsPositions(markers);
         }
     }
 
@@ -197,13 +248,15 @@ export default class Map {
      */
     public setCenterMarker(type: string, condition?: any): void {
         if (this.markersList[type] && condition) {
-            const marker = this.markersList[type].find((marker: any) => condition(marker.object));
+            const marker = this.markersList[type].find((marker: any) =>
+                condition(marker.object)
+            );
 
             // Center on the marker with the condition
-            this.map.setCenterMarker(marker);
+            this.map?.setCenterMarker(marker);
         } else {
             if (this.markersList[type] && this.markersList[type].length) {
-                this.map.setCenterMarker(this.markersList[type][0]);
+                this.map?.setCenterMarker(this.markersList[type][0]);
             }
         }
     }
@@ -226,14 +279,20 @@ export default class Map {
      * @param {any} condition
      * @returns {number}
      */
-    public countMarkers(type: string, onlyOnMap: boolean = true, condition?: any): number {
+    public countMarkers(
+        type: string,
+        onlyOnMap: boolean = true,
+        condition?: any
+    ): number {
         if (this.markerClusterer[type]) {
-            return this.map.countMarkersOnCluster(this.markerClusterer[type]);
+            return (
+                this.map?.countMarkersOnCluster(this.markerClusterer[type]) ?? 0
+            );
         }
 
         let markers = this.getMarkers(type, condition);
         if (onlyOnMap) {
-            markers = markers.filter((x: any) => this.map.isMarkerOnMap(x));
+            markers = markers.filter((x: any) => this.map?.isMarkerOnMap(x));
         }
 
         return markers.length;
@@ -246,10 +305,15 @@ export default class Map {
      * @param {any} eventFunction
      * @param {any} condition [nullable]
      */
-    public addMarkerEvent(type: string, event: MarkerEventType, eventFunction: any, condition?: any): void {
+    public addMarkerEvent(
+        type: string,
+        event: MarkerEventType,
+        eventFunction: any,
+        condition?: any
+    ): void {
         const markers = this.getMarkers(type, condition);
 
-        this.map.addMarkerEvent(markers, event, eventFunction);
+        this.map?.addMarkerEvent(markers, event, eventFunction);
     }
 
     /**
@@ -258,10 +322,14 @@ export default class Map {
      * @param {InlogMaps.MarkerEventType} event
      * @param {any} condition [nullable]
      */
-    public removeMarkerEvent(type: string, event: MarkerEventType, condition?: any): void {
+    public removeMarkerEvent(
+        type: string,
+        event: MarkerEventType,
+        condition?: any
+    ): void {
         const markers = this.getMarkers(type, condition);
 
-        this.map.removeMarkerEvent(markers, event);
+        this.map?.removeMarkerEvent(markers, event);
     }
 
     /* Marker Clusterer */
@@ -270,8 +338,11 @@ export default class Map {
      * @param {string} type same type of markers
      * @param {InlogMaps.MarkerClusterConfig} config
      */
-    public addMarkerClusterer(type: string, config: MarkerClustererConfig): void {
-        this.markerClusterer[type] = this.map.addMarkerClusterer(config);
+    public addMarkerClusterer(
+        type: string,
+        config: MarkerClustererConfig
+    ): void {
+        this.markerClusterer[type] = this.map?.addMarkerClusterer(config);
     }
 
     /**
@@ -279,9 +350,15 @@ export default class Map {
      * @param type same type of markers
      * @param {InlogMaps.MarkerClusterConfig} config
      */
-    public alterMarkerClustererConfig(type: string, config: MarkerClustererConfig): void {
+    public alterMarkerClustererConfig(
+        type: string,
+        config: MarkerClustererConfig
+    ): void {
         if (this.markerClusterer[type]) {
-            this.map.alterMarkerClustererConfig(this.markerClusterer[type], config);
+            this.map?.alterMarkerClustererConfig(
+                this.markerClusterer[type],
+                config
+            );
         }
     }
 
@@ -291,7 +368,7 @@ export default class Map {
      */
     public refreshClusterer(type: string): void {
         if (this.markerClusterer[type]) {
-            this.map.refreshClusterer(this.markerClusterer[type]);
+            this.map?.refreshClusterer(this.markerClusterer[type]);
         }
     }
 
@@ -301,7 +378,7 @@ export default class Map {
      */
     public clearMarkersClusterer(type: string): void {
         if (this.markerClusterer[type]) {
-            this.map.clearMarkersClusterer(this.markerClusterer[type]);
+            this.map?.clearMarkersClusterer(this.markerClusterer[type]);
         }
     }
 
@@ -312,8 +389,12 @@ export default class Map {
      * @param {InlogMaps.PolygonOptions} options
      * @param {any} eventClick [nullable]
      */
-    public drawPolygon(type: string, options: PolygonOptions, eventClick?: any): void {
-        const polygon = this.map.drawPolygon(options, eventClick);
+    public drawPolygon(
+        type: string,
+        options: PolygonOptions,
+        eventClick?: any
+    ): void {
+        const polygon = this.map?.drawPolygon(options, eventClick);
 
         if (!this.polygonsList[type]) {
             this.polygonsList[type] = [];
@@ -331,7 +412,7 @@ export default class Map {
         const polygons = this.getPolygons(type, condition);
 
         if (polygons && polygons.length) {
-            this.map.togglePolygons(polygons, show);
+            this.map?.togglePolygons(polygons, show);
         }
     }
 
@@ -345,13 +426,15 @@ export default class Map {
             const polygons = this.getPolygons(type, condition);
 
             // Hide markers with the condition
-            this.map.togglePolygons(polygons, false);
+            this.map?.togglePolygons(polygons, false);
 
             // Keep markers that doesn't have the condition
-            this.polygonsList[type] = this.polygonsList[type].filter((polygon: any) => !condition(polygon.object));
+            this.polygonsList[type] = this.polygonsList[type].filter(
+                (polygon: any) => !condition(polygon.object)
+            );
         } else {
             if (this.polygonsList[type]) {
-                this.map.togglePolygons(this.polygonsList[type], false);
+                this.map?.togglePolygons(this.polygonsList[type], false);
             }
             this.polygonsList[type] = [];
         }
@@ -378,11 +461,15 @@ export default class Map {
      * @param {InlogMaps.PolygonAlterOptions} options
      * @param {any} condition alter polygon with the condition [nullable]
      */
-    public alterPolygonOptions(type: string, options: PolygonAlterOptions, condition?: any): void {
+    public alterPolygonOptions(
+        type: string,
+        options: PolygonAlterOptions,
+        condition?: any
+    ): void {
         const polygons = this.getPolygons(type, condition);
 
         if (polygons && polygons.length) {
-            this.map.alterPolygonOptions(polygons, options);
+            this.map?.alterPolygonOptions(polygons, options);
         }
     }
 
@@ -392,11 +479,12 @@ export default class Map {
      * @param {any} condition fit polygon bounds with the condition [nullable]
      */
     public fitBoundsPolygons(type: string, condition?: any): void {
-        const polygons = this.getPolygons(type, condition)
-            .filter((polygon: any) => this.map.isPolygonOnMap(polygon));
+        const polygons = this.getPolygons(type, condition).filter(
+            (polygon: any) => this.map?.isPolygonOnMap(polygon)
+        );
 
         if (polygons && polygons.length) {
-            this.map.fitBoundsPolygons(polygons);
+            this.map?.fitBoundsPolygons(polygons);
         }
     }
 
@@ -406,11 +494,12 @@ export default class Map {
      * @param {any} condition fit polygon bounds with the condition [nullable]
      */
     public setCenterPolygons(type: string, condition?: any): void {
-        const polygons = this.getPolygons(type, condition)
-            .filter((polygon: any) => this.map.isPolygonOnMap(polygon));
+        const polygons = this.getPolygons(type, condition).filter(
+            (polygon: any) => this.map?.isPolygonOnMap(polygon)
+        );
 
         if (polygons && polygons.length) {
-            this.map.setCenterPolygons(polygons);
+            this.map?.setCenterPolygons(polygons);
         }
     }
 
@@ -431,11 +520,14 @@ export default class Map {
      * @param {any} condition
      * @returns {number[]}
      */
-    public getPolygonPath(type: string, condition?: any): number[][] {
+    public getPolygonPath(
+        type: string,
+        condition?: any
+    ): number[][] | undefined {
         const polygon = this.getPolygons(type, condition);
 
         if (polygon && polygon.length) {
-            return this.map.getPolygonPath(polygon[0]);
+            return this.map?.getPolygonPath(polygon[0]) ?? [];
         }
     }
 
@@ -446,10 +538,15 @@ export default class Map {
      * @param {any} eventFunction
      * @param {any} condition [nullable]
      */
-    public addPolygonEvent(type: string, event: PolygonEventType, eventFunction: any, condition?: any): void {
+    public addPolygonEvent(
+        type: string,
+        event: PolygonEventType,
+        eventFunction: any,
+        condition?: any
+    ): void {
         const polygons = this.getPolygons(type, condition);
 
-        this.map.addPolygonEvent(polygons, event, eventFunction);
+        this.map?.addPolygonEvent(polygons, event, eventFunction);
     }
 
     /**
@@ -458,10 +555,14 @@ export default class Map {
      * @param {InlogMaps.PolygonEventType} event
      * @param {any} condition [nullable]
      */
-    public removePolygonEvent(type: string, event: PolygonEventType, condition?: any): void {
+    public removePolygonEvent(
+        type: string,
+        event: PolygonEventType,
+        condition?: any
+    ): void {
         const polygons = this.getPolygons(type, condition);
 
-        this.map.removePolygonEvent(polygons, event);
+        this.map?.removePolygonEvent(polygons, event);
     }
 
     /* Circles */
@@ -471,8 +572,12 @@ export default class Map {
      * @param {InlogMaps.CircleOptions} options
      * @param {any} eventClick [nullable]
      */
-    public drawCircle(type: string, options: CircleOptions, eventClick?: any): void {
-        const circle = this.map.drawCircle(options, eventClick);
+    public drawCircle(
+        type: string,
+        options: CircleOptions,
+        eventClick?: any
+    ): void {
+        const circle = this.map?.drawCircle(options, eventClick);
 
         if (!this.circlesList[type]) {
             this.circlesList[type] = [];
@@ -490,7 +595,7 @@ export default class Map {
         const circles = this.getCircles(type, condition);
 
         if (circles && circles.length) {
-            this.map.toggleCircles(circles, show);
+            this.map?.toggleCircles(circles, show);
         }
     }
 
@@ -504,13 +609,15 @@ export default class Map {
             const circles = this.getCircles(type, condition);
 
             // Hide circles with the condition
-            this.map.toggleCircles(circles, false);
+            this.map?.toggleCircles(circles, false);
 
             // Keep circles that doesn't have the condition
-            this.circlesList[type] = this.circlesList[type].filter((circle: any) => !condition(circle.object));
+            this.circlesList[type] = this.circlesList[type].filter(
+                (circle: any) => !condition(circle.object)
+            );
         } else {
             if (this.circlesList[type]) {
-                this.map.toggleCircles(this.circlesList[type], false);
+                this.map?.toggleCircles(this.circlesList[type], false);
             }
             this.circlesList[type] = [];
         }
@@ -537,11 +644,15 @@ export default class Map {
      * @param {InlogMaps.CircleAlterOptions} options
      * @param {any} condition alter circle with the condition [nullable]
      */
-    public alterCircleOptions(type: string, options: CircleAlterOptions, condition?: any): void {
+    public alterCircleOptions(
+        type: string,
+        options: CircleAlterOptions,
+        condition?: any
+    ): void {
         const circles = this.getCircles(type, condition);
 
         if (circles && circles.length) {
-            this.map.alterCircleOptions(circles, options);
+            this.map?.alterCircleOptions(circles, options);
         }
     }
 
@@ -551,11 +662,12 @@ export default class Map {
      * @param {any} condition fit polygon bounds with the condition [nullable]
      */
     public fitBoundsCircles(type: string, condition?: any): void {
-        const circles = this.getCircles(type, condition)
-            .filter((circle: any) => this.map.isCircleOnMap(circle));
+        const circles = this.getCircles(type, condition).filter((circle: any) =>
+            this.map?.isCircleOnMap(circle)
+        );
 
         if (circles && circles.length) {
-            this.map.fitBoundsCircles(circles);
+            this.map?.fitBoundsCircles(circles);
         }
     }
 
@@ -576,11 +688,11 @@ export default class Map {
      * @param {any} condition [nullable]
      * @returns {number[]}
      */
-    public getCircleCenter(type: string, condition?: any): number[] {
+    public getCircleCenter(type: string, condition?: any): number[] | null {
         const circles = this.getCircles(type, condition);
 
         if (circles && circles.length) {
-            return this.map.getCircleCenter(circles[0]);
+            return this.map?.getCircleCenter(circles[0]);
         }
 
         return null;
@@ -592,11 +704,11 @@ export default class Map {
      * @param {any} condition [nullable]
      * @returns {number}
      */
-    public getCircleRadius(type: string, condition?: any): number {
+    public getCircleRadius(type: string, condition?: any): number | null {
         const circles = this.getCircles(type, condition);
 
         if (circles && circles.length) {
-            return this.map.getCircleRadius(circles[0]);
+            return this.map?.getCircleRadius(circles[0]);
         }
 
         return null;
@@ -609,10 +721,15 @@ export default class Map {
      * @param {any} eventFunction
      * @param {any} condition [nullable]
      */
-    public addCircleEvent(type: string, event: CircleEventType, eventFunction: any, condition?: any): void {
+    public addCircleEvent(
+        type: string,
+        event: CircleEventType,
+        eventFunction: any,
+        condition?: any
+    ): void {
         const circles = this.getCircles(type, condition);
 
-        this.map.addCircleEvent(circles, event, eventFunction);
+        this.map?.addCircleEvent(circles, event, eventFunction);
     }
 
     /**
@@ -621,10 +738,14 @@ export default class Map {
      * @param {InlogMaps.CircleEventType} event
      * @param {any} condition [nullable]
      */
-    public removeCircleEvent(type: string, event: CircleEventType, condition?: any): void {
+    public removeCircleEvent(
+        type: string,
+        event: CircleEventType,
+        condition?: any
+    ): void {
         const circles = this.getCircles(type, condition);
 
-        this.map.removeCircleEvent(circles, event);
+        this.map?.removeCircleEvent(circles, event);
     }
 
     /* Polylines */
@@ -634,8 +755,12 @@ export default class Map {
      * @param {InlogMaps.PolylineOptions} options
      * @param {any} eventClick [nullable]
      */
-    public drawPolyline(type: string, options: PolylineOptions, eventClick?: any): void {
-        const polyline = this.map.drawPolyline(options, eventClick);
+    public drawPolyline(
+        type: string,
+        options: PolylineOptions,
+        eventClick?: any
+    ): void {
+        const polyline = this.map?.drawPolyline(options, eventClick);
 
         if (!this.polylinesList[type]) {
             this.polylinesList[type] = [];
@@ -648,8 +773,15 @@ export default class Map {
      * @param {string} type
      * @param {InlogMaps.PolylineOptions} options
      */
-    public drawPolylineWithNavigation(type: string, options: PolylineOptions, eventClick?: any): void {
-        const polyline = this.map.drawPolylineWithNavigation(options, eventClick);
+    public drawPolylineWithNavigation(
+        type: string,
+        options: PolylineOptions,
+        eventClick?: any
+    ): void {
+        const polyline = this.map?.drawPolylineWithNavigation(
+            options,
+            eventClick
+        );
 
         if (!this.polylinesList[type]) {
             this.polylinesList[type] = [];
@@ -667,7 +799,7 @@ export default class Map {
         const polyline = this.getPolylines(type, condition);
 
         if (polyline && polyline.length) {
-            this.map.togglePolylines(polyline, show);
+            this.map?.togglePolylines(polyline, show);
         }
     }
 
@@ -681,13 +813,15 @@ export default class Map {
             const polylines = this.getPolylines(type, condition);
 
             // Hide markers with the condition
-            this.map.togglePolylines(polylines, false);
+            this.map?.togglePolylines(polylines, false);
 
             // Keep markers that doesn't have the condition
-            this.polylinesList[type] = this.polylinesList[type].filter((polyline: any) => !condition(polyline.object));
+            this.polylinesList[type] = this.polylinesList[type].filter(
+                (polyline: any) => !condition(polyline.object)
+            );
         } else {
             if (this.polylinesList[type]) {
-                this.map.togglePolylines(this.polylinesList[type], false);
+                this.map?.togglePolylines(this.polylinesList[type], false);
             }
             this.polylinesList[type] = [];
         }
@@ -714,11 +848,15 @@ export default class Map {
      * @param {InlogMaps.PolylineOptions} options
      * @param {any} condition alter polyline with the condition [nullable]
      */
-    public alterPolylineOptions(type: string, options: PolylineOptions, condition?: any): void {
+    public alterPolylineOptions(
+        type: string,
+        options: PolylineOptions,
+        condition?: any
+    ): void {
         const polyline = this.getPolylines(type, condition);
 
         if (polyline && polyline.length) {
-            this.map.alterPolylineOptions(polyline, options);
+            this.map?.alterPolylineOptions(polyline, options);
         }
     }
 
@@ -728,11 +866,12 @@ export default class Map {
      * @param {any} condition [nullable]
      */
     public fitBoundsPolylines(type: string, condition?: any): void {
-        const polylines = this.getPolylines(type, condition)
-            .filter((polyline: any) => this.map.isPolylineOnMap(polyline));
+        const polylines = this.getPolylines(type, condition).filter(
+            (polyline: any) => this.map?.isPolylineOnMap(polyline)
+        );
 
         if (polylines && polylines.length) {
-            this.map.fitBoundsPolylines(polylines);
+            this.map?.fitBoundsPolylines(polylines);
         }
     }
 
@@ -753,11 +892,15 @@ export default class Map {
      * @param {number[]} position
      * @param {any} condition [nullable]
      */
-    public addPolylinePath(type: string, position: number[], condition?: any): void {
+    public addPolylinePath(
+        type: string,
+        position: number[],
+        condition?: any
+    ): void {
         const polyline = this.getPolylines(type, condition);
 
         if (polyline && polyline.length) {
-            this.map.addPolylinePath(polyline, position);
+            this.map?.addPolylinePath(polyline, position);
         } else {
             const options = new PolylineOptions();
             options.addToMap = true;
@@ -772,7 +915,10 @@ export default class Map {
      * @param {any} condition
      * @returns {number[]}
      */
-    public getPolylinePath(type: string, condition?: any): number[][] {
+    public getPolylinePath(
+        type: string,
+        condition?: any
+    ): number[][] | undefined {
         const polyline = this.getPolylines(type, condition);
 
         if (polyline && polyline.length) {
@@ -784,7 +930,7 @@ export default class Map {
      * Use this function to clear polyline selected from the currentMap
      */
     public removePolylineHighlight(): void {
-        this.map.removePolylineHighlight();
+        this.map?.removePolylineHighlight();
     }
 
     /**
@@ -794,10 +940,15 @@ export default class Map {
      * @param {any} eventFunction
      * @param {any} condition [nullable]
      */
-    public addPolylineEvent(type: string, event: PolylineEventType, eventFunction: any, condition?: any): void {
+    public addPolylineEvent(
+        type: string,
+        event: PolylineEventType,
+        eventFunction: any,
+        condition?: any
+    ): void {
         const polyline = this.getPolylines(type, condition);
 
-        this.map.addPolylineEvent(polyline, event, eventFunction);
+        this.map?.addPolylineEvent(polyline, event, eventFunction);
     }
 
     /**
@@ -806,10 +957,14 @@ export default class Map {
      * @param {InlogMaps.PolylineEventType} event
      * @param {any} condition [nullable]
      */
-    public removePolylineEvent(type: string, event: PolylineEventType, condition?: any): void {
+    public removePolylineEvent(
+        type: string,
+        event: PolylineEventType,
+        condition?: any
+    ): void {
         const polyline = this.getPolylines(type, condition);
 
-        this.map.removePolylineEvent(polyline, event);
+        this.map?.removePolylineEvent(polyline, event);
     }
 
     /**
@@ -818,11 +973,15 @@ export default class Map {
      * @param {number} initialIndex
      * @param {any} condition [nullable]
      */
-    public setIndexPolylineHighlight(type: string, initialIndex: number, condition?: any) {
+    public setIndexPolylineHighlight(
+        type: string,
+        initialIndex: number,
+        condition?: any
+    ) {
         const polylines = this.getPolylines(type, condition);
 
         if (polylines && polylines.length) {
-            this.map.setIndexPolylineHighlight(polylines[0], initialIndex);
+            this.map?.setIndexPolylineHighlight(polylines[0], initialIndex);
         }
     }
 
@@ -832,11 +991,11 @@ export default class Map {
      * @param {any} condition
      * @returns {object}
      */
-    public getObjectPolyline(type: string, condition?: any): object {
+    public getObjectPolyline(type: string, condition?: any): object | null {
         const polylines = this.getPolylines(type, condition);
 
         if (polylines && polylines.length) {
-            return this.map.getObjectPolyline(polylines[0]);
+            return this.map?.getObjectPolyline(polylines[0]);
         } else {
             return null;
         }
@@ -847,7 +1006,7 @@ export default class Map {
      * @returns {object}
      */
     public getObjectPolylineHighlight(): any {
-        return this.map.getObjectPolylineHighlight();
+        return this.map?.getObjectPolylineHighlight();
     }
 
     /**
@@ -855,8 +1014,11 @@ export default class Map {
      * @param {InlogMaps.PolylineEventType} event
      * @param {any} eventFunction
      */
-    public addPolylineHighlightEvent(event: PolylineEventType, eventFunction: any) {
-        this.map.addPolylineHighlightEvent(event, eventFunction);
+    public addPolylineHighlightEvent(
+        event: PolylineEventType,
+        eventFunction: any
+    ) {
+        this.map?.addPolylineHighlightEvent(event, eventFunction);
     }
 
     /**
@@ -864,7 +1026,7 @@ export default class Map {
      * @returns {number[]} returns an array with initial index and final index
      */
     public getPolylineHighlightIndex(): number[] {
-        return this.map.getPolylineHighlightIndex();
+        return this.map?.getPolylineHighlightIndex();
     }
 
     /* Info Windows */
@@ -876,15 +1038,22 @@ export default class Map {
     public drawPopup(type: string, options: PopupOptions): void {
         let marker: any = null;
         if (options.marker) {
-            const markers = this.getMarkers(options.marker, options.conditionMarker);
+            const markers = this.getMarkers(
+                options.marker,
+                options.conditionMarker
+            );
             marker = markers[0];
         }
 
         let popup: any;
         if (this.infoWindowList[type]) {
-            popup = this.map.alterPopup(this.infoWindowList[type], options, marker);
+            popup = this.map?.alterPopup(
+                this.infoWindowList[type],
+                options,
+                marker
+            );
         } else {
-            popup = this.map.drawPopup(options, marker);
+            popup = this.map?.drawPopup(options, marker);
         }
 
         this.infoWindowList[type] = popup;
@@ -904,7 +1073,11 @@ export default class Map {
         }
 
         if (popups) {
-            this.map.alterPopupContent(popups, options, markers ? markers[0] : null);
+            this.map?.alterPopupContent(
+                popups,
+                options,
+                markers ? markers[0] : null
+            );
         }
     }
 
@@ -914,7 +1087,9 @@ export default class Map {
      * @returns {object}
      */
     public getObjectOpenPopup(type: string): object {
-        return this.infoWindowList[type] ? this.infoWindowList[type].object : null;
+        return this.infoWindowList[type]
+            ? this.infoWindowList[type].object
+            : null;
     }
 
     /**
@@ -923,7 +1098,7 @@ export default class Map {
      */
     public closePopup(type: string): void {
         if (this.infoWindowList[type]) {
-            this.map.closePopup(this.infoWindowList[type])
+            this.map?.closePopup(this.infoWindowList[type]);
         }
     }
 
@@ -944,7 +1119,7 @@ export default class Map {
      * Resize de map based on html size
      */
     public resizeMap(): void {
-        this.map.resizeMap();
+        this.map?.resizeMap();
     }
 
     /**
@@ -953,7 +1128,7 @@ export default class Map {
      * @param eventFunction function callback
      */
     public addEventMap(eventType: MapEventType, eventFunction: any): void {
-        this.map.addEventMap(eventType, eventFunction);
+        this.map?.addEventMap(eventType, eventFunction);
     }
 
     /**
@@ -961,7 +1136,7 @@ export default class Map {
      * @param {InlogMaps.MapEventType} eventType
      */
     public removeEventMap(eventType: MapEventType): void {
-        this.map.removeEventMap(eventType);
+        this.map?.removeEventMap(eventType);
     }
 
     /**
@@ -969,7 +1144,7 @@ export default class Map {
      * @returns {number}
      */
     public getZoom(): number {
-        return this.map.getZoom();
+        return this.map?.getZoom();
     }
 
     /**
@@ -977,7 +1152,16 @@ export default class Map {
      * @param {number} zoom
      */
     public setZoom(zoom: number): void {
-        this.map.setZoom(zoom);
+        this.map?.setZoom(zoom);
+    }
+
+    /**
+     * Takes a screenshot with all the context included in it (visible area)
+     * Returns the image as a base64 string or null
+     * @returns {Promise<string | null>}
+     */
+    public async takeMapScreenshot(): Promise<string> {
+        return await this.map?.takeMapScreenshot();
     }
 
     /**
@@ -985,7 +1169,7 @@ export default class Map {
      * @returns {number[]}
      */
     public getCenter(): number[] {
-        return this.map.getCenter();
+        return this.map?.getCenter();
     }
 
     /**
@@ -993,7 +1177,7 @@ export default class Map {
      * @param {number[]} position
      */
     public setCenter(position: number[]): void {
-        this.map.setCenter(position);
+        this.map?.setCenter(position);
     }
 
     /**
@@ -1003,7 +1187,7 @@ export default class Map {
      * @returns {number[]}
      */
     public pixelsToLatLng(offsetx: number, offsety: number): number[] {
-        return this.map.pixelsToLatLng(offsetx, offsety);
+        return this.map?.pixelsToLatLng(offsetx, offsety);
     }
 
     /**
@@ -1012,19 +1196,23 @@ export default class Map {
      * @param {any} condition [nullable]
      */
     public fitBoundsElements(type: string, condition?: any): void {
-        const markers = this.getMarkers(type, condition)
-            .filter((marker: any) => this.map.isMarkerOnMap(marker));
+        const markers = this.getMarkers(type, condition).filter((marker: any) =>
+            this.map?.isMarkerOnMap(marker)
+        );
 
-        const circles = this.getCircles(type, condition)
-            .filter((circle: any) => this.map.isCircleOnMap(circle));
+        const circles = this.getCircles(type, condition).filter((circle: any) =>
+            this.map?.isCircleOnMap(circle)
+        );
 
-        const polygons = this.getPolygons(type, condition)
-            .filter((polygon: any) => this.map.isPolygonOnMap(polygon));
+        const polygons = this.getPolygons(type, condition).filter(
+            (polygon: any) => this.map?.isPolygonOnMap(polygon)
+        );
 
-        const polylines = this.getPolylines(type, condition)
-            .filter((polyline: any) => this.map.isPolylineOnMap(polyline));
+        const polylines = this.getPolylines(type, condition).filter(
+            (polyline: any) => this.map?.isPolylineOnMap(polyline)
+        );
 
-        this.map.fitBoundsElements(markers, circles, polygons, polylines);
+        this.map?.fitBoundsElements(markers, circles, polygons, polylines);
     }
 
     /* Overlay */
@@ -1037,13 +1225,16 @@ export default class Map {
         let overlay = null;
 
         if (options.polygon) {
-            const polygons = this.getPolygons(options.polygon, options.conditionPolygon);
+            const polygons = this.getPolygons(
+                options.polygon,
+                options.conditionPolygon
+            );
 
             if (polygons && polygons.length) {
-                overlay = this.map.drawOverlay(options, polygons);
+                overlay = this.map?.drawOverlay(options, polygons);
             }
         } else {
-            overlay = this.map.drawOverlay(options);
+            overlay = this.map?.drawOverlay(options);
         }
 
         if (overlay != null) {
@@ -1064,7 +1255,7 @@ export default class Map {
         const overlays = this.getOverlays(type, condition);
 
         if (overlays && overlays.length) {
-            this.map.toggleOverlay(overlays, show);
+            this.map?.toggleOverlay(overlays, show);
         }
     }
 
@@ -1078,13 +1269,15 @@ export default class Map {
             const overlays = this.getOverlays(type, condition);
 
             // Hide markers with the condition
-            this.map.toggleOverlay(overlays, false);
+            this.map?.toggleOverlay(overlays, false);
 
             // Keep markers that doesn't have the condition
-            this.overlayList[type] = this.overlayList[type].filter((overlay: any) => !condition(overlay.object));
+            this.overlayList[type] = this.overlayList[type].filter(
+                (overlay: any) => !condition(overlay.object)
+            );
         } else {
             if (this.overlayList[type]) {
-                this.map.toggleOverlay(this.overlayList[type], false);
+                this.map?.toggleOverlay(this.overlayList[type], false);
             }
             this.overlayList[type] = [];
         }
@@ -1110,7 +1303,9 @@ export default class Map {
         const markers = this.markersList[type];
 
         if (markers && markers.length) {
-            return condition ? markers.filter((marker: any) => condition(marker.object)) : markers;
+            return condition
+                ? markers.filter((marker: any) => condition(marker.object))
+                : markers;
         } else return [];
     }
 
@@ -1118,7 +1313,9 @@ export default class Map {
         const polygons = this.polygonsList[type];
 
         if (polygons && polygons.length) {
-            return condition ? polygons.filter((polygon: any) => condition(polygon.object)) : polygons;
+            return condition
+                ? polygons.filter((polygon: any) => condition(polygon.object))
+                : polygons;
         } else return [];
     }
 
@@ -1126,7 +1323,9 @@ export default class Map {
         const circles = this.circlesList[type];
 
         if (circles && circles.length) {
-            return condition ? circles.filter((circle: any) => condition(circle.object)) : circles;
+            return condition
+                ? circles.filter((circle: any) => condition(circle.object))
+                : circles;
         } else return [];
     }
 
@@ -1134,7 +1333,11 @@ export default class Map {
         const polylines = this.polylinesList[type];
 
         if (polylines && polylines.length) {
-            return condition ? polylines.filter((polyline: any) => condition(polyline.object)) : polylines;
+            return condition
+                ? polylines.filter((polyline: any) =>
+                      condition(polyline.object)
+                  )
+                : polylines;
         } else return [];
     }
 
@@ -1142,7 +1345,9 @@ export default class Map {
         const overlays = this.overlayList[type];
 
         if (overlays && overlays.length) {
-            return condition ? overlays.filter((overlay: any) => condition(overlay.object)) : overlays;
+            return condition
+                ? overlays.filter((overlay: any) => condition(overlay.object))
+                : overlays;
         } else return [];
     }
 }

@@ -1,11 +1,11 @@
 export default class OverlayOptions {
-    public position: number[];
+    public position?: number[];
     public divElement: HTMLDivElement;
     public addToMap: boolean;
     public object: any;
-    public polygon: string;
-    public conditionPolygon: any;
-    public draggable: boolean;
+    public polygon?: string;
+    public conditionPolygon?: any;
+    public draggable?: boolean;
     public afterEventDragHandler: any;
 
     constructor(divElement: HTMLDivElement, addToMap: boolean, position?: number[], object?: any,

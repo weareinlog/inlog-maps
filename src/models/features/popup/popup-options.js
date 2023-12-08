@@ -1,12 +1,13 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 var PopupOptions = /** @class */ (function () {
-    function PopupOptions(latlng, content, marker) {
+    function PopupOptions(latlng, content, marker, conditionMarker, notCalledByMap, object) {
         this.latlng = latlng;
         this.content = content;
         this.marker = marker;
+        this.conditionMarker = conditionMarker;
+        this.notCalledByMap = notCalledByMap;
+        this.object = object;
     }
     return PopupOptions;
 }());
-exports.default = PopupOptions;
+export default PopupOptions;
 //# sourceMappingURL=popup-options.js.map
