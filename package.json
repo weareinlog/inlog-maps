@@ -7,7 +7,7 @@
     "scripts": {
         "clean": "shx rm -rf _bundles lib lib-esm",
         "build": "npm run clean && tsc && tsc --outDir lib-esm && webpack",
-        "docs": "doxdox lib/map.js --layout markdown --output DOCUMENTATION.md",
+        "docs": "doxdox lib-esm/map.js --layout markdown --output DOCUMENTATION.md",
         "start": "webpack-dev-server --mode development",
         "test": "mocha --reporter spec"
     },
