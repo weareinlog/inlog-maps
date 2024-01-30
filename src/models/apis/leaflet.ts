@@ -131,11 +131,15 @@ export default class Leaflet implements IMapFunctions {
             this.leafletPolygons = new LeafletPolygons(map, leaflet);
             this.leafletCircles = new LeafletCircles(map, leaflet);
             this.leafletPopups = new LeafletPopups(map, leaflet);
-            this.leafletMap = new LeafletMap(map, leaflet);
             this.leafletPolylines = new LeafletPolylines(
                 map,
                 leaflet,
                 this.leafletPopups
+            );
+            this.leafletMap = new LeafletMap(
+                map,
+                leaflet,
+                this.leafletPolylines
             );
             this.leafletOverlays = new LeafletOverlays(
                 map,

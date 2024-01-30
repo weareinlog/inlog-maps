@@ -19,7 +19,6 @@ export default class LeafletPolylines {
     private multiSelection: boolean | null = false;
     private navigateByPoint: boolean = false;
     private navigationOptions: NavigationOptions | any = {};
-
     private editModeBlockingMapClick: boolean;
 
     constructor(map: any, leaflet: any, leafletPopup: LeafletPopup) {
@@ -69,11 +68,13 @@ export default class LeafletPolylines {
         if (eventClick) {
             polyline.on("click", (event: any) => {
                 self.leaflet.DomEvent.stopPropagation(event);
-                const param = new EventReturn([
-                    event.latlng.lat,
-                    event.latlng.lng,
-                ]);
-                eventClick(param, event.target.object);
+                if (!this.getEditModeBlockingMapClick()) {
+                    const param = new EventReturn([
+                        event.latlng.lat,
+                        event.latlng.lng,
+                    ]);
+                    eventClick(param, event.target.object);
+                }
             });
 
             polyline.on(
@@ -84,11 +85,13 @@ export default class LeafletPolylines {
                     target: { object: any };
                 }) => {
                     event.cancel();
-                    const param = new EventReturn([
-                        event.latlng.lat,
-                        event.latlng.lng,
-                    ]);
-                    eventClick(param, event.target.object);
+                    if (!this.getEditModeBlockingMapClick()) {
+                        const param = new EventReturn([
+                            event.latlng.lat,
+                            event.latlng.lng,
+                        ]);
+                        eventClick(param, event.target.object);
+                    }
                 }
             );
         }
@@ -295,9 +298,22 @@ export default class LeafletPolylines {
         return this.map.hasLayer(polyline);
     }
 
+    public getEditModeBlockingMapClick() {
+        return this.editModeBlockingMapClick;
+    }
+
+    public setEditModeBlockingMapClick(newState: boolean) {
+        this.editModeBlockingMapClick = newState;
+    }
+
+    // TODO: Fazer uma função tipo getEditModelBlockingMap
+    // Fazer o leaflet-map ter acesso a essa função.
+    // Antes de dar o click do evento, perguntar se pode.
+    // Se puder deixar ou não executa o click.
+
     public addPolylinePath(polylines: any, position: number[]) {
         // TODO: Só adiciona linha se não estiver editando no mesmo momento.
-        if (!this.editModeBlockingMapClick) {
+        if (!this.getEditModeBlockingMapClick) {
             polylines.forEach((polyline: any) => {
                 const path = polyline.getLatLngs();
 
@@ -763,8 +779,9 @@ export default class LeafletPolylines {
     private addPolylineEventMove(polyline: any, eventFunction: any) {
         const self = this;
         polyline.on("editable:vertex:dragstart", (eventStart: any) => {
+            console.log("DRAG START");
+            this.setEditModeBlockingMapClick(true)
             // TODO: Se estiver editando um trecho na polyline, não libera para novos trechos. (duplo clique)
-            this.editModeBlockingMapClick = true;
             const lastPosition = new EventReturn([
                 eventStart.vertex.latlng.lat,
                 eventStart.vertex.latlng.lng,
@@ -791,7 +808,7 @@ export default class LeafletPolylines {
                 );
                 polyline.off("editable:vertex:dragend");
                 setTimeout(() => {
-                    this.editModeBlockingMapClick = false;
+                    this.setEditModeBlockingMapClick(false);
                 }, 300);
             });
         });

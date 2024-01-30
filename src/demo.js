@@ -563,7 +563,21 @@ function removePolylineHighlight() {
 }
 
 function updatePolyline(event) {
-    currentMap.addPolylinePath("polyline", event.latlng);
+    console.log("FUNÇÂO QUE ALTERA AS COISAS")
+    const options = new inlogMaps.PolylineOptions([event.latlng])
+    options.color = '#009ACA'
+    options.weight = 5
+    options.editable = true
+    options.addToMap = true
+    options.fitBounds = false
+    options.draggable = true
+
+    currentMap?.drawPolyline('polyline', options, event)
+    currentMap.AddEventPolyline(map, uuidMap, () => {
+        handleSaveHistoric(uuidMap, 'polyline')
+        handleUpdateShape(uuidMap, 'polyline')
+      })
+    // currentMap.addPolylinePath("polyline", event.latlng);
 }
 
 function drawPolyline() {
