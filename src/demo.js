@@ -26,10 +26,10 @@ const leafletLibParams = {
 const inlogMaps = window.InlogMaps;
 const currentMap = new inlogMaps.Map();
 
+// currentMap;
+// .initialize(inlogMaps.MapType.Google, googleMapsLibParams)
 currentMap
-    .initialize(inlogMaps.MapType.Google, googleMapsLibParams)
-    // currentMap
-    //     .initialize(inlogMaps.MapType.Leaflet, leafletLibParams)
+    .initialize(inlogMaps.MapType.Leaflet, leafletLibParams)
     .then(() => console.log("map initialized!"));
 
 let simpleMarkerShow = null;

@@ -14,7 +14,9 @@ body {
     height: 100%;
 }
 
-*, *:before, *:after {
+*,
+*:before,
+*:after {
     margin: 0;
     padding: 0;
     border: none;
@@ -57,7 +59,7 @@ input[type="submit"] {
     width: 15rem;
 }
 
-.infowindow-default div.section .infowindow-table{
+.infowindow-default div.section .infowindow-table {
     margin: 1rem;
     line-height: 1.5rem;
 }
