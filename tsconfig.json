@@ -15,8 +15,10 @@
         "resolveJsonModule": true,
         "isolatedModules": true,
         "noEmit": false,
-        "jsx": "react-jsx"
+        "jsx": "react-jsx",
+        "outDir": "lib",
+        "declaration": true
     },
-    "exclude": ["src/demo.js", "src/index.html"],
+    "exclude": ["src/demo.js", "src/index.html", "node_modules"],
     "include": ["src"]
 }
