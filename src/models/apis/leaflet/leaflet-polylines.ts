@@ -306,13 +306,7 @@ export default class LeafletPolylines {
         this.editModeBlockingMapClick = newState;
     }
 
-    // TODO: Fazer uma função tipo getEditModelBlockingMap
-    // Fazer o leaflet-map ter acesso a essa função.
-    // Antes de dar o click do evento, perguntar se pode.
-    // Se puder deixar ou não executa o click.
-
     public addPolylinePath(polylines: any, position: number[]) {
-        // TODO: Só adiciona linha se não estiver editando no mesmo momento.
         if (!this.getEditModeBlockingMapClick) {
             polylines.forEach((polyline: any) => {
                 const path = polyline.getLatLngs();
@@ -780,7 +774,6 @@ export default class LeafletPolylines {
         const self = this;
         polyline.on("editable:vertex:dragstart", (eventStart: any) => {
             this.setEditModeBlockingMapClick(true);
-            // TODO: Se estiver editando um trecho na polyline, não libera para novos trechos. (duplo clique)
             const lastPosition = new EventReturn([
                 eventStart.vertex.latlng.lat,
                 eventStart.vertex.latlng.lng,
