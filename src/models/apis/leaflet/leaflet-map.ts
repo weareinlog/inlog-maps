@@ -28,7 +28,6 @@ export default class LeafletMap {
                     ]);
                     const isEdit =
                         self.leafletPolyline?.getEditModeBlockingMapClick();
-                    console.log("IS EDIT", isEdit);
                     if (!isEdit) {
                         eventFunction(param);
                     }

@@ -427,6 +427,7 @@ function addPolyline() {
         options.editable = true;
         options.object = {
             item: "New",
+            uuid: 1,
         };
         currentMap.drawPolyline("polyline", options, onClickPolyline);
 
@@ -562,22 +563,47 @@ function removePolylineHighlight() {
     currentMap.removePolylineHighlight();
 }
 
-function updatePolyline(event) {
-    console.log("FUNÇÂO QUE ALTERA AS COISAS")
-    const options = new inlogMaps.PolylineOptions([event.latlng])
-    options.color = '#009ACA'
-    options.weight = 5
-    options.editable = true
-    options.addToMap = true
-    options.fitBounds = false
-    options.draggable = true
+function AddEventPolyline(uuid, event) {
+    currentMap?.addPolylineEvent(
+        "polyline",
+        inlogMaps.PolylineEventType.InsertAt,
+        event
+    );
+    currentMap?.addPolylineEvent(
+        "polyline",
+        inlogMaps.PolylineEventType.RemoveAt,
+        event
+    );
+    currentMap?.addPolylineEvent(
+        "polyline",
+        inlogMaps.PolylineEventType.SetAt,
+        event,
+        (object) => object?.uuid === uuid
+    );
+    currentMap?.addPolylineEvent(
+        "polyline",
+        inlogMaps.PolylineEventType.DragPolyline,
+        event
+    );
+}
 
-    currentMap?.drawPolyline('polyline', options, event)
-    currentMap.AddEventPolyline(map, uuidMap, () => {
-        handleSaveHistoric(uuidMap, 'polyline')
-        handleUpdateShape(uuidMap, 'polyline')
-      })
-    // currentMap.addPolylinePath("polyline", event.latlng);
+function updatePolyline(event) {
+    // TODO: Criando polylines de 2 formas.
+    currentMap.addPolylinePath("polyline", event.latlng);
+
+    // const options = new inlogMaps.PolylineOptions([event.latlng]);
+    // options.color = "#009ACA";
+    // options.weight = 5;
+    // options.editable = true;
+    // options.addToMap = true;
+    // options.fitBounds = false;
+    // options.draggable = true;
+    // options.object = {};
+
+    // currentMap?.drawPolyline("polyline", options, event);
+    // AddEventPolyline(5, () => {
+    //     debugger;
+    // });
 }
 
 function drawPolyline() {

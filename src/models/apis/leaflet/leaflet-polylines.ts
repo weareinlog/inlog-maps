@@ -779,8 +779,7 @@ export default class LeafletPolylines {
     private addPolylineEventMove(polyline: any, eventFunction: any) {
         const self = this;
         polyline.on("editable:vertex:dragstart", (eventStart: any) => {
-            console.log("DRAG START");
-            this.setEditModeBlockingMapClick(true)
+            this.setEditModeBlockingMapClick(true);
             // TODO: Se estiver editando um trecho na polyline, não libera para novos trechos. (duplo clique)
             const lastPosition = new EventReturn([
                 eventStart.vertex.latlng.lat,
@@ -809,7 +808,7 @@ export default class LeafletPolylines {
                 polyline.off("editable:vertex:dragend");
                 setTimeout(() => {
                     this.setEditModeBlockingMapClick(false);
-                }, 300);
+                }, 500);
             });
         });
     }
