@@ -136,7 +136,11 @@ export default class Leaflet implements IMapFunctions {
                 leaflet,
                 this.leafletPopups
             );
-            this.leafletMap = new LeafletMap(map, leaflet);
+            this.leafletMap = new LeafletMap(
+                map,
+                leaflet,
+                this.leafletPolylines
+            );
             this.leafletOverlays = new LeafletOverlays(
                 map,
                 leaflet,
@@ -231,7 +235,10 @@ export default class Leaflet implements IMapFunctions {
         markerClusterer: any,
         config: MarkerClustererConfig
     ): void {
-        this.leafletMarkers?.alterMarkerClustererConfig(markerClusterer, config);
+        this.leafletMarkers?.alterMarkerClustererConfig(
+            markerClusterer,
+            config
+        );
     }
 
     public refreshClusterer(markerClusterer: any): void {

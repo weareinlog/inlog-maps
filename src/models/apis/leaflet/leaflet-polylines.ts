@@ -19,11 +19,13 @@ export default class LeafletPolylines {
     private multiSelection: boolean | null = false;
     private navigateByPoint: boolean = false;
     private navigationOptions: NavigationOptions | any = {};
+    private editModeBlockingMapClick: boolean;
 
     constructor(map: any, leaflet: any, leafletPopup: LeafletPopup) {
         this.map = map;
         this.leaflet = leaflet;
         this.leafletPopup = leafletPopup;
+        this.editModeBlockingMapClick = false;
     }
 
     public drawPolyline(options: PolylineOptions, eventClick: any) {
@@ -66,11 +68,13 @@ export default class LeafletPolylines {
         if (eventClick) {
             polyline.on("click", (event: any) => {
                 self.leaflet.DomEvent.stopPropagation(event);
-                const param = new EventReturn([
-                    event.latlng.lat,
-                    event.latlng.lng,
-                ]);
-                eventClick(param, event.target.object);
+                if (!this.getEditModeBlockingMapClick()) {
+                    const param = new EventReturn([
+                        event.latlng.lat,
+                        event.latlng.lng,
+                    ]);
+                    eventClick(param, event.target.object);
+                }
             });
 
             polyline.on(
@@ -81,11 +85,13 @@ export default class LeafletPolylines {
                     target: { object: any };
                 }) => {
                     event.cancel();
-                    const param = new EventReturn([
-                        event.latlng.lat,
-                        event.latlng.lng,
-                    ]);
-                    eventClick(param, event.target.object);
+                    if (!this.getEditModeBlockingMapClick()) {
+                        const param = new EventReturn([
+                            event.latlng.lat,
+                            event.latlng.lng,
+                        ]);
+                        eventClick(param, event.target.object);
+                    }
                 }
             );
         }
@@ -292,18 +298,28 @@ export default class LeafletPolylines {
         return this.map.hasLayer(polyline);
     }
 
+    public getEditModeBlockingMapClick() {
+        return this.editModeBlockingMapClick;
+    }
+
+    public setEditModeBlockingMapClick(newState: boolean) {
+        this.editModeBlockingMapClick = newState;
+    }
+
     public addPolylinePath(polylines: any, position: number[]) {
-        polylines.forEach((polyline: any) => {
-            const path = polyline.getLatLngs();
+        if (!this.getEditModeBlockingMapClick) {
+            polylines.forEach((polyline: any) => {
+                const path = polyline.getLatLngs();
 
-            path.push(new this.leaflet.LatLng(position[0], position[1]));
-            polyline.setLatLngs(path);
+                path.push(new this.leaflet.LatLng(position[0], position[1]));
+                polyline.setLatLngs(path);
 
-            if (polyline.editEnabled && polyline.editEnabled()) {
-                polyline.disableEdit();
-                polyline.enableEdit();
-            }
-        });
+                if (polyline.editEnabled && polyline.editEnabled()) {
+                    polyline.disableEdit();
+                    polyline.enableEdit();
+                }
+            });
+        }
     }
 
     public getPolylinePath(polyline: any): number[][] {
@@ -757,6 +773,7 @@ export default class LeafletPolylines {
     private addPolylineEventMove(polyline: any, eventFunction: any) {
         const self = this;
         polyline.on("editable:vertex:dragstart", (eventStart: any) => {
+            this.setEditModeBlockingMapClick(true);
             const lastPosition = new EventReturn([
                 eventStart.vertex.latlng.lat,
                 eventStart.vertex.latlng.lng,
@@ -782,6 +799,9 @@ export default class LeafletPolylines {
                         .map((x: any) => new EventReturn([x.lat, x.lng]))
                 );
                 polyline.off("editable:vertex:dragend");
+                setTimeout(() => {
+                    this.setEditModeBlockingMapClick(false);
+                }, 500);
             });
         });
     }
@@ -865,10 +885,14 @@ export default class LeafletPolylines {
 
     private addPolylineEventDragPolyline(polyline: any, eventFunction: any) {
         polyline.on("dragend", (event: any) => {
+            this.editModeBlockingMapClick = true;
             const param = event.target
                 .getLatLngs()
                 .map((x: any) => new EventReturn([x.lat, x.lng]));
             eventFunction(param, event.target.object);
+            setTimeout(() => {
+                this.editModeBlockingMapClick = false;
+            }, 300);
         });
     }
 }

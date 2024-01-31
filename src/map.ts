@@ -948,7 +948,9 @@ export default class Map {
     ): void {
         const polyline = this.getPolylines(type, condition);
 
-        this.map?.addPolylineEvent(polyline, event, eventFunction);
+        if (polyline && polyline.length) {
+            this.map?.addPolylineEvent(polyline, event, eventFunction);
+        }
     }
 
     /**
@@ -1333,12 +1335,14 @@ export default class Map {
         const polylines = this.polylinesList[type];
 
         if (polylines && polylines.length) {
-            return condition
+            const resultFilter = condition
                 ? polylines.filter((polyline: any) =>
                       condition(polyline.object)
                   )
                 : polylines;
-        } else return [];
+            return resultFilter.length > 0 ? resultFilter : polylines;
+        }
+        return [];
     }
 
     private getOverlays(type: string, condition: any): any[] {

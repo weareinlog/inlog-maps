@@ -4,10 +4,12 @@ import EventReturn from "../../features/events/event-return";
 export default class LeafletMap {
     private map: any = {};
     private leaflet: any = {};
+    private leafletPolyline?: any = {};
 
-    constructor(map: any, leaflet: any) {
+    constructor(map: any, leaflet: any, leafletPolyline?: any) {
         this.map = map;
         this.leaflet = leaflet;
+        this.leafletPolyline = leafletPolyline;
     }
 
     public resizeMap(): void {
@@ -24,7 +26,11 @@ export default class LeafletMap {
                         event.latlng.lat,
                         event.latlng.lng,
                     ]);
-                    eventFunction(param);
+                    const isEdit =
+                        self.leafletPolyline?.getEditModeBlockingMapClick();
+                    if (!isEdit) {
+                        eventFunction(param);
+                    }
                 });
                 break;
             case MapEventType.ZoomChanged:
