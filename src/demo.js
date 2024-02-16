@@ -411,59 +411,62 @@ function onClickPolyline(event, object) {
 
 function addPolyline() {
     if (polylineShow === null) {
-        let options = new inlogMaps.PolylineOptions();
+        [1, 2].forEach((el) => {
+            let options = new inlogMaps.PolylineOptions();
 
-        options.path = [
-            [-23.02487, -43.48283],
-            [-23.02475, -43.48391],
-            [-23.02486, -43.48233],
-            [-23.02443, -43.48212],
-            [-23.02429, -43.48243],
-            [-23.02477, -43.48245],
-        ];
-        options.addToMap = true;
-        options.fitBounds = true;
-        options.draggable = true;
-        options.editable = true;
-        options.object = {
-            item: "New",
-            uuid: 1,
-        };
-        currentMap.drawPolyline("polyline", options, onClickPolyline);
+            options.path = [
+                [-23.02487, -43.48283],
+                [-23.02475, -43.48391],
+                [-23.02486, -43.48233],
+                [-23.02443, -43.48212],
+                [-23.02429, -43.48243],
+                [-23.02477, -43.48245],
+            ];
+            options.addToMap = true;
+            options.fitBounds = true;
+            options.draggable = true;
+            options.editable = true;
+            options.object = {
+                item: "New",
+                uuid: el,
+                color: "#009ACA",
+            };
+            currentMap.drawPolyline("polyline", options, onClickPolyline);
 
-        currentMap.addPolylineEvent(
-            "polyline",
-            inlogMaps.PolylineEventType.SetAt,
-            () => {
-                debugger;
-            }
-        );
-        currentMap.addPolylineEvent(
-            "polyline",
-            inlogMaps.PolylineEventType.InsertAt,
-            () => {
-                debugger;
-            }
-        );
-        currentMap.addPolylineEvent(
-            "polyline",
-            inlogMaps.PolylineEventType.RemoveAt,
-            () => {
-                debugger;
-            }
-        );
-        currentMap.addPolylineEvent(
-            "polyline",
-            inlogMaps.PolylineEventType.DragPolyline,
-            () => {
-                debugger;
-            }
-        );
-        currentMap.addPolylineEvent(
-            "polyline",
-            inlogMaps.PolylineEventType.RightClick,
-            () => onRightClick
-        );
+            currentMap.addPolylineEvent(
+                "polyline",
+                inlogMaps.PolylineEventType.SetAt,
+                () => {
+                    debugger;
+                }
+            );
+            currentMap.addPolylineEvent(
+                "polyline",
+                inlogMaps.PolylineEventType.InsertAt,
+                () => {
+                    debugger;
+                }
+            );
+            currentMap.addPolylineEvent(
+                "polyline",
+                inlogMaps.PolylineEventType.RemoveAt,
+                () => {
+                    debugger;
+                }
+            );
+            currentMap.addPolylineEvent(
+                "polyline",
+                inlogMaps.PolylineEventType.DragPolyline,
+                () => {
+                    debugger;
+                }
+            );
+            currentMap.addPolylineEvent(
+                "polyline",
+                inlogMaps.PolylineEventType.RightClick,
+                () => onRightClick
+            );
+        });
 
         polylineShow = true;
     } else {
@@ -633,7 +636,11 @@ function changePolyline() {
         item: "Edited",
     };
 
-    currentMap.alterPolylineOptions("polyline", options);
+    currentMap.alterPolylineOptions(
+        "polyline",
+        options,
+        (object) => object.uuid === 2
+    );
 }
 
 /* Polygon tests */

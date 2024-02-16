@@ -1340,7 +1340,7 @@ export default class Map {
                       condition(polyline.object)
                   )
                 : polylines;
-            return resultFilter.length > 0 ? resultFilter : polylines;
+            return resultFilter.length > 0 ? resultFilter : [];
         }
         return [];
     }
