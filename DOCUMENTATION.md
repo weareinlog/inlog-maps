@@ -1,4 +1,4 @@
-# [@inlog/inlog-maps](https://github.com/weareinlog/inlog-maps#readme) *6.4.0*
+# [@inlog/inlog-maps](https://github.com/weareinlog/inlog-maps#readme) *6.4.1*
 
 > A library for using generic layer maps 
 
@@ -1630,6 +1630,38 @@ Returns the image as a base64 string or null
 
 
 - `Promise.&lt;string|null&gt;`  
+
+
+
+#### Map.onMapClickForRuler() 
+
+Manipulador de cliques no mapa para a régua.
+
+
+
+
+
+
+##### Returns
+
+
+- `Void`
+
+
+
+#### Map.removeRuler() 
+
+Remove a régua do mapa e os listeners de eventos.
+
+
+
+
+
+
+##### Returns
+
+
+- `Void`
 
 
 
