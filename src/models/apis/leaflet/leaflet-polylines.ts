@@ -28,7 +28,11 @@ export default class LeafletPolylines {
         this.editModeBlockingMapClick = false;
     }
 
-    public drawPolyline(options: PolylineOptions, eventClick: any) {
+    public drawPolyline(
+        options: PolylineOptions,
+        eventClick: any,
+        callBackEdit?: (params: any) => void
+    ) {
         const self = this;
         const newOptions: any = {
             color: options.color || "#000000",
@@ -138,6 +142,21 @@ export default class LeafletPolylines {
             }
             if (options.editable) {
                 polyline.enableEdit();
+                const self = this;
+                polyline.on("editable:vertex:dragstart", function (e: any) {
+                    self.setEditModeBlockingMapClick(true);
+                });
+                polyline.on("editable:vertex:dragend", function (e: any) {
+                    callBackEdit
+                        ? callBackEdit({
+                              ...e,
+                              origin: options.path,
+                          })
+                        : null;
+                    setTimeout(() => {
+                        self.setEditModeBlockingMapClick(false);
+                    }, 500);
+                });
             }
         }
 

@@ -354,8 +354,16 @@ export default class Leaflet implements IMapFunctions {
     }
 
     /* Polylines */
-    public drawPolyline(options: PolylineOptions, eventClick: any): any {
-        return this.leafletPolylines?.drawPolyline(options, eventClick);
+    public drawPolyline(
+        options: PolylineOptions,
+        eventClick: any,
+        callBackEdit?: any
+    ): any {
+        return this.leafletPolylines?.drawPolyline(
+            options,
+            eventClick,
+            callBackEdit
+        );
     }
 
     public drawPolylineWithNavigation(

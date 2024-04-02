@@ -1,6 +1,5 @@
 import GoogleMaps from "./models/apis/googleMaps";
 import Leaflet from "./models/apis/leaflet";
-import IMapFunctions from "./models/apis/mapFunctions";
 import {
     MarkerEventType,
     CircleEventType,
@@ -9,6 +8,7 @@ import {
     MapEventType,
 } from "./models/dto/event-type";
 import { MapType } from "./models/dto/map-type";
+import { PolylineType } from "./models/dto/polyline-type";
 import CircleAlterOptions from "./models/features/circle/circle-alter-options";
 import CircleOptions from "./models/features/circle/circle-options";
 import GeoJsonOptions from "./models/features/geojson/geojson-options";
@@ -21,6 +21,7 @@ import PolygonAlterOptions from "./models/features/polygons/polygon-alter-option
 import PolygonOptions from "./models/features/polygons/polygon-options";
 import PolylineOptions from "./models/features/polyline/polyline-options";
 import PopupOptions from "./models/features/popup/popup-options";
+import * as geolib from "geolib";
 
 export default class Map {
     private markersList: any = {};
@@ -31,6 +32,10 @@ export default class Map {
     private overlayList: any = {};
     private map: any = {};
     private markerClusterer: any = {};
+    private rulerPolylines: any[] = [];
+    private rulerClicks: Array<[number, number]> = [];
+    private rulerLatLongs: Array<[number, number]>[] = [];
+    private rulerPolylineCount: number = 0;
 
     constructor() {
         /**/
@@ -758,9 +763,14 @@ export default class Map {
     public drawPolyline(
         type: string,
         options: PolylineOptions,
-        eventClick?: any
+        eventClick?: any,
+        callBackEdit?: any
     ): void {
-        const polyline = this.map?.drawPolyline(options, eventClick);
+        const polyline = this.map?.drawPolyline(
+            options,
+            eventClick,
+            callBackEdit
+        );
 
         if (!this.polylinesList[type]) {
             this.polylinesList[type] = [];
@@ -1167,6 +1177,30 @@ export default class Map {
     }
 
     /**
+     * Remove ruler in the map
+     * @returns {void}
+     */
+    public removeRuler(): void {
+        this.removePolylines("lutocar-ruler", null);
+        this.rulerPolylines = [];
+        this.rulerLatLongs = [];
+
+        this.removeEventMap(MapEventType.Click);
+        this.removeOverlays("lutocar-ruler");
+    }
+
+    /**
+     * Create ruler in the map
+     * @returns {void}
+     */
+    public createRuler(): void {
+        this.addEventMap(
+            MapEventType.Click,
+            this.onMapClickForRuler.bind(this)
+        );
+    }
+
+    /**
      * Returns the center position of the map
      * @returns {number[]}
      */
@@ -1353,5 +1387,138 @@ export default class Map {
                 ? overlays.filter((overlay: any) => condition(overlay.object))
                 : overlays;
         } else return [];
+    }
+
+    private coordinatesToKm = (
+        coordinatesFrom: number[],
+        coordinatesTo: number[]
+    ) => {
+        const distance = geolib.getDistance(
+            { latitude: coordinatesFrom[0], longitude: coordinatesFrom[1] },
+            { latitude: coordinatesTo[0], longitude: coordinatesTo[1] }
+        );
+
+        return distance / 1000;
+    };
+
+    private onMapClickForRuler(event: any): void {
+        this.rulerPolylineCount++;
+        this.rulerClicks.push([event.latlng[0], event.latlng[1]]);
+        const polylineOptions: PolylineOptions = {
+            addToMap: true,
+            fitBounds: false,
+            draggable: true,
+            editable: true,
+            style: PolylineType.Dotted,
+            color: "#009ACA",
+            weight: 5,
+            object: {
+                id: this.rulerPolylineCount,
+            },
+            path: this.rulerClicks,
+        };
+        const rulerPolyline = this.drawPolyline(
+            "lutocar-ruler",
+            polylineOptions,
+            () => {},
+            () => {
+                this.rulerLatLongs = [];
+                const polylines = this.getPolylines("lutocar-ruler", null);
+                const polylinesPloted = polylines
+                    .filter((el) => {
+                        if (el._latlngs.length === 2) {
+                            return el;
+                        }
+                        return null;
+                    })
+                    .filter((el) => el !== null);
+                this.rulerLatLongs.push(
+                    polylinesPloted
+                        .map((el) =>
+                            el._latlngs.map((el: any) => {
+                                return [el.lat, el.lng];
+                            })
+                        )
+                        .flat()
+                );
+                this.removeOverlays("lutocar-ruler");
+                this.addRulerMovingOverlay();
+            }
+        );
+        this.rulerPolylines.push(rulerPolyline);
+        this.addRulerOverlay();
+        if (this.rulerClicks.length === 2) {
+            this.rulerLatLongs.push(this.rulerClicks);
+            this.rulerClicks = [];
+        }
+    }
+
+    private addRulerOverlay(): void {
+        const overlayFirst = this.createDistanceOverlay(0.0);
+
+        const firstPoint = new OverlayOptions(
+            overlayFirst,
+            true,
+            this.rulerClicks[0]
+        );
+        this?.drawOverlay("lutocar-ruler", firstPoint);
+
+        if (this.rulerClicks[1]) {
+            const teste = this.coordinatesToKm(
+                this.rulerClicks[0],
+                this.rulerClicks[1]
+            );
+
+            const overlaySecond = this.createDistanceOverlay(teste);
+
+            const options = new OverlayOptions(
+                overlaySecond,
+                true,
+                this.rulerClicks[1]
+            );
+            this?.drawOverlay("lutocar-ruler", options);
+        }
+    }
+
+    private addRulerMovingOverlay(): void {
+        for (let i = 0; i < this.rulerLatLongs[0].length; i += 2) {
+            const latLong1 = this.rulerLatLongs[0][i];
+            const latLong2 = this.rulerLatLongs[0][i + 1]
+                ? this.rulerLatLongs[0][i + 1]
+                : null;
+
+            if (latLong1 && latLong2) {
+                const overlayFirst = this.createDistanceOverlay(0.0);
+                const firstPoint = new OverlayOptions(
+                    overlayFirst,
+                    true,
+                    latLong1
+                );
+                this?.drawOverlay("lutocar-ruler", firstPoint);
+
+                const overlaySecondDistance = this.coordinatesToKm(
+                    latLong1,
+                    latLong2
+                );
+                const overlaySecond = this.createDistanceOverlay(
+                    overlaySecondDistance
+                );
+                const secondPointOptions = new OverlayOptions(
+                    overlaySecond,
+                    true,
+                    latLong2
+                );
+                this?.drawOverlay("lutocar-ruler", secondPointOptions);
+            }
+        }
+    }
+
+    private createDistanceOverlay(distance: number): HTMLDivElement {
+        const element = document.createElement("div");
+        element.textContent = `${(distance * 1000).toFixed(1)}m`;
+        element.style.cssText =
+            "font-size: 12px;font-weight: 600; letter-spacing: 1px;color: black;height: 30px; width: 120px;text-align: center;display: flex;justify-content: center;align-items: center;transform: translateX(-60px) translateY(-40px); white-space: pre-line; line-height: 1";
+        element.style.position = "absolute";
+        return element;
     }
 }
