@@ -1181,12 +1181,12 @@ export default class Map {
      * @returns {void}
      */
     public removeRuler(): void {
-        this.removePolylines("lutocar-ruler", null);
+        this.removePolylines("inlogmaps-ruler", null);
         this.rulerPolylines = [];
         this.rulerLatLongs = [];
 
         this.removeEventMap(MapEventType.Click);
-        this.removeOverlays("lutocar-ruler");
+        this.removeOverlays("inlogmaps-ruler");
     }
 
     /**
@@ -1418,12 +1418,12 @@ export default class Map {
             path: this.rulerClicks,
         };
         const rulerPolyline = this.drawPolyline(
-            "lutocar-ruler",
+            "inlogmaps-ruler",
             polylineOptions,
             () => {},
             () => {
                 this.rulerLatLongs = [];
-                const polylines = this.getPolylines("lutocar-ruler", null);
+                const polylines = this.getPolylines("inlogmaps-ruler", null);
                 const polylinesPloted = polylines
                     .filter((el) => {
                         if (el._latlngs.length === 2) {
@@ -1441,7 +1441,7 @@ export default class Map {
                         )
                         .flat()
                 );
-                this.removeOverlays("lutocar-ruler");
+                this.removeOverlays("inlogmaps-ruler");
                 this.addRulerMovingOverlay();
             }
         );
@@ -1461,7 +1461,7 @@ export default class Map {
             true,
             this.rulerClicks[0]
         );
-        this?.drawOverlay("lutocar-ruler", firstPoint);
+        this?.drawOverlay("inlogmaps-ruler", firstPoint);
 
         if (this.rulerClicks[1]) {
             const teste = this.coordinatesToKm(
@@ -1476,7 +1476,7 @@ export default class Map {
                 true,
                 this.rulerClicks[1]
             );
-            this?.drawOverlay("lutocar-ruler", options);
+            this?.drawOverlay("inlogmaps-ruler", options);
         }
     }
 
@@ -1494,7 +1494,7 @@ export default class Map {
                     true,
                     latLong1
                 );
-                this?.drawOverlay("lutocar-ruler", firstPoint);
+                this?.drawOverlay("inlogmaps-ruler", firstPoint);
 
                 const overlaySecondDistance = this.coordinatesToKm(
                     latLong1,
@@ -1508,7 +1508,7 @@ export default class Map {
                     true,
                     latLong2
                 );
-                this?.drawOverlay("lutocar-ruler", secondPointOptions);
+                this?.drawOverlay("inlogmaps-ruler", secondPointOptions);
             }
         }
     }
