@@ -1633,25 +1633,9 @@ Returns the image as a base64 string or null
 
 
 
-#### Map.onMapClickForRuler() 
-
-Manipulador de cliques no mapa para a régua.
-
-
-
-
-
-
-##### Returns
-
-
-- `Void`
-
-
-
 #### Map.removeRuler() 
 
-Remove a régua do mapa e os listeners de eventos.
+Remove ruler in the map
 
 
 
@@ -1661,7 +1645,23 @@ Remove a régua do mapa e os listeners de eventos.
 ##### Returns
 
 
-- `Void`
+-  
+
+
+
+#### Map.createRuler() 
+
+Create ruler in the map
+
+
+
+
+
+
+##### Returns
+
+
+-  
 
 
 
