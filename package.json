@@ -1,6 +1,6 @@
 {
     "name": "@inlog/inlog-maps",
-    "version": "6.3.0",
+    "version": "6.4.1",
     "description": "A library for using generic layer maps ",
     "main": "index.js",
     "types": "dist/index.d.ts",
@@ -47,6 +47,7 @@
         "@types/google-maps": "^3.2.6",
         "@types/googlemaps": "^3.43.3",
         "@types/node": "^20.10.4",
+        "geolib": "^3.3.4",
         "html2canvas": "^1.4.1",
         "jsdoc-to-markdown": "^8.0.0",
         "leaflet": "^1.9.4",
