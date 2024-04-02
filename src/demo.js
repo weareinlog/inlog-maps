@@ -1468,3 +1468,11 @@ function changeCircleColor() {
         currentMap.alterCircleOptions("circle", options);
     }
 }
+
+function enableRuler() {
+    currentMap.createRuler();
+}
+
+function removeRuler() {
+    currentMap.removeRuler();
+}
