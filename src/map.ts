@@ -1423,22 +1423,22 @@ export default class Map {
             () => {},
             () => {
                 this.rulerLatLongs = [];
-                const polylines = this.getPolylines("inlogmaps-ruler", null);
-                const polylinesPloted = polylines
-                    .filter((el) => {
-                        if (el._latlngs.length === 2) {
-                            return el;
-                        }
-                        return null;
+                const polylinesPaths = this.getPolylines(
+                    "inlogmaps-ruler",
+                    null
+                );
+
+                const filter = polylinesPaths
+                    .map((polyline) => {
+                        return this.map?.getPolylinePath(polyline);
                     })
-                    .filter((el) => el !== null);
+                    .filter((el) => el.length === 2);
+
                 this.rulerLatLongs.push(
-                    polylinesPloted
-                        .map((el) =>
-                            el._latlngs.map((el: any) => {
-                                return [el.lat, el.lng];
-                            })
-                        )
+                    filter
+                        .map((el) => {
+                            return [el[0], el[1]];
+                        })
                         .flat()
                 );
                 this.removeOverlays("inlogmaps-ruler");

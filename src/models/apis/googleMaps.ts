@@ -351,8 +351,16 @@ export default class GoogleMaps implements IMapFunctions {
     }
 
     /* Polylines */
-    public drawPolyline(options: PolylineOptions, eventClick: any): any {
-        return this.googlePolylines?.drawPolyline(options, eventClick);
+    public drawPolyline(
+        options: PolylineOptions,
+        eventClick: any,
+        callBackEdit?: any
+    ): any {
+        return this.googlePolylines?.drawPolyline(
+            options,
+            eventClick,
+            callBackEdit
+        );
     }
 
     public drawPolylineWithNavigation(
@@ -503,7 +511,12 @@ export default class GoogleMaps implements IMapFunctions {
         polygons: any,
         polylines: any
     ): void {
-        this.googleMap?.fitBoundsElements(markers, circles, polygons, polylines);
+        this.googleMap?.fitBoundsElements(
+            markers,
+            circles,
+            polygons,
+            polylines
+        );
     }
 
     /* Overlay */
