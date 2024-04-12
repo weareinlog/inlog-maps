@@ -18,14 +18,20 @@ export default class GooglePolylines {
     private multiSelection: boolean | null = false;
     private navigateByPoint: boolean | null = false;
     private navigationOptions: NavigationOptions | any = {};
+    private editModeBlockingMapClick: boolean;
 
     constructor(map: any, google: any, googlePopups: GooglePopups) {
         this.map = map;
         this.google = google;
         this.googlePopups = googlePopups;
+        this.editModeBlockingMapClick = false;
     }
 
-    public drawPolyline(options: PolylineOptions, eventClick: any) {
+    public drawPolyline(
+        options: PolylineOptions,
+        eventClick: any,
+        callBackEdit?: (params: any) => void
+    ) {
         const self = this;
         const newOptions: any = {
             draggable: options.draggable,
@@ -104,6 +110,10 @@ export default class GooglePolylines {
 
         const polyline = new this.google.maps.Polyline(newOptions);
 
+        if (options.editable) {
+            this.attachVertexDragEvents(polyline, callBackEdit);
+        }
+
         if (eventClick) {
             this.google.maps.event.addListener(
                 polyline,
@@ -127,6 +137,54 @@ export default class GooglePolylines {
         }
 
         return polyline;
+    }
+
+    private attachVertexDragEvents(
+        polyline: any,
+        callBackEdit?: (params: any) => void
+    ) {
+        const path = polyline.getPath();
+        let isDragging = false;
+        let lastEditedVertexIndex = -1;
+
+        // Este evento é disparado quando um vértice na polilinha é modificado
+        google.maps.event.addListener(path, "set_at", (index: number) => {
+            isDragging = true;
+            lastEditedVertexIndex = index;
+            this.setEditModeBlockingMapClick(true);
+        });
+
+        google.maps.event.addListener(path, "insert_at", (index: number) => {
+            isDragging = true;
+            lastEditedVertexIndex = index;
+            this.setEditModeBlockingMapClick(true);
+        });
+
+        // Monitorar quando o arrasto de qualquer vértice termina
+        google.maps.event.addListener(polyline, "mouseup", () => {
+            if (isDragging && lastEditedVertexIndex !== -1) {
+                callBackEdit
+                    ? callBackEdit({
+                          _latLng: this.getPolylinePath(polyline).map((el) => {
+                              return {
+                                  lat: el[0],
+                                  long: el[1],
+                              };
+                          }),
+                          origin: polyline.path,
+                      })
+                    : null;
+                setTimeout(() => {
+                    this.setEditModeBlockingMapClick(false);
+                }, 500);
+                isDragging = false;
+                lastEditedVertexIndex = -1;
+            }
+        });
+    }
+
+    public setEditModeBlockingMapClick(newState: boolean) {
+        this.editModeBlockingMapClick = newState;
     }
 
     public drawPolylineWithNavigation(
