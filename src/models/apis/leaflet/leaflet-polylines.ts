@@ -108,7 +108,7 @@ export default class LeafletPolylines {
             };
             if (!polyline.decorator || !self.leaflet.Symbol) {
                 console.error(
-                    "Decorator Error: Importe o arquivo leaflet.polylineDecorator.js no scriptsDependencies."
+                    "Decorator Error: Please import the leaflet.polylineDecorator.js file in the scriptsDependencies."
                 );
             } else {
                 polyline.decorator = self.leaflet.polylineDecorator(polyline, {
@@ -260,7 +260,7 @@ export default class LeafletPolylines {
 
                     if (!polyline.decorator || !self.leaflet.Symbol) {
                         console.error(
-                            "DecoratorError: Importe o arquivo leaflet.polylineDecorator.js no scriptsDependencies."
+                            "Decorator Error: Please import the leaflet.polylineDecorator.js file in the scriptsDependencies."
                         );
                     } else {
                         polyline.decorator = self.leaflet.polylineDecorator(
