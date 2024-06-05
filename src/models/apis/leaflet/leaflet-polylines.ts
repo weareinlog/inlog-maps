@@ -106,33 +106,38 @@ export default class LeafletPolylines {
                 weight: 0,
                 color: polyline.options.color,
             };
-
-            polyline.decorator = self.leaflet.polylineDecorator(polyline, {
-                patterns: [
-                    {
-                        offset: "20%",
-                        repeat: "90px",
-                        symbol: self.leaflet.Symbol.arrowHead({
-                            pixelSize: 20,
-                            pathOptions,
-                        }),
-                    },
-                    {
-                        offset: "0%",
-                        symbol: self.leaflet.Symbol.arrowHead({
-                            pathOptions,
-                            pixelSize: 20,
-                        }),
-                    },
-                    {
-                        offset: "100%",
-                        symbol: self.leaflet.Symbol.arrowHead({
-                            pixelSize: 20,
-                            pathOptions,
-                        }),
-                    },
-                ],
-            });
+            if (!polyline.decorator || !self.leaflet.Symbol) {
+                console.error(
+                    "Decorator Error: Please import the leaflet.polylineDecorator.js file in the scriptsDependencies."
+                );
+            } else {
+                polyline.decorator = self.leaflet.polylineDecorator(polyline, {
+                    patterns: [
+                        {
+                            offset: "20%",
+                            repeat: "90px",
+                            symbol: self.leaflet.Symbol.arrowHead({
+                                pixelSize: 20,
+                                pathOptions,
+                            }),
+                        },
+                        {
+                            offset: "0%",
+                            symbol: self.leaflet.Symbol.arrowHead({
+                                pathOptions,
+                                pixelSize: 20,
+                            }),
+                        },
+                        {
+                            offset: "100%",
+                            symbol: self.leaflet.Symbol.arrowHead({
+                                pixelSize: 20,
+                                pathOptions,
+                            }),
+                        },
+                    ],
+                });
+            }
         }
 
         if (options.addToMap) {
@@ -253,39 +258,46 @@ export default class LeafletPolylines {
                         self.map.removeLayer(polyline.decorator);
                     }
 
-                    polyline.decorator = self.leaflet.polylineDecorator(
-                        polyline,
-                        {
-                            patterns: [
-                                {
-                                    offset: "20%",
-                                    repeat: "90px",
-                                    symbol: self.leaflet.Symbol.arrowHead({
-                                        pixelSize: 20,
-                                        pathOptions,
-                                    }),
-                                },
-                                {
-                                    offset: "0%",
-                                    symbol: self.leaflet.Symbol.arrowHead({
-                                        pixelSize: 20,
-                                        pathOptions,
-                                    }),
-                                },
-                                {
-                                    offset: "100%",
-                                    symbol: self.leaflet.Symbol.arrowHead({
-                                        pixelSize: 20,
-                                        pathOptions,
-                                    }),
-                                },
-                            ],
-                        }
-                    );
+                    if (!polyline.decorator || !self.leaflet.Symbol) {
+                        console.error(
+                            "Decorator Error: Please import the leaflet.polylineDecorator.js file in the scriptsDependencies."
+                        );
+                    } else {
+                        polyline.decorator = self.leaflet.polylineDecorator(
+                            polyline,
+                            {
+                                patterns: [
+                                    {
+                                        offset: "20%",
+                                        repeat: "90px",
+                                        symbol: self.leaflet.Symbol.arrowHead({
+                                            pixelSize: 20,
+                                            pathOptions,
+                                        }),
+                                    },
+                                    {
+                                        offset: "0%",
+                                        symbol: self.leaflet.Symbol.arrowHead({
+                                            pixelSize: 20,
+                                            pathOptions,
+                                        }),
+                                    },
+                                    {
+                                        offset: "100%",
+                                        symbol: self.leaflet.Symbol.arrowHead({
+                                            pixelSize: 20,
+                                            pathOptions,
+                                        }),
+                                    },
+                                ],
+                            }
+                        );
 
-                    if (self.map.hasLayer(polyline)) {
-                        polyline.decorator.addTo(self.map);
+                        if (self.map.hasLayer(polyline)) {
+                            polyline.decorator.addTo(self.map);
+                        }
                     }
+
                     break;
                 default:
                     if (polyline.decorator) {

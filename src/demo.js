@@ -14,6 +14,7 @@ const leafletLibParams = {
         "../node_modules/leaflet.path.drag/src/Path.Drag.js",
         "../node_modules/leaflet-gesture-handling/dist/leaflet-gesture-handling.js",
         "../node_modules/leaflet.markercluster/dist/leaflet.markercluster.js",
+        "../node_modules/leaflet-polylinedecorator/dist/leaflet.polylineDecorator.js",
     ],
     cssDependencies: [
         "../node_modules/leaflet-gesture-handling/dist/leaflet-gesture-handling.css",
