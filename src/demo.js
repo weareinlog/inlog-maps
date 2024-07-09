@@ -412,7 +412,7 @@ function onClickPolyline(event, object) {
 
 function addPolyline() {
     if (polylineShow === null) {
-        [1, 2].forEach((el) => {
+        [1].forEach((el) => {
             let options = new inlogMaps.PolylineOptions();
 
             options.path = [
