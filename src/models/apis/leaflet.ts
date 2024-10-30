@@ -448,6 +448,11 @@ export default class Leaflet implements IMapFunctions {
         return this.leafletPolylines?.getPolylineHighlightIndex()!;
     }
 
+    public checkIdx(polyline: any, point: any[]): number | undefined {
+        const result = this.leafletPolylines?.checkIdx(polyline, point);
+        return result;
+    }
+
     /* Popups */
     public drawPopup(options: PopupOptions, marker?: any): any {
         return this.leafletPopups?.drawPopup(options, marker);

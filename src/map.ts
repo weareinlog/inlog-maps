@@ -1334,6 +1334,22 @@ export default class Map {
         }
     }
 
+    /* Check Index Polyline */
+    /**
+     * Use this function get idx polyline
+     * @param {string} type
+     * @param {any} point
+     * @param {any} condition
+     */
+    public checkIdx(
+        type: string,
+        point: [],
+        condition?: any
+    ): number | undefined {
+        const polyline = this.getPolylines(type, condition)?.[0];
+        return this.map?.checkIdx(polyline, point);
+    }
+
     /* Private Methods */
     private getMarkers(type: string, condition: any): any[] {
         const markers = this.markersList[type];

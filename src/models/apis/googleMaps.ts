@@ -446,6 +446,15 @@ export default class GoogleMaps implements IMapFunctions {
         return this.googlePolylines?.getPolylineHighlightIndex()!;
     }
 
+    public checkIdx(polyline: any, point: any): number | undefined {
+        const formatPoint = {
+            lat: () => point?.lat,
+            lng: () => point?.lng,
+        };
+
+        return this.googlePolylines?.checkIdx(polyline, formatPoint);
+    }
+
     /* Info Windows */
     public drawPopup(options: PopupOptions, marker?: any): any {
         return this.googlePopups?.drawPopup(options, marker);
