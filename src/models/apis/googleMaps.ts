@@ -454,8 +454,8 @@ export default class GoogleMaps implements IMapFunctions {
     ): number | undefined {
         const formatPoint = [
             {
-                lat: () => point?.[0],
-                lng: () => point?.[1],
+                lat: () => point[0],
+                lng: () => point[1],
             },
         ];
 

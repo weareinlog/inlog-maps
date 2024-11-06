@@ -1843,7 +1843,7 @@ Remove all overlays from the map and from the internal list
 
 #### Map.checkIdx(type, point, condition) 
 
-Use this function to draw markers in the currentMap
+Use this function get idx polyline
 
 
 
@@ -1853,7 +1853,7 @@ Use this function to draw markers in the currentMap
 | Name | Type | Description |  |
 | ---- | ---- | ----------- | -------- |
 | type | `string`  |  | &nbsp; |
-| point | `any`  | is a function callback on click [nullable] | &nbsp; |
+| point | `[number, number]`  |  | &nbsp; |
 | condition | `any`  |  | &nbsp; |
 
 

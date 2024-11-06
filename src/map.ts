@@ -1338,7 +1338,7 @@ export default class Map {
     /**
      * Use this function get idx polyline
      * @param {string} type
-     * @param {any} point
+     * @param {[number, number]} point
      * @param {any} condition
      */
     public checkIdx(
