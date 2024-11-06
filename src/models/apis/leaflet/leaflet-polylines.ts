@@ -141,27 +141,27 @@ export default class LeafletPolylines {
         }
 
         if (options.addToMap) {
-                polyline.addTo(self.map);
-                if (polyline.decorator) {
-                    polyline.decorator.addTo(self.map);
-                }
-                if (options.editable) {
-                    polyline.enableEdit();
-                    const self = this;
-                    polyline.on("editable:vertex:dragstart", function (e: any) {
-                        self.setEditModeBlockingMapClick(true);
-                    });
-                    polyline.on("editable:vertex:dragend", function (e: any) {
-                        callBackEdit
-                            ? callBackEdit({
-                                  ...e,
-                                  origin: options.path,
-                              })
-                            : null;
-                        setTimeout(() => {
-                            self.setEditModeBlockingMapClick(false);
-                        }, 500);
-                    });
+            polyline.addTo(self.map);
+            if (polyline.decorator) {
+                polyline.decorator.addTo(self.map);
+            }
+            if (options.editable) {
+                polyline.enableEdit();
+                const self = this;
+                polyline.on("editable:vertex:dragstart", function (e: any) {
+                    self.setEditModeBlockingMapClick(true);
+                });
+                polyline.on("editable:vertex:dragend", function (e: any) {
+                    callBackEdit
+                        ? callBackEdit({
+                              ...e,
+                              origin: options.path,
+                          })
+                        : null;
+                    setTimeout(() => {
+                        self.setEditModeBlockingMapClick(false);
+                    }, 500);
+                });
             }
         }
 
@@ -729,7 +729,13 @@ export default class LeafletPolylines {
         this.selectedPath.highlight = true;
     }
 
-    public checkIdx(polyline: any, point: any) {
+    public checkIdx(
+        polyline: any,
+        point: {
+            lat: number;
+            lng: number;
+        }
+    ) {
         const self = this;
         const path = polyline.getLatLngs();
         let distance = 0;

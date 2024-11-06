@@ -28,7 +28,7 @@ const inlogMaps = window.InlogMaps;
 const currentMap = new inlogMaps.Map();
 
 // currentMap
-//  .initialize(inlogMaps.MapType.Google, googleMapsLibParams)
+// .initialize(inlogMaps.MapType.Google, googleMapsLibParams)
 currentMap
     .initialize(inlogMaps.MapType.Leaflet, leafletLibParams)
     .then(() => console.log("map initialized!"));
@@ -409,10 +409,7 @@ function onClickPolyline(event, object) {
 
     const checkIdx = currentMap.checkIdx(
         "polyline",
-        {
-            lat: event.latlng[0],
-            lng: event.latlng[1],
-        },
+        [event.latlng[0], event.latlng[1]],
         (object) => {
             return object?.uuid === 1;
         }

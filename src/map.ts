@@ -1343,7 +1343,7 @@ export default class Map {
      */
     public checkIdx(
         type: string,
-        point: [],
+        point: [number, number],
         condition?: any
     ): number | undefined {
         const polyline = this.getPolylines(type, condition)?.[0];

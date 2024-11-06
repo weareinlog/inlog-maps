@@ -906,7 +906,10 @@ export default class GooglePolylines {
         }
     }
 
-    public checkIdx(polyline: any, point: any) {
+    public checkIdx(
+        polyline: any,
+        point: { lat: () => number; lng: () => number }
+    ): number {
         const self = this;
         const path = polyline.getPath();
         let distance = 0;
