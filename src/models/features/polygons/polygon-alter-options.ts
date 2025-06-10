@@ -6,7 +6,7 @@ export default class PolygonAlterOptions {
     public fillOpacity?: number;
     public addToMap: boolean;
     public object: any;
-    public path: number[][];
+    public path?: number[][];
     public editable?: boolean;
     public draggable?: boolean;
 
@@ -18,6 +18,6 @@ export default class PolygonAlterOptions {
         this.fillColor = fillColor;
         this.fillOpacity = fillOpacity;
         this.weight = weight;
-        this.path = [];
+        this.path = undefined;
     }
 }
