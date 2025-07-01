@@ -799,6 +799,19 @@ export default class Map {
         this.polylinesList[type].push(polyline);
     }
 
+    private getPolylines(type: string, condition: any): any[] {
+        const polylines = this.polylinesList[type];
+        if (polylines && polylines.length) {
+            const resultFilter = condition
+                ? polylines.filter((polyline: any) =>
+                      condition(polyline.object)
+                  )
+                : polylines;
+            return resultFilter.length > 0 ? resultFilter : [];
+        }
+        return [];
+    }
+
     /**
      * Use this function to toggle polylines
      * @param {boolean} show
@@ -818,25 +831,14 @@ export default class Map {
      * @param {string} type
      * @param {any} condition remove polyline with the condition [nullable]
      */
-    public removePolylines(type: string, condition?: any): void {
-        if (this.polylinesList[type] && condition) {
-            const polylines = this.getPolylines(type, condition);
-
-            // Hide markers with the condition
-            this.map?.togglePolylines(polylines, false);
-
-            // Keep markers that doesn't have the condition
-            this.polylinesList[type] = this.polylinesList[type].filter(
-                (polyline: any) => !condition(polyline.object)
-            );
-        } else {
-            if (this.polylinesList[type]) {
-                this.map?.togglePolylines(this.polylinesList[type], false);
-            }
+    private removePolylines(type: string, condition?: any): void {
+        // If there are polylines of this type, hide them on the map and clear the array
+        if (this.polylinesList[type]) {
+            this.map?.togglePolylines(this.polylinesList[type], false);
             this.polylinesList[type] = [];
         }
-
-        if (this.polylinesList[type].length === 0) {
+        // If the array is empty after cleanup, remove the key from the object
+        if (this.polylinesList[type]?.length === 0) {
             delete this.polylinesList[type];
         }
     }
@@ -1257,22 +1259,8 @@ export default class Map {
      * @param {string} type
      * @param {InlogMaps.OverlayOptions} options
      */
-    public drawOverlay(type: string, options: OverlayOptions): void {
-        let overlay = null;
-
-        if (options.polygon) {
-            const polygons = this.getPolygons(
-                options.polygon,
-                options.conditionPolygon
-            );
-
-            if (polygons && polygons.length) {
-                overlay = this.map?.drawOverlay(options, polygons);
-            }
-        } else {
-            overlay = this.map?.drawOverlay(options);
-        }
-
+    private drawOverlay(type: string, options: OverlayOptions): void {
+        let overlay = this.map?.drawOverlay(options);
         if (overlay != null) {
             if (!this.overlayList[type]) {
                 this.overlayList[type] = [];
@@ -1365,20 +1353,6 @@ export default class Map {
         } else return [];
     }
 
-    private getPolylines(type: string, condition: any): any[] {
-        const polylines = this.polylinesList[type];
-
-        if (polylines && polylines.length) {
-            const resultFilter = condition
-                ? polylines.filter((polyline: any) =>
-                      condition(polyline.object)
-                  )
-                : polylines;
-            return resultFilter.length > 0 ? resultFilter : [];
-        }
-        return [];
-    }
-
     private getOverlays(type: string, condition: any): any[] {
         const overlays = this.overlayList[type];
 
@@ -1389,68 +1363,13 @@ export default class Map {
         } else return [];
     }
 
-    private coordinatesToKm = (
-        coordinatesFrom: number[],
-        coordinatesTo: number[]
-    ) => {
-        const distance = geolib.getDistance(
-            { latitude: coordinatesFrom[0], longitude: coordinatesFrom[1] },
-            { latitude: coordinatesTo[0], longitude: coordinatesTo[1] }
-        );
-
-        return distance / 1000;
-    };
-
-    private onMapClickForRuler(event: any): void {
-        this.rulerPolylineCount++;
-        this.rulerClicks.push([event.latlng[0], event.latlng[1]]);
-        const polylineOptions: PolylineOptions = {
-            addToMap: true,
-            fitBounds: false,
-            draggable: true,
-            editable: true,
-            style: PolylineType.Dotted,
-            color: "#009ACA",
-            weight: 5,
-            object: {
-                id: this.rulerPolylineCount,
-            },
-            path: this.rulerClicks,
-        };
-        const rulerPolyline = this.drawPolyline(
-            "inlogmaps-ruler",
-            polylineOptions,
-            () => {},
-            () => {
-                this.rulerLatLongs = [];
-                const polylinesPaths = this.getPolylines(
-                    "inlogmaps-ruler",
-                    null
-                );
-
-                const filter = polylinesPaths
-                    .map((polyline) => {
-                        return this.map?.getPolylinePath(polyline);
-                    })
-                    .filter((el) => el.length === 2);
-
-                this.rulerLatLongs.push(
-                    filter
-                        .map((el) => {
-                            return [el[0], el[1]];
-                        })
-                        .flat()
-                );
-                this.removeOverlays("inlogmaps-ruler");
-                this.addRulerMovingOverlay();
-            }
-        );
-        this.rulerPolylines.push(rulerPolyline);
-        this.addRulerOverlay();
-        if (this.rulerClicks.length === 2) {
-            this.rulerLatLongs.push(this.rulerClicks);
-            this.rulerClicks = [];
-        }
+    private createDistanceOverlay(distance: number): HTMLDivElement {
+        const element = document.createElement("div");
+        element.textContent = `${(distance * 1000).toFixed(1)}m`;
+        element.style.cssText =
+            "font-size: 12px;font-weight: 600; letter-spacing: 1px;color: black;height: 30px; width: 120px;text-align: center;display: flex;justify-content: center;align-items: center;transform: translateX(-60px) translateY(-40px); white-space: pre-line; line-height: 1";
+        element.style.position = "absolute";
+        return element;
     }
 
     private addRulerOverlay(): void {
@@ -1481,44 +1400,109 @@ export default class Map {
     }
 
     private addRulerMovingOverlay(): void {
-        for (let i = 0; i < this.rulerLatLongs[0].length; i += 2) {
-            const latLong1 = this.rulerLatLongs[0][i];
-            const latLong2 = this.rulerLatLongs[0][i + 1]
-                ? this.rulerLatLongs[0][i + 1]
-                : null;
+        // Now draw overlays for all saved rulers
+        for (
+            let rulerIndex = 0;
+            rulerIndex < this.rulerLatLongs.length;
+            rulerIndex++
+        ) {
+            const points = this.rulerLatLongs[rulerIndex];
+            if (!points || points.length < 2) continue;
 
-            if (latLong1 && latLong2) {
-                const overlayFirst = this.createDistanceOverlay(0.0);
-                const firstPoint = new OverlayOptions(
-                    overlayFirst,
-                    true,
-                    latLong1
-                );
-                this?.drawOverlay("inlogmaps-ruler", firstPoint);
+            let totalDistance = 0;
 
-                const overlaySecondDistance = this.coordinatesToKm(
+            for (let i = 0; i < points.length - 1; i++) {
+                const latLong1 = points[i];
+                const latLong2 = points[i + 1];
+
+                // Overlay 0m at the first point of each ruler
+                if (i === 0) {
+                    const overlayFirst = this.createDistanceOverlay(0.0);
+                    const firstPoint = new OverlayOptions(
+                        overlayFirst,
+                        true,
+                        latLong1
+                    );
+                    this.drawOverlay("inlogmaps-ruler", firstPoint);
+                }
+
+                // Accumulate distance
+                const segmentDistance = this.coordinatesToKm(
                     latLong1,
                     latLong2
                 );
-                const overlaySecond = this.createDistanceOverlay(
-                    overlaySecondDistance
-                );
+                totalDistance += segmentDistance;
+
+                // Overlay with accumulated distance at the next point
+                const overlaySecond = this.createDistanceOverlay(totalDistance);
                 const secondPointOptions = new OverlayOptions(
                     overlaySecond,
                     true,
                     latLong2
                 );
-                this?.drawOverlay("inlogmaps-ruler", secondPointOptions);
+                this.drawOverlay("inlogmaps-ruler", secondPointOptions);
             }
         }
     }
 
-    private createDistanceOverlay(distance: number): HTMLDivElement {
-        const element = document.createElement("div");
-        element.textContent = `${(distance * 1000).toFixed(1)}m`;
-        element.style.cssText =
-            "font-size: 12px;font-weight: 600; letter-spacing: 1px;color: black;height: 30px; width: 120px;text-align: center;display: flex;justify-content: center;align-items: center;transform: translateX(-60px) translateY(-40px); white-space: pre-line; line-height: 1";
-        element.style.position = "absolute";
-        return element;
+    private onMapClickForRuler(event: any): void {
+        this.rulerPolylineCount++;
+        this.rulerClicks.push([event.latlng[0], event.latlng[1]]);
+        const polylineOptions: PolylineOptions = {
+            addToMap: true,
+            fitBounds: false,
+            draggable: true,
+            editable: true,
+            style: PolylineType.Dotted,
+            color: "#009ACA",
+            weight: 5,
+            object: {
+                id: this.rulerPolylineCount,
+            },
+            path: this.rulerClicks,
+        };
+        // Draws the polyline for the ruler tool and attaches update logic on drag/edit
+        const rulerPolyline = this.drawPolyline(
+            "inlogmaps-ruler",
+            polylineOptions,
+            () => {},
+            () => {
+                const polylinesPaths = this.getPolylines(
+                    "inlogmaps-ruler",
+                    null
+                );
+
+                // Updates the ruler segments array with all valid paths
+                const allPaths = polylinesPaths
+                    .map((polyline) => this.map?.getPolylinePath(polyline))
+                    .filter((el) => !!el && el.length >= 2);
+
+                this.rulerLatLongs = allPaths;
+
+                // Refreshes overlays (distance labels, etc.) after polyline changes
+                this.removeOverlays("inlogmaps-ruler");
+                this.addRulerMovingOverlay();
+            }
+        );
+        this.rulerPolylines.push(rulerPolyline);
+        this.addRulerOverlay();
+
+        // When two points are set, save them as a new ruler segment and reset the array
+        if (this.rulerClicks.length === 2) {
+            this.rulerLatLongs.push(this.rulerClicks);
+            this.rulerClicks = [];
+        }
+    }
+
+    private coordinatesToKm(
+        coordinatesFrom: number[],
+        coordinatesTo: number[]
+    ) {
+        const distance = geolib.getDistance(
+            { latitude: coordinatesFrom[0], longitude: coordinatesFrom[1] },
+            { latitude: coordinatesTo[0], longitude: coordinatesTo[1] }
+        );
+
+        return distance / 1000;
     }
 }
