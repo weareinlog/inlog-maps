@@ -831,14 +831,25 @@ export default class Map {
      * @param {string} type
      * @param {any} condition remove polyline with the condition [nullable]
      */
-    private removePolylines(type: string, condition?: any): void {
-        // If there are polylines of this type, hide them on the map and clear the array
-        if (this.polylinesList[type]) {
-            this.map?.togglePolylines(this.polylinesList[type], false);
+    public removePolylines(type: string, condition?: any): void {
+        if (this.polylinesList[type] && condition) {
+            const polylines = this.getPolylines(type, condition);
+
+            // Hide markers with the condition
+            this.map?.togglePolylines(polylines, false);
+
+            // Keep markers that doesn't have the condition
+            this.polylinesList[type] = this.polylinesList[type].filter(
+                (polyline: any) => !condition(polyline.object)
+            );
+        } else {
+            if (this.polylinesList[type]) {
+                this.map?.togglePolylines(this.polylinesList[type], false);
+            }
             this.polylinesList[type] = [];
         }
-        // If the array is empty after cleanup, remove the key from the object
-        if (this.polylinesList[type]?.length === 0) {
+
+        if (this.polylinesList[type].length === 0) {
             delete this.polylinesList[type];
         }
     }
@@ -1259,8 +1270,22 @@ export default class Map {
      * @param {string} type
      * @param {InlogMaps.OverlayOptions} options
      */
-    private drawOverlay(type: string, options: OverlayOptions): void {
-        let overlay = this.map?.drawOverlay(options);
+    public drawOverlay(type: string, options: OverlayOptions): void {
+        let overlay = null;
+
+        if (options.polygon) {
+            const polygons = this.getPolygons(
+                options.polygon,
+                options.conditionPolygon
+            );
+
+            if (polygons && polygons.length) {
+                overlay = this.map?.drawOverlay(options, polygons);
+            }
+        } else {
+            overlay = this.map?.drawOverlay(options);
+        }
+
         if (overlay != null) {
             if (!this.overlayList[type]) {
                 this.overlayList[type] = [];
@@ -1383,12 +1408,12 @@ export default class Map {
         this?.drawOverlay("inlogmaps-ruler", firstPoint);
 
         if (this.rulerClicks[1]) {
-            const teste = this.coordinatesToKm(
+            const segmentLengthKm = this.coordinatesToKm(
                 this.rulerClicks[0],
                 this.rulerClicks[1]
             );
 
-            const overlaySecond = this.createDistanceOverlay(teste);
+            const overlaySecond = this.createDistanceOverlay(segmentLengthKm);
 
             const options = new OverlayOptions(
                 overlaySecond,
