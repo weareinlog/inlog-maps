@@ -729,7 +729,13 @@ export default class LeafletPolylines {
         this.selectedPath.highlight = true;
     }
 
-    private checkIdx(polyline: any, point: any) {
+    public checkIdx(
+        polyline: any,
+        point: {
+            lat: number;
+            lng: number;
+        }
+    ) {
         const self = this;
         const path = polyline.getLatLngs();
         let distance = 0;

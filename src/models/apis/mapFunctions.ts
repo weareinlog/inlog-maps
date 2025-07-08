@@ -144,4 +144,6 @@ export default interface IMapFunctions {
 
     /* ScreenShot */
     takeMapScreenshot(): Promise<string | null>;
+    /* Check Index */
+    checkIdx(polyline: any, point: [number, number]): number | undefined;
 }

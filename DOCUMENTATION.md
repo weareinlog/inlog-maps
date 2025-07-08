@@ -1,4 +1,4 @@
-# [@inlog/inlog-maps](https://github.com/weareinlog/inlog-maps#readme) *6.4.1*
+# [@inlog/inlog-maps](https://github.com/weareinlog/inlog-maps#readme) *6.4.3*
 
 > A library for using generic layer maps 
 
@@ -1830,6 +1830,31 @@ Remove overlays from the map and from internal list
 Remove all overlays from the map and from the internal list
 
 
+
+
+
+
+##### Returns
+
+
+- `Void`
+
+
+
+#### Map.checkIdx(type, point, condition) 
+
+Use this function get idx polyline
+
+
+
+
+##### Parameters
+
+| Name | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| type | `string`  |  | &nbsp; |
+| point | `[number, number]`  |  | &nbsp; |
+| condition | `any`  |  | &nbsp; |
 
 
 
