@@ -1,4 +1,4 @@
-# [@inlog/inlog-maps](https://github.com/weareinlog/inlog-maps#readme) *6.4.4*
+# [@inlog/inlog-maps](https://github.com/weareinlog/inlog-maps#readme) *6.5.0*
 
 > A library for using generic layer maps 
 
@@ -1633,6 +1633,169 @@ Returns the image as a base64 string or null
 
 
 
+#### Map.drawHeatMap(type, options) 
+
+Use this function to draw heatmaps in the currentMap
+
+
+
+
+##### Parameters
+
+| Name | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| type | `string`  |  | &nbsp; |
+| options | `HeatMapOptions`  |  | &nbsp; |
+
+
+
+
+##### Returns
+
+
+- `Void`
+
+
+
+#### Map.toggleHeatMaps(show, type, condition) 
+
+Use this function to show/hide heatmaps from a specific type
+
+
+
+
+##### Parameters
+
+| Name | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| show | `boolean`  |  | &nbsp; |
+| type | `string`  |  | &nbsp; |
+| condition | `any`  | toggle heatmaps with the condition [nullable] | &nbsp; |
+
+
+
+
+##### Returns
+
+
+- `Void`
+
+
+
+#### Map.updateHeatMapData(type, data, condition) 
+
+Update heatmap data for a specific type
+
+
+
+
+##### Parameters
+
+| Name | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| type | `string`  |  | &nbsp; |
+| data | `Array.<Array.<number>>`  |  | &nbsp; |
+| condition | `any`  | update heatmaps with the condition [nullable] | &nbsp; |
+
+
+
+
+##### Returns
+
+
+- `Void`
+
+
+
+#### Map.setHeatMapOptions(type, options, condition) 
+
+Set heatmap options for a specific type
+
+
+
+
+##### Parameters
+
+| Name | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| type | `string`  |  | &nbsp; |
+| options | `Partial.<HeatMapOptions>`  |  | &nbsp; |
+| condition | `any`  | update heatmaps with the condition [nullable] | &nbsp; |
+
+
+
+
+##### Returns
+
+
+- `Void`
+
+
+
+#### Map.removeHeatMaps(type, condition) 
+
+Remove heatmaps from the map and from internal list
+
+
+
+
+##### Parameters
+
+| Name | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| type | `string`  |  | &nbsp; |
+| condition | `any`  | remove heatmaps with the condition [nullable] | &nbsp; |
+
+
+
+
+##### Returns
+
+
+- `Void`
+
+
+
+#### Map.removeAllHeatMaps() 
+
+Remove all heatmaps from the map and from the internal list
+
+
+
+
+
+
+##### Returns
+
+
+- `Void`
+
+
+
+#### Map.isHeatMapOnMap(type, condition) 
+
+Check if heatmap is visible on map
+
+
+
+
+##### Parameters
+
+| Name | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| type | `string`  |  | &nbsp; |
+| condition | `any`  | check heatmaps with the condition [nullable] | &nbsp; |
+
+
+
+
+##### Returns
+
+
+- `boolean`  
+
+
+
 #### Map.removeRuler() 
 
 Remove ruler in the map
@@ -1853,7 +2016,7 @@ Use this function get idx polyline
 | Name | Type | Description |  |
 | ---- | ---- | ----------- | -------- |
 | type | `string`  |  | &nbsp; |
-| point | `[number, number]`  |  | &nbsp; |
+| point | `Array.<number>`  |  | &nbsp; |
 | condition | `any`  |  | &nbsp; |
 
 
