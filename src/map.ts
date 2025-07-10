@@ -801,6 +801,19 @@ export default class Map {
         this.polylinesList[type].push(polyline);
     }
 
+    private getPolylines(type: string, condition: any): any[] {
+        const polylines = this.polylinesList[type];
+        if (polylines && polylines.length) {
+            const resultFilter = condition
+                ? polylines.filter((polyline: any) =>
+                      condition(polyline.object)
+                  )
+                : polylines;
+            return resultFilter.length > 0 ? resultFilter : [];
+        }
+        return [];
+    }
+
     /**
      * Use this function to toggle polylines
      * @param {boolean} show
@@ -1100,7 +1113,7 @@ export default class Map {
      * @param {string} type
      * @returns {object}
      */
-    public getObjectOpenPopup(type: string): object {
+    public getObjectOpenPopup(type: string): object | null {
         return this.infoWindowList[type]
             ? this.infoWindowList[type].object
             : null;
@@ -1219,7 +1232,11 @@ export default class Map {
      * @param {number[][]} data
      * @param {any} condition update heatmaps with the condition [nullable]
      */
-    public updateHeatMapData(type: string, data: number[][], condition?: any): void {
+    public updateHeatMapData(
+        type: string,
+        data: number[][],
+        condition?: any
+    ): void {
         const heatmaps = this.getHeatMaps(type, condition);
 
         if (heatmaps && heatmaps.length) {
@@ -1235,7 +1252,11 @@ export default class Map {
      * @param {Partial<HeatMapOptions>} options
      * @param {any} condition update heatmaps with the condition [nullable]
      */
-    public setHeatMapOptions(type: string, options: Partial<HeatMapOptions>, condition?: any): void {
+    public setHeatMapOptions(
+        type: string,
+        options: Partial<HeatMapOptions>,
+        condition?: any
+    ): void {
         const heatmaps = this.getHeatMaps(type, condition);
 
         if (heatmaps && heatmaps.length) {
@@ -1296,11 +1317,11 @@ export default class Map {
      */
     public isHeatMapOnMap(type: string, condition?: any): boolean {
         const heatmaps = this.getHeatMaps(type, condition);
-        
+
         if (heatmaps && heatmaps.length > 0) {
             return this.map?.isHeatMapOnMap(heatmaps[0]) || false;
         }
-        
+
         return false;
     }
 
@@ -1509,20 +1530,6 @@ export default class Map {
         } else return [];
     }
 
-    private getPolylines(type: string, condition: any): any[] {
-        const polylines = this.polylinesList[type];
-
-        if (polylines && polylines.length) {
-            const resultFilter = condition
-                ? polylines.filter((polyline: any) =>
-                      condition(polyline.object)
-                  )
-                : polylines;
-            return resultFilter.length > 0 ? resultFilter : [];
-        }
-        return [];
-    }
-
     private getOverlays(type: string, condition: any): any[] {
         const overlays = this.overlayList[type];
 
@@ -1543,17 +1550,87 @@ export default class Map {
         } else return [];
     }
 
-    private coordinatesToKm = (
-        coordinatesFrom: number[],
-        coordinatesTo: number[]
-    ) => {
-        const distance = geolib.getDistance(
-            { latitude: coordinatesFrom[0], longitude: coordinatesFrom[1] },
-            { latitude: coordinatesTo[0], longitude: coordinatesTo[1] }
-        );
+    private createDistanceOverlay(distance: number): HTMLDivElement {
+        const element = document.createElement("div");
+        element.textContent = `${(distance * 1000).toFixed(1)}m`;
+        element.style.cssText =
+            "font-size: 12px;font-weight: 600; letter-spacing: 1px;color: black;height: 30px; width: 120px;text-align: center;display: flex;justify-content: center;align-items: center;transform: translateX(-60px) translateY(-40px); white-space: pre-line; line-height: 1";
+        element.style.position = "absolute";
+        return element;
+    }
 
-        return distance / 1000;
-    };
+    private addRulerOverlay(): void {
+        const overlayFirst = this.createDistanceOverlay(0.0);
+
+        const firstPoint = new OverlayOptions(
+            overlayFirst,
+            true,
+            this.rulerClicks[0]
+        );
+        this?.drawOverlay("inlogmaps-ruler", firstPoint);
+
+        if (this.rulerClicks[1]) {
+            const segmentLengthKm = this.coordinatesToKm(
+                this.rulerClicks[0],
+                this.rulerClicks[1]
+            );
+
+            const overlaySecond = this.createDistanceOverlay(segmentLengthKm);
+
+            const options = new OverlayOptions(
+                overlaySecond,
+                true,
+                this.rulerClicks[1]
+            );
+            this?.drawOverlay("inlogmaps-ruler", options);
+        }
+    }
+
+    private addRulerMovingOverlay(): void {
+        // Now draw overlays for all saved rulers
+        for (
+            let rulerIndex = 0;
+            rulerIndex < this.rulerLatLongs.length;
+            rulerIndex++
+        ) {
+            const points = this.rulerLatLongs[rulerIndex];
+            if (!points || points.length < 2) continue;
+
+            let totalDistance = 0;
+
+            for (let i = 0; i < points.length - 1; i++) {
+                const latLong1 = points[i];
+                const latLong2 = points[i + 1];
+
+                // Overlay 0m at the first point of each ruler
+                if (i === 0) {
+                    const overlayFirst = this.createDistanceOverlay(0.0);
+                    const firstPoint = new OverlayOptions(
+                        overlayFirst,
+                        true,
+                        latLong1
+                    );
+                    this.drawOverlay("inlogmaps-ruler", firstPoint);
+                }
+
+                // Accumulate distance
+                const segmentDistance = this.coordinatesToKm(
+                    latLong1,
+                    latLong2
+                );
+                totalDistance += segmentDistance;
+
+                // Overlay with accumulated distance at the next point
+                const overlaySecond = this.createDistanceOverlay(totalDistance);
+                const secondPointOptions = new OverlayOptions(
+                    overlaySecond,
+                    true,
+                    latLong2
+                );
+                this.drawOverlay("inlogmaps-ruler", secondPointOptions);
+            }
+        }
+    }
 
     private onMapClickForRuler(event: any): void {
         this.rulerPolylineCount++;
@@ -1571,108 +1648,48 @@ export default class Map {
             },
             path: this.rulerClicks,
         };
+        // Draws the polyline for the ruler tool and attaches update logic on drag/edit
         const rulerPolyline = this.drawPolyline(
             "inlogmaps-ruler",
             polylineOptions,
             () => {},
             () => {
-                this.rulerLatLongs = [];
                 const polylinesPaths = this.getPolylines(
                     "inlogmaps-ruler",
                     null
                 );
 
-                const filter = polylinesPaths
-                    .map((polyline) => {
-                        return this.map?.getPolylinePath(polyline);
-                    })
-                    .filter((el) => el.length === 2);
+                // Updates the ruler segments array with all valid paths
+                const allPaths = polylinesPaths
+                    .map((polyline) => this.map?.getPolylinePath(polyline))
+                    .filter((el) => !!el && el.length >= 2);
 
-                this.rulerLatLongs.push(
-                    filter
-                        .map((el) => {
-                            return [el[0], el[1]];
-                        })
-                        .flat()
-                );
+                this.rulerLatLongs = allPaths;
+
+                // Refreshes overlays (distance labels, etc.) after polyline changes
                 this.removeOverlays("inlogmaps-ruler");
                 this.addRulerMovingOverlay();
             }
         );
         this.rulerPolylines.push(rulerPolyline);
         this.addRulerOverlay();
+
+        // When two points are set, save them as a new ruler segment and reset the array
         if (this.rulerClicks.length === 2) {
             this.rulerLatLongs.push(this.rulerClicks);
             this.rulerClicks = [];
         }
     }
 
-    private addRulerOverlay(): void {
-        const overlayFirst = this.createDistanceOverlay(0.0);
-
-        const firstPoint = new OverlayOptions(
-            overlayFirst,
-            true,
-            this.rulerClicks[0]
+    private coordinatesToKm(
+        coordinatesFrom: number[],
+        coordinatesTo: number[]
+    ) {
+        const distance = geolib.getDistance(
+            { latitude: coordinatesFrom[0], longitude: coordinatesFrom[1] },
+            { latitude: coordinatesTo[0], longitude: coordinatesTo[1] }
         );
-        this?.drawOverlay("inlogmaps-ruler", firstPoint);
 
-        if (this.rulerClicks[1]) {
-            const teste = this.coordinatesToKm(
-                this.rulerClicks[0],
-                this.rulerClicks[1]
-            );
-
-            const overlaySecond = this.createDistanceOverlay(teste);
-
-            const options = new OverlayOptions(
-                overlaySecond,
-                true,
-                this.rulerClicks[1]
-            );
-            this?.drawOverlay("inlogmaps-ruler", options);
-        }
-    }
-
-    private addRulerMovingOverlay(): void {
-        for (let i = 0; i < this.rulerLatLongs[0].length; i += 2) {
-            const latLong1 = this.rulerLatLongs[0][i];
-            const latLong2 = this.rulerLatLongs[0][i + 1]
-                ? this.rulerLatLongs[0][i + 1]
-                : null;
-
-            if (latLong1 && latLong2) {
-                const overlayFirst = this.createDistanceOverlay(0.0);
-                const firstPoint = new OverlayOptions(
-                    overlayFirst,
-                    true,
-                    latLong1
-                );
-                this?.drawOverlay("inlogmaps-ruler", firstPoint);
-
-                const overlaySecondDistance = this.coordinatesToKm(
-                    latLong1,
-                    latLong2
-                );
-                const overlaySecond = this.createDistanceOverlay(
-                    overlaySecondDistance
-                );
-                const secondPointOptions = new OverlayOptions(
-                    overlaySecond,
-                    true,
-                    latLong2
-                );
-                this?.drawOverlay("inlogmaps-ruler", secondPointOptions);
-            }
-        }
-    }
-
-    private createDistanceOverlay(distance: number): HTMLDivElement {
-        const element = document.createElement("div");
-        element.textContent = `${(distance * 1000).toFixed(1)}m`;
-        element.style.cssText =
-            "font-size: 12px;font-weight: 600; letter-spacing: 1px;color: black;height: 30px; width: 120px;text-align: center;display: flex;justify-content: center;align-items: center;transform: translateX(-60px) translateY(-40px); white-space: pre-line; line-height: 1";
-        element.style.position = "absolute";
-        return element;
+        return distance / 1000;
     }
 }
