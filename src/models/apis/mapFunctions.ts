@@ -152,4 +152,7 @@ export default interface IMapFunctions {
     updateHeatMapData(heatmap: any, data: number[][]): void;
     setHeatMapOptions(heatmap: any, options: Partial<HeatMapOptions>): void;
     isHeatMapOnMap(heatmap: any): boolean;
+
+    /* Check Index */
+    checkIdx(polyline: any, point: [number, number]): number | undefined;
 }

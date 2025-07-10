@@ -28,10 +28,8 @@ const leafletLibParams = {
 const inlogMaps = window.InlogMaps;
 const currentMap = new inlogMaps.Map();
 
-// currentMap;
-// .initialize(inlogMaps.MapType.Google, googleMapsLibParams)
-currentMap
-    .initialize(inlogMaps.MapType.Leaflet, leafletLibParams)
+//currentMap.initialize(inlogMaps.MapType.Google, googleMapsLibParams)
+currentMap.initialize(inlogMaps.MapType.Leaflet, leafletLibParams)
     .then(() => console.log("map initialized!"));
 
 let simpleMarkerShow = null;
@@ -280,6 +278,7 @@ function addMarker() {
 function onMouseOver(event) {
     console.log(event);
 }
+
 function onRightClick(event) {
     console.log(event);
 }
@@ -306,21 +305,16 @@ function onClickMarkerCustom(event, object) {
                     </h3>
                     <div class="section">
                         <div class="infowindow-table">
-                            <div><strong>Valor 1:</strong><span> ${
-                                object.valor1 || ""
-                            }</span> </div>
-                            <div><strong>Valor 2:</strong><span> ${
-                                object.valor2 || ""
-                            }</span></div>
-                            <div><strong>Valor 3:</strong><span> ${
-                                object.valor3 || ""
-                            }</span></div>
-                            <div><strong>Valor 4:</strong><span> ${
-                                object.valor4
-                            }</span></div>
-                            <div><strong>Valor 5:</strong><span> ${
-                                object.valor5
-                            }</span></div>
+                            <div><strong>Valor 1:</strong><span> ${object.valor1 || ""
+        }</span> </div>
+                            <div><strong>Valor 2:</strong><span> ${object.valor2 || ""
+        }</span></div>
+                            <div><strong>Valor 3:</strong><span> ${object.valor3 || ""
+        }</span></div>
+                            <div><strong>Valor 4:</strong><span> ${object.valor4
+        }</span></div>
+                            <div><strong>Valor 5:</strong><span> ${object.valor5
+        }</span></div>
                         </div>
                     </div>
                 </div>`;
@@ -479,6 +473,10 @@ function onClickPolyline(event, object) {
         `<p>${object.item}.</p>`
     );
 
+    const checkIdx = currentMap.checkIdx("polyline", event.latlng, (object) => {
+        return object?.uuid === 1;
+    });
+    console.log("checkIdx", checkIdx);
     currentMap.drawPopup("polyline", options);
 }
 
@@ -504,6 +502,7 @@ function addPolyline() {
                 uuid: el,
                 color: "#009ACA",
             };
+            options.style = inlogMaps.PolylineType.Arrow;
             currentMap.drawPolyline("polyline", options, onClickPolyline);
 
             currentMap.addPolylineEvent(

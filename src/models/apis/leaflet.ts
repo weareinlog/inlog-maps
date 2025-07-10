@@ -452,6 +452,17 @@ export default class Leaflet implements IMapFunctions {
         return this.leafletPolylines?.getPolylineHighlightIndex()!;
     }
 
+    public checkIdx(
+        polyline: any,
+        point: [number, number]
+    ): number | undefined {
+        const result = this.leafletPolylines?.checkIdx(polyline, {
+            lat: point[0],
+            lng: point[1],
+        });
+        return result;
+    }
+
     /* Popups */
     public drawPopup(options: PopupOptions, marker?: any): any {
         return this.leafletPopups?.drawPopup(options, marker);

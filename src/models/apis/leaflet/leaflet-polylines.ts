@@ -106,11 +106,7 @@ export default class LeafletPolylines {
                 weight: 0,
                 color: polyline.options.color,
             };
-            if (!polyline.decorator || !self.leaflet.Symbol) {
-                console.error(
-                    "Decorator Error: Please import the leaflet.polylineDecorator.js file in the scriptsDependencies."
-                );
-            } else {
+            if (polyline.decorator || self.leaflet.Symbol) {
                 polyline.decorator = self.leaflet.polylineDecorator(polyline, {
                     patterns: [
                         {
@@ -137,7 +133,7 @@ export default class LeafletPolylines {
                         },
                     ],
                 });
-            }
+            } else console.error("Decorator Error: Please import the leaflet.polylineDecorator.js file in the scriptsDependencies.");
         }
 
         if (options.addToMap) {
@@ -154,9 +150,9 @@ export default class LeafletPolylines {
                 polyline.on("editable:vertex:dragend", function (e: any) {
                     callBackEdit
                         ? callBackEdit({
-                              ...e,
-                              origin: options.path,
-                          })
+                            ...e,
+                            origin: options.path,
+                        })
                         : null;
                     setTimeout(() => {
                         self.setEditModeBlockingMapClick(false);
@@ -729,7 +725,13 @@ export default class LeafletPolylines {
         this.selectedPath.highlight = true;
     }
 
-    private checkIdx(polyline: any, point: any) {
+    public checkIdx(
+        polyline: any,
+        point: {
+            lat: number;
+            lng: number;
+        }
+    ) {
         const self = this;
         const path = polyline.getLatLngs();
         let distance = 0;
@@ -789,7 +791,7 @@ export default class LeafletPolylines {
             e.asin(
                 e.sqrt(
                     e.pow(e.sin(d / 2), 2) +
-                        e.cos(b) * e.cos(c) * e.pow(e.sin(g / 2), 2)
+                    e.cos(b) * e.cos(c) * e.pow(e.sin(g / 2), 2)
                 )
             );
 
@@ -843,9 +845,9 @@ export default class LeafletPolylines {
             const latlngs = eventNew.vertex.latlngs;
             const previous =
                 latlngs[
-                    latlngs.findIndex(
-                        (x: any) => x === eventNew.vertex.latlng
-                    ) - 1
+                latlngs.findIndex(
+                    (x: any) => x === eventNew.vertex.latlng
+                ) - 1
                 ];
             const previousPoint = new EventReturn([previous.lat, previous.lng]);
 
