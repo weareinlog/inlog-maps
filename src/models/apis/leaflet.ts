@@ -12,6 +12,7 @@ import { MapType } from "../dto/map-type";
 import CircleAlterOptions from "../features/circle/circle-alter-options";
 import CircleOptions from "../features/circle/circle-options";
 import GeoJsonOptions from "../features/geojson/geojson-options";
+import HeatMapOptions from "../features/heatmap/heatmap-options";
 import MarkerClustererConfig from "../features/marker-clusterer/marker-clusterer-config";
 import CircleMarkerOptions from "../features/marker/circle-marker-options";
 import MarkerAlterOptions from "../features/marker/marker-alter-options";
@@ -22,6 +23,7 @@ import PolylineOptions from "../features/polyline/polyline-options";
 import PopupOptions from "../features/popup/popup-options";
 import LeafletCircles from "./leaflet/leaflet-circle";
 import LeafletGeoJson from "./leaflet/leaflet-geojson";
+import LeafletHeatMap from "./leaflet/leaflet-heatmap";
 import LeafletMap from "./leaflet/leaflet-map";
 import LeafletMarkers from "./leaflet/leaflet-markers";
 import LeafletOverlays from "./leaflet/leaflet-overlay";
@@ -39,6 +41,7 @@ export default class Leaflet implements IMapFunctions {
     private leafletMap: LeafletMap | null = null;
     private leafletOverlays: LeafletOverlays | null = null;
     private leafletGeoJson: LeafletGeoJson | null = null;
+    private leafletHeatMap: LeafletHeatMap | null = null;
     private leafletScreenshot: any;
 
     private mapsApiLoader: MapsApiLoaderService = new MapsApiLoaderService();
@@ -147,6 +150,7 @@ export default class Leaflet implements IMapFunctions {
                 this.leafletPolygons
             );
             this.leafletGeoJson = new LeafletGeoJson(map, leaflet);
+            this.leafletHeatMap = new LeafletHeatMap(map, leaflet);
             return this;
         } catch (err) {
             console.error(err);
@@ -539,6 +543,27 @@ export default class Leaflet implements IMapFunctions {
 
     public toggleOverlay(overlays: any[], show: boolean): void {
         this.leafletOverlays?.toggleOverlay(overlays, show);
+    }
+
+    /* HeatMap */
+    public drawHeatMap(options: HeatMapOptions): any {
+        return this.leafletHeatMap?.drawHeatMap(options);
+    }
+
+    public toggleHeatMap(heatmap: any, show: boolean): void {
+        this.leafletHeatMap?.toggleHeatMap(heatmap, show);
+    }
+
+    public updateHeatMapData(heatmap: any, data: number[][]): void {
+        this.leafletHeatMap?.updateHeatMapData(heatmap, data);
+    }
+
+    public setHeatMapOptions(heatmap: any, options: Partial<HeatMapOptions>): void {
+        this.leafletHeatMap?.setHeatMapOptions(heatmap, options);
+    }
+
+    public isHeatMapOnMap(heatmap: any): boolean {
+        return this.leafletHeatMap?.isHeatMapOnMap(heatmap) || false;
     }
 
     /* Private Methods */

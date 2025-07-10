@@ -22,6 +22,7 @@ import MarkerClustererConfig from './models/features/marker-clusterer/marker-clu
 import { MarkerEventType, CircleEventType, PolygonEventType, PolylineEventType, MapEventType } from './models/dto/event-type';
 import { MapType } from './models/dto/map-type';
 import { PolylineType } from './models/dto/polyline-type';
+import HeatMapOptions from './models/features/heatmap/heatmap-options';
 
 export { Map };
 export { MarkerOptions };
@@ -48,3 +49,4 @@ export { CircleEventType };
 export { PolygonEventType };
 export { PolylineEventType };
 export { MarkerClustererConfig };
+export { HeatMapOptions };

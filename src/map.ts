@@ -12,6 +12,7 @@ import { PolylineType } from "./models/dto/polyline-type";
 import CircleAlterOptions from "./models/features/circle/circle-alter-options";
 import CircleOptions from "./models/features/circle/circle-options";
 import GeoJsonOptions from "./models/features/geojson/geojson-options";
+import HeatMapOptions from "./models/features/heatmap/heatmap-options";
 import MarkerClustererConfig from "./models/features/marker-clusterer/marker-clusterer-config";
 import CircleMarkerOptions from "./models/features/marker/circle-marker-options";
 import MarkerAlterOptions from "./models/features/marker/marker-alter-options";
@@ -30,6 +31,7 @@ export default class Map {
     private polylinesList: any = {};
     private infoWindowList: any = {};
     private overlayList: any = {};
+    private heatmapsList: any = {};
     private map: any = {};
     private markerClusterer: any = {};
     private rulerPolylines: any[] = [];
@@ -1176,6 +1178,132 @@ export default class Map {
         return await this.map?.takeMapScreenshot();
     }
 
+    /* HeatMap */
+    /**
+     * Use this function to draw heatmaps in the currentMap
+     * @param {string} type
+     * @param {HeatMapOptions} options
+     */
+    public drawHeatMap(type: string, options: HeatMapOptions): any {
+        const heatmap = this.map?.drawHeatMap(options);
+
+        if (heatmap) {
+            if (!this.heatmapsList[type]) {
+                this.heatmapsList[type] = [];
+            }
+            this.heatmapsList[type].push(heatmap);
+        }
+
+        return heatmap;
+    }
+
+    /**
+     * Use this function to show/hide heatmaps from a specific type
+     * @param {boolean} show
+     * @param {string} type
+     * @param {any} condition toggle heatmaps with the condition [nullable]
+     */
+    public toggleHeatMaps(show: boolean, type: string, condition?: any): void {
+        const heatmaps = this.getHeatMaps(type, condition);
+
+        if (heatmaps && heatmaps.length) {
+            heatmaps.forEach((heatmap: any) => {
+                this.map?.toggleHeatMap(heatmap, show);
+            });
+        }
+    }
+
+    /**
+     * Update heatmap data for a specific type
+     * @param {string} type
+     * @param {number[][]} data
+     * @param {any} condition update heatmaps with the condition [nullable]
+     */
+    public updateHeatMapData(type: string, data: number[][], condition?: any): void {
+        const heatmaps = this.getHeatMaps(type, condition);
+
+        if (heatmaps && heatmaps.length) {
+            heatmaps.forEach((heatmap: any) => {
+                this.map?.updateHeatMapData(heatmap, data);
+            });
+        }
+    }
+
+    /**
+     * Set heatmap options for a specific type
+     * @param {string} type
+     * @param {Partial<HeatMapOptions>} options
+     * @param {any} condition update heatmaps with the condition [nullable]
+     */
+    public setHeatMapOptions(type: string, options: Partial<HeatMapOptions>, condition?: any): void {
+        const heatmaps = this.getHeatMaps(type, condition);
+
+        if (heatmaps && heatmaps.length) {
+            heatmaps.forEach((heatmap: any) => {
+                this.map?.setHeatMapOptions(heatmap, options);
+            });
+        }
+    }
+
+    /**
+     * Remove heatmaps from the map and from internal list
+     * @param {string} type
+     * @param {any} condition remove heatmaps with the condition [nullable]
+     */
+    public removeHeatMaps(type: string, condition?: any): void {
+        if (this.heatmapsList[type] && condition) {
+            const heatmaps = this.getHeatMaps(type, condition);
+
+            // Hide heatmaps with the condition
+            heatmaps.forEach((heatmap: any) => {
+                this.map?.toggleHeatMap(heatmap, false);
+            });
+
+            // Keep heatmaps that doesn't have the condition
+            this.heatmapsList[type] = this.heatmapsList[type].filter(
+                (heatmap: any) => !condition(heatmap.object)
+            );
+        } else {
+            if (this.heatmapsList[type]) {
+                this.heatmapsList[type].forEach((heatmap: any) => {
+                    this.map?.toggleHeatMap(heatmap, false);
+                });
+            }
+            this.heatmapsList[type] = [];
+        }
+
+        if (this.heatmapsList[type] && this.heatmapsList[type].length === 0) {
+            delete this.heatmapsList[type];
+        }
+    }
+
+    /**
+     * Remove all heatmaps from the map and from the internal list
+     */
+    public removeAllHeatMaps(): void {
+        for (const type in this.heatmapsList) {
+            if (this.heatmapsList.hasOwnProperty(type)) {
+                this.removeHeatMaps(type);
+            }
+        }
+    }
+
+    /**
+     * Check if heatmap is visible on map
+     * @param {string} type
+     * @param {any} condition check heatmaps with the condition [nullable]
+     * @returns {boolean}
+     */
+    public isHeatMapOnMap(type: string, condition?: any): boolean {
+        const heatmaps = this.getHeatMaps(type, condition);
+        
+        if (heatmaps && heatmaps.length > 0) {
+            return this.map?.isHeatMapOnMap(heatmaps[0]) || false;
+        }
+        
+        return false;
+    }
+
     /**
      * Remove ruler in the map
      * @returns {void}
@@ -1402,6 +1530,16 @@ export default class Map {
             return condition
                 ? overlays.filter((overlay: any) => condition(overlay.object))
                 : overlays;
+        } else return [];
+    }
+
+    private getHeatMaps(type: string, condition: any): any[] {
+        const heatmaps = this.heatmapsList[type];
+
+        if (heatmaps && heatmaps.length) {
+            return condition
+                ? heatmaps.filter((heatmap: any) => condition(heatmap.object))
+                : heatmaps;
         } else return [];
     }
 

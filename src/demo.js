@@ -15,6 +15,7 @@ const leafletLibParams = {
         "../node_modules/leaflet-gesture-handling/dist/leaflet-gesture-handling.js",
         "../node_modules/leaflet.markercluster/dist/leaflet.markercluster.js",
         "../node_modules/leaflet-polylinedecorator/dist/leaflet.polylineDecorator.js",
+        "../node_modules/leaflet.heat/dist/leaflet-heat.js",
     ],
     cssDependencies: [
         "../node_modules/leaflet-gesture-handling/dist/leaflet-gesture-handling.css",
@@ -40,6 +41,7 @@ let circleShow = null;
 let drawing = false;
 let zoomChanged = false;
 let isPolygonEditable = false;
+let heatmapShow = null;
 
 /* GEOJson */
 function onClick(event) {
@@ -164,6 +166,76 @@ function geojsonPolygon() {
         },
         onClick
     );
+}
+
+function geojsonHeatmap() {
+    // Criar dados de heatmap a partir de um GeoJSON simulado de pontos de interesse
+    const geojsonData = {
+        type: "FeatureCollection",
+        features: [
+            {
+                type: "Feature",
+                properties: { intensity: 0.8, name: "Centro SP" },
+                geometry: { type: "Point", coordinates: [-46.633309, -23.550520] }
+            },
+            {
+                type: "Feature", 
+                properties: { intensity: 0.9, name: "Paulista" },
+                geometry: { type: "Point", coordinates: [-46.656139, -23.564608] }
+            },
+            {
+                type: "Feature",
+                properties: { intensity: 0.7, name: "Vila Madalena" },
+                geometry: { type: "Point", coordinates: [-46.691847, -23.546310] }
+            },
+            {
+                type: "Feature",
+                properties: { intensity: 0.6, name: "Itaim Bibi" },
+                geometry: { type: "Point", coordinates: [-46.677094, -23.591057] }
+            },
+            {
+                type: "Feature",
+                properties: { intensity: 0.8, name: "Copacabana" },
+                geometry: { type: "Point", coordinates: [-43.177280, -22.967140] }
+            },
+            {
+                type: "Feature",
+                properties: { intensity: 0.7, name: "Ipanema" },
+                geometry: { type: "Point", coordinates: [-43.204710, -22.984290] }
+            }
+        ]
+    };
+
+    // Converter GeoJSON para formato de heatmap
+    const heatmapData = geojsonData.features.map(feature => {
+        const coords = feature.geometry.coordinates;
+        const intensity = feature.properties.intensity || 0.5;
+        return [coords[1], coords[0], intensity]; // [lat, lng, intensity]
+    });
+
+    let options = new inlogMaps.HeatMapOptions(
+        heatmapData,
+        true,  // addToMap
+        35,    // radius
+        1.0,   // maxIntensity
+        0.2,   // minOpacity
+        0.8,   // opacity
+        {      // gradient baseado em POIs
+            0.0: '#4CAF50',  // verde
+            0.4: '#FFEB3B',  // amarelo
+            0.7: '#FF9800',  // laranja
+            1.0: '#F44336'   // vermelho
+        },
+        25,    // blur
+        15,    // maxZoom
+        false, // dissipating
+        false, // scaleRadius
+        false, // useLocalExtrema
+        true,  // fitBounds
+        { type: 'geojson-based', geojson: geojsonData }
+    );
+
+    currentMap.drawHeatMap("geojsonHeatmap", options);
 }
 
 /* Marker tests */
@@ -1475,4 +1547,186 @@ function enableRuler() {
 
 function removeRuler() {
     currentMap.removeRuler();
+}
+
+/* Heatmap tests */
+function addHeatmap() {
+    if (heatmapShow === null) {
+        // Gerar dados de exemplo para o heatmap
+        const heatmapData = generateHeatmapData();
+        
+        let options = new inlogMaps.HeatMapOptions(
+            heatmapData,
+            true, // addToMap
+            25,   // radius
+            1.0,  // maxIntensity
+            0.05, // minOpacity
+            0.6,  // opacity
+            {     // gradient
+                0.0: 'blue',
+                0.2: 'cyan', 
+                0.4: 'lime',
+                0.6: 'yellow',
+                1.0: 'red'
+            },
+            15,   // blur
+            18,   // maxZoom
+            false, // dissipating
+            false, // scaleRadius
+            false, // useLocalExtrema
+            true   // fitBounds
+        );
+
+        currentMap.drawHeatMap("heatmap", options);
+        heatmapShow = true;
+    } else {
+        heatmapShow = !heatmapShow;
+        currentMap.toggleHeatMaps(heatmapShow, "heatmap");
+    }
+}
+
+function generateHeatmapData() {
+    // Gerar dados de exemplo concentrados em algumas regiões
+    const data = [];
+    const centers = [
+        [-23.550520, -46.633309], // São Paulo
+        [-22.906847, -43.172896], // Rio de Janeiro
+        [-25.441105, -49.276855], // Curitiba
+        [-30.034647, -51.217658], // Porto Alegre
+    ];
+
+    centers.forEach(center => {
+        // Adicionar pontos ao redor de cada centro
+        for (let i = 0; i < 50; i++) {
+            const lat = center[0] + (Math.random() - 0.5) * 0.1;
+            const lng = center[1] + (Math.random() - 0.5) * 0.1;
+            const intensity = Math.random();
+            data.push([lat, lng, intensity]);
+        }
+    });
+
+    return data;
+}
+
+function changeHeatmapIntensity() {
+    if (heatmapShow === null) {
+        alert("The heatmap was not created yet!");
+    } else {
+        const options = {
+            maxIntensity: 2.0,
+            opacity: 0.8
+        };
+        currentMap.setHeatMapOptions("heatmap", options);
+    }
+}
+
+function changeHeatmapRadius() {
+    if (heatmapShow === null) {
+        alert("The heatmap was not created yet!");
+    } else {
+        const options = {
+            radius: 40,
+            blur: 25
+        };
+        currentMap.setHeatMapOptions("heatmap", options);
+    }
+}
+
+function changeHeatmapGradient() {
+    if (heatmapShow === null) {
+        alert("The heatmap was not created yet!");
+    } else {
+        const options = {
+            gradient: {
+                0.0: 'navy',
+                0.25: 'blue',
+                0.5: 'green',
+                0.75: 'yellow',
+                1.0: 'red'
+            }
+        };
+        currentMap.setHeatMapOptions("heatmap", options);
+    }
+}
+
+function updateHeatmapData() {
+    if (heatmapShow === null) {
+        alert("The heatmap was not created yet!");
+    } else {
+        // Gerar novos dados aleatórios
+        const newData = [];
+        for (let i = 0; i < 100; i++) {
+            const lat = -30 + Math.random() * 10; // Latitude entre -30 e -20
+            const lng = -55 + Math.random() * 10; // Longitude entre -55 e -45
+            const intensity = Math.random();
+            newData.push([lat, lng, intensity]);
+        }
+        
+        currentMap.updateHeatMapData("heatmap", newData);
+    }
+}
+
+function addHeatmapWithLocationData() {
+    // Criar dados baseados em localizações reais do Brasil
+    const locationData = [
+        // São Paulo - região metropolitana
+        [-23.550520, -46.633309, 0.9],
+        [-23.563720, -46.654540, 0.8],
+        [-23.532100, -46.637800, 0.7],
+        [-23.561680, -46.625290, 0.8],
+        [-23.550650, -46.640530, 0.9],
+        
+        // Rio de Janeiro
+        [-22.906847, -43.172896, 0.8],
+        [-22.951600, -43.210500, 0.7],
+        [-22.906990, -43.179720, 0.8],
+        [-22.913100, -43.172900, 0.7],
+        
+        // Belo Horizonte
+        [-19.916681, -43.934493, 0.6],
+        [-19.924430, -43.935190, 0.5],
+        [-19.912180, -43.940230, 0.6],
+        
+        // Brasília
+        [-15.794229, -47.882166, 0.5],
+        [-15.789000, -47.870000, 0.4],
+        
+        // Salvador
+        [-12.971211, -38.501245, 0.6],
+        [-12.975000, -38.480000, 0.5],
+        
+        // Curitiba
+        [-25.441105, -49.276855, 0.7],
+        [-25.450000, -49.280000, 0.6],
+        
+        // Porto Alegre
+        [-30.034647, -51.217658, 0.6],
+        [-30.040000, -51.220000, 0.5],
+    ];
+
+    let options = new inlogMaps.HeatMapOptions(
+        locationData,
+        true,  // addToMap
+        30,    // radius
+        1.0,   // maxIntensity
+        0.1,   // minOpacity
+        0.7,   // opacity
+        {      // gradient personalizado para localizações
+            0.0: '#000080',  // azul escuro
+            0.3: '#0000FF',  // azul
+            0.5: '#00FFFF',  // ciano
+            0.7: '#FFFF00',  // amarelo
+            0.9: '#FF8000',  // laranja
+            1.0: '#FF0000'   // vermelho
+        },
+        20,    // blur
+        16,    // maxZoom
+        false, // dissipating
+        false, // scaleRadius
+        false, // useLocalExtrema
+        true,  // fitBounds
+        { type: 'location-based', description: 'Heatmap baseado em localizações reais' }
+    );
+
+    currentMap.drawHeatMap("locationHeatmap", options);
 }

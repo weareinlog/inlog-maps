@@ -10,6 +10,7 @@ import { MapType } from "../dto/map-type";
 import CircleAlterOptions from "../features/circle/circle-alter-options";
 import CircleOptions from "../features/circle/circle-options";
 import GeoJsonOptions from "../features/geojson/geojson-options";
+import HeatMapOptions from "../features/heatmap/heatmap-options";
 import MarkerClustererConfig from "../features/marker-clusterer/marker-clusterer-config";
 import CircleMarkerOptions from "../features/marker/circle-marker-options";
 import MarkerAlterOptions from "../features/marker/marker-alter-options";
@@ -21,6 +22,7 @@ import PolylineOptions from "../features/polyline/polyline-options";
 import PopupOptions from "../features/popup/popup-options";
 import GoogleCircles from "./google/google-circles";
 import GoogleGeoJson from "./google/google-geojson";
+import GoogleHeatMap from "./google/google-heatmap";
 import GoogleMap from "./google/google-map";
 import GoogleMarkers from "./google/google-markers";
 import GoogleOverlays from "./google/google-overlay";
@@ -39,6 +41,7 @@ export default class GoogleMaps implements IMapFunctions {
     private googleMap: GoogleMap | null = null;
     private googleOverlays: GoogleOverlays | null = null;
     private googleGeoJson: GoogleGeoJson | null = null;
+    private googleHeatMap: GoogleHeatMap | null = null;
 
     private mapsApiLoader: MapsApiLoaderService = new MapsApiLoaderService();
 
@@ -140,6 +143,7 @@ export default class GoogleMaps implements IMapFunctions {
                 this.googlePolygons
             );
             this.googleGeoJson = new GoogleGeoJson(map, google);
+            this.googleHeatMap = new GoogleHeatMap(map, google);
 
             if (imageMapTypes && imageMapTypes.length) {
                 imageMapTypes.forEach((image: any) => {
@@ -542,5 +546,26 @@ export default class GoogleMaps implements IMapFunctions {
 
     public toggleOverlay(overlays: any[], show: boolean): void {
         this.googleOverlays?.toggleOverlay(overlays, show);
+    }
+
+    /* HeatMap */
+    public drawHeatMap(options: HeatMapOptions): any {
+        return this.googleHeatMap?.drawHeatMap(options);
+    }
+
+    public toggleHeatMap(heatmap: any, show: boolean): void {
+        this.googleHeatMap?.toggleHeatMap(heatmap, show);
+    }
+
+    public updateHeatMapData(heatmap: any, data: number[][]): void {
+        this.googleHeatMap?.updateHeatMapData(heatmap, data);
+    }
+
+    public setHeatMapOptions(heatmap: any, options: Partial<HeatMapOptions>): void {
+        this.googleHeatMap?.setHeatMapOptions(heatmap, options);
+    }
+
+    public isHeatMapOnMap(heatmap: any): boolean {
+        return this.googleHeatMap?.isHeatMapOnMap(heatmap) || false;
     }
 }

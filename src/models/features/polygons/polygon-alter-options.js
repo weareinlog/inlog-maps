@@ -6,7 +6,7 @@ var PolygonAlterOptions = /** @class */ (function () {
         this.fillColor = fillColor;
         this.fillOpacity = fillOpacity;
         this.weight = weight;
-        this.path = [];
+        this.path = undefined;
     }
     return PolygonAlterOptions;
 }());
