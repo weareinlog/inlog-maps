@@ -10,7 +10,7 @@ Install the library
 #### Google
 ```javascript
 const params = {
-    libraries: ['drawing'],
+    libraries: ['drawing', 'visualization'],
     apiKey: '<your-api-key-here>',
     gestureHandling: false,
     showTraffic: false,
@@ -28,7 +28,8 @@ const params = {
     scriptsDependencies: [
         'path/to/Leaflet.Editable.js',
         'path/to/Path.Drag.js',
-        'path/to/leaflet-gesture-handling.js'
+        'path/to/leaflet-gesture-handling.js',
+        'path/to/leaflet-heat.js'
     ],
     cssDependencies: [
         'path/to/leaflet-gesture-handling.css'

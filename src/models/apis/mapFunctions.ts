@@ -9,6 +9,7 @@ import { MapType } from "../dto/map-type";
 import CircleAlterOptions from "../features/circle/circle-alter-options";
 import CircleOptions from "../features/circle/circle-options";
 import GeoJsonOptions from "../features/geojson/geojson-options";
+import HeatMapOptions from "../features/heatmap/heatmap-options";
 import CircleMarkerOptions from "../features/marker/circle-marker-options";
 import MarkerAlterOptions from "../features/marker/marker-alter-options";
 import MarkerOptions from "../features/marker/marker-options";
@@ -144,4 +145,14 @@ export default interface IMapFunctions {
 
     /* ScreenShot */
     takeMapScreenshot(): Promise<string | null>;
+
+    /* HeatMap */
+    drawHeatMap(options: HeatMapOptions): any;
+    toggleHeatMap(heatmap: any, show: boolean): void;
+    updateHeatMapData(heatmap: any, data: number[][]): void;
+    setHeatMapOptions(heatmap: any, options: Partial<HeatMapOptions>): void;
+    isHeatMapOnMap(heatmap: any): boolean;
+
+    /* Check Index */
+    checkIdx(polyline: any, point: [number, number]): number | undefined;
 }
