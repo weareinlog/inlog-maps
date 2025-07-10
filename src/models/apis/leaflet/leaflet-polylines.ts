@@ -133,7 +133,10 @@ export default class LeafletPolylines {
                         },
                     ],
                 });
-            } else console.error("Decorator Error: Please import the leaflet.polylineDecorator.js file in the scriptsDependencies.");
+            } else
+                console.error(
+                    "Decorator Error: Please import the leaflet.polylineDecorator.js file in the scriptsDependencies."
+                );
         }
 
         if (options.addToMap) {
@@ -150,9 +153,9 @@ export default class LeafletPolylines {
                 polyline.on("editable:vertex:dragend", function (e: any) {
                     callBackEdit
                         ? callBackEdit({
-                            ...e,
-                            origin: options.path,
-                        })
+                              ...e,
+                              origin: options.path,
+                          })
                         : null;
                     setTimeout(() => {
                         self.setEditModeBlockingMapClick(false);
@@ -254,11 +257,7 @@ export default class LeafletPolylines {
                         self.map.removeLayer(polyline.decorator);
                     }
 
-                    if (!polyline.decorator || !self.leaflet.Symbol) {
-                        console.error(
-                            "Decorator Error: Please import the leaflet.polylineDecorator.js file in the scriptsDependencies."
-                        );
-                    } else {
+                    if (polyline.decorator || self.leaflet.Symbol) {
                         polyline.decorator = self.leaflet.polylineDecorator(
                             polyline,
                             {
@@ -292,6 +291,10 @@ export default class LeafletPolylines {
                         if (self.map.hasLayer(polyline)) {
                             polyline.decorator.addTo(self.map);
                         }
+                    } else {
+                        console.error(
+                            "Decorator Error: Please import the leaflet.polylineDecorator.js file in the scriptsDependencies."
+                        );
                     }
 
                     break;
@@ -791,7 +794,7 @@ export default class LeafletPolylines {
             e.asin(
                 e.sqrt(
                     e.pow(e.sin(d / 2), 2) +
-                    e.cos(b) * e.cos(c) * e.pow(e.sin(g / 2), 2)
+                        e.cos(b) * e.cos(c) * e.pow(e.sin(g / 2), 2)
                 )
             );
 
@@ -845,9 +848,9 @@ export default class LeafletPolylines {
             const latlngs = eventNew.vertex.latlngs;
             const previous =
                 latlngs[
-                latlngs.findIndex(
-                    (x: any) => x === eventNew.vertex.latlng
-                ) - 1
+                    latlngs.findIndex(
+                        (x: any) => x === eventNew.vertex.latlng
+                    ) - 1
                 ];
             const previousPoint = new EventReturn([previous.lat, previous.lng]);
 

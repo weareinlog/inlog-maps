@@ -1113,7 +1113,7 @@ export default class Map {
      * @param {string} type
      * @returns {object}
      */
-    public getObjectOpenPopup(type: string): object {
+    public getObjectOpenPopup(type: string): object | null {
         return this.infoWindowList[type]
             ? this.infoWindowList[type].object
             : null;
@@ -1550,68 +1550,13 @@ export default class Map {
         } else return [];
     }
 
-    private coordinatesToKm = (
-        coordinatesFrom: number[],
-        coordinatesTo: number[]
-    ) => {
-        const distance = geolib.getDistance(
-            { latitude: coordinatesFrom[0], longitude: coordinatesFrom[1] },
-            { latitude: coordinatesTo[0], longitude: coordinatesTo[1] }
-        );
-
-        return distance / 1000;
-    };
-
-    private onMapClickForRuler(event: any): void {
-        this.rulerPolylineCount++;
-        this.rulerClicks.push([event.latlng[0], event.latlng[1]]);
-        const polylineOptions: PolylineOptions = {
-            addToMap: true,
-            fitBounds: false,
-            draggable: true,
-            editable: true,
-            style: PolylineType.Dotted,
-            color: "#009ACA",
-            weight: 5,
-            object: {
-                id: this.rulerPolylineCount,
-            },
-            path: this.rulerClicks,
-        };
-        const rulerPolyline = this.drawPolyline(
-            "inlogmaps-ruler",
-            polylineOptions,
-            () => {},
-            () => {
-                this.rulerLatLongs = [];
-                const polylinesPaths = this.getPolylines(
-                    "inlogmaps-ruler",
-                    null
-                );
-
-                const filter = polylinesPaths
-                    .map((polyline) => {
-                        return this.map?.getPolylinePath(polyline);
-                    })
-                    .filter((el) => el.length === 2);
-
-                this.rulerLatLongs.push(
-                    filter
-                        .map((el) => {
-                            return [el[0], el[1]];
-                        })
-                        .flat()
-                );
-                this.removeOverlays("inlogmaps-ruler");
-                this.addRulerMovingOverlay();
-            }
-        );
-        this.rulerPolylines.push(rulerPolyline);
-        this.addRulerOverlay();
-        if (this.rulerClicks.length === 2) {
-            this.rulerLatLongs.push(this.rulerClicks);
-            this.rulerClicks = [];
-        }
+    private createDistanceOverlay(distance: number): HTMLDivElement {
+        const element = document.createElement("div");
+        element.textContent = `${(distance * 1000).toFixed(1)}m`;
+        element.style.cssText =
+            "font-size: 12px;font-weight: 600; letter-spacing: 1px;color: black;height: 30px; width: 120px;text-align: center;display: flex;justify-content: center;align-items: center;transform: translateX(-60px) translateY(-40px); white-space: pre-line; line-height: 1";
+        element.style.position = "absolute";
+        return element;
     }
 
     private addRulerOverlay(): void {
