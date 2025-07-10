@@ -1,6 +1,6 @@
 {
     "name": "@inlog/inlog-maps",
-    "version": "6.5.0",
+    "version": "6.5.1",
     "description": "A library for using generic layer maps ",
     "main": "index.js",
     "types": "dist/index.d.ts",
