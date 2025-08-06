@@ -1730,3 +1730,8 @@ function addHeatmapWithLocationData() {
 
     currentMap.drawHeatMap("locationHeatmap", options);
 }
+
+plotarPolylineAsPolygon(){
+    const path = 
+    const options = new inlogMaps.PolylineOptions();
+}

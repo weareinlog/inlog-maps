@@ -78,6 +78,17 @@ export default class LeafletMarkers {
             });
         }
 
+        if (options.style.label) {
+            const { text, permanent, direction, open } = options.style.label;
+            const tooltipOptions = { permanent, direction };
+        
+            marker.bindTooltip(text, tooltipOptions);
+        
+            if (open) {
+                marker.openTooltip();
+            }
+        }
+
         if (options.addToMap) {
             marker.addTo(self.map);
         }

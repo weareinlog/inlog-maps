@@ -80,13 +80,19 @@ export default class GoogleMarkers {
                 scale: options.style.radius,
                 strokeColor: options.style.color,
                 strokeWeight: options.style.weight,
+                labelOrigin: null
             },
             object: options.object,
             position: {
                 lat: options.latlng[0],
                 lng: options.latlng[1],
             },
+            label: options.style.label
         };
+
+        if (options.style.labelOrigin) {
+            newOptions.icon.labelOrigin = new this.google.maps.Point(options.style.labelOrigin[0], options.style.labelOrigin[1])
+        }
 
         const marker = new this.google.maps.Marker(newOptions);
 
