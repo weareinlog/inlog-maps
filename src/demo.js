@@ -28,8 +28,13 @@ const leafletLibParams = {
 const inlogMaps = window.InlogMaps;
 const currentMap = new inlogMaps.Map();
 
-//currentMap.initialize(inlogMaps.MapType.Google, googleMapsLibParams)
-currentMap.initialize(inlogMaps.MapType.Leaflet, leafletLibParams)
+//const mapType = inlogMaps.MapType.Leaflet;
+//const mapParams = leafletLibParams;
+
+const mapType = inlogMaps.MapType.Google;
+const mapParams = googleMapsLibParams;
+
+currentMap.initialize(mapType, mapParams)
     .then(() => console.log("map initialized!"));
 
 let simpleMarkerShow = null;
@@ -179,7 +184,7 @@ function geojsonHeatmap() {
                 geometry: { type: "Point", coordinates: [-46.633309, -23.550520] }
             },
             {
-                type: "Feature", 
+                type: "Feature",
                 properties: { intensity: 0.9, name: "Paulista" },
                 geometry: { type: "Point", coordinates: [-46.656139, -23.564608] }
             },
@@ -373,26 +378,28 @@ function onClickCircleMarker(event) {
 
 function addCircleMarker() {
     if (circleMarkerShow === null) {
-        let style = new inlogMaps.CircleMarkerStyle(
-            5,
-            1,
-            "#000000",
-            "#FF0000",
-            0.8
-        );
-        let options = new inlogMaps.CircleMarkerOptions(
-            [-24, -48],
-            style,
-            true,
-            true
-        );
 
-        currentMap.drawCircleMarker(
-            "circleMarker",
-            options,
-            onClickCircleMarker
-        );
+        let style = new inlogMaps.CircleMarkerStyle(5, 1, "#000000", "#FF0000", 0.8);
+        if (mapType === inlogMaps.MapType.Leaflet) {
+            style.label = {
+                text: '1',
+                permanent: true,
+                direction: 'top',
+                open: true
+            }
+        } else {
+            style.labelOrigin = [0, -5];
+            style.label = {
+                text: '2',
+                color: '#000000',
+                fontSize: '14px',
+                fontWeight: 'bold'
+            }
+        }
 
+        let options = new inlogMaps.CircleMarkerOptions([-24, -48], style, true, true);
+
+        currentMap.drawCircleMarker("circleMarker", options, onClickCircleMarker);
         circleMarkerShow = true;
     } else {
         circleMarkerShow = !circleMarkerShow;
@@ -1554,7 +1561,7 @@ function addHeatmap() {
     if (heatmapShow === null) {
         // Gerar dados de exemplo para o heatmap
         const heatmapData = generateHeatmapData();
-        
+
         let options = new inlogMaps.HeatMapOptions(
             heatmapData,
             true, // addToMap
@@ -1564,7 +1571,7 @@ function addHeatmap() {
             0.6,  // opacity
             {     // gradient
                 0.0: 'blue',
-                0.2: 'cyan', 
+                0.2: 'cyan',
                 0.4: 'lime',
                 0.6: 'yellow',
                 1.0: 'red'
@@ -1661,7 +1668,7 @@ function updateHeatmapData() {
             const intensity = Math.random();
             newData.push([lat, lng, intensity]);
         }
-        
+
         currentMap.updateHeatMapData("heatmap", newData);
     }
 }
@@ -1675,30 +1682,30 @@ function addHeatmapWithLocationData() {
         [-23.532100, -46.637800, 0.7],
         [-23.561680, -46.625290, 0.8],
         [-23.550650, -46.640530, 0.9],
-        
+
         // Rio de Janeiro
         [-22.906847, -43.172896, 0.8],
         [-22.951600, -43.210500, 0.7],
         [-22.906990, -43.179720, 0.8],
         [-22.913100, -43.172900, 0.7],
-        
+
         // Belo Horizonte
         [-19.916681, -43.934493, 0.6],
         [-19.924430, -43.935190, 0.5],
         [-19.912180, -43.940230, 0.6],
-        
+
         // Brasília
         [-15.794229, -47.882166, 0.5],
         [-15.789000, -47.870000, 0.4],
-        
+
         // Salvador
         [-12.971211, -38.501245, 0.6],
         [-12.975000, -38.480000, 0.5],
-        
+
         // Curitiba
         [-25.441105, -49.276855, 0.7],
         [-25.450000, -49.280000, 0.6],
-        
+
         // Porto Alegre
         [-30.034647, -51.217658, 0.6],
         [-30.040000, -51.220000, 0.5],

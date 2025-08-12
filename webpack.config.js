@@ -1,5 +1,6 @@
 const path = require("path");
 const webpack = require("webpack");
+const TerserPlugin = require("terser-webpack-plugin");
 
 const PATHS = {
     entryPoint: path.resolve(__dirname, "src/index.ts"),
@@ -7,6 +8,7 @@ const PATHS = {
 };
 
 const config = {
+    mode: "none", // Evita minificação automática do Webpack
     // These are the entry point of our library. We tell webpack to use
     // the name we assign later, when creating the bundle. We also use
     // the name to filter the second entry point for applying code
@@ -35,11 +37,22 @@ const config = {
     // source when the user debugs the application
     devtool: "source-map",
     plugins: [
-        // Apply minification only on the second bundle by
-        // using a RegEx on the name, which must end with `.min.js`
-        // NB: Remember to activate sourceMaps in UglifyJsPlugin
-        // since they are disabled by default!
+        // Plugins customizados podem ser adicionados aqui
     ],
+    optimization: {
+        minimize: true,
+        minimizer: [
+            new TerserPlugin({
+                include: /\.min\.js$/,
+                terserOptions: {
+                    format: {
+                        comments: false,
+                    },
+                },
+                extractComments: false,
+            }),
+        ],
+    },
     module: {
         // Webpack doesn't understand TypeScript files and a loader is needed.
         // `node_modules` folder is excluded in order to prevent problems with
