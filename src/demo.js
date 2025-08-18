@@ -22,17 +22,17 @@ const leafletLibParams = {
         "../node_modules/leaflet.markercluster/dist/MarkerCluster.Default.css",
     ],
     wikimedia: false,
-    gestureHandling: true,
+    gestureHandling: false,
 };
 
 const inlogMaps = window.InlogMaps;
 const currentMap = new inlogMaps.Map();
 
-//const mapType = inlogMaps.MapType.Leaflet;
-//const mapParams = leafletLibParams;
+const mapType = inlogMaps.MapType.Leaflet;
+const mapParams = leafletLibParams;
 
-const mapType = inlogMaps.MapType.Google;
-const mapParams = googleMapsLibParams;
+//const mapType = inlogMaps.MapType.Google;
+//const mapParams = googleMapsLibParams;
 
 currentMap.initialize(mapType, mapParams)
     .then(() => console.log("map initialized!"));
@@ -498,11 +498,12 @@ function addPolyline() {
                 [-23.02486, -43.48233],
                 [-23.02443, -43.48212],
                 [-23.02429, -43.48243],
-                [-23.02477, -43.48245],
+                [-23.02477, -43.48245]
             ];
+
             options.addToMap = true;
             options.fitBounds = true;
-            options.draggable = true;
+            options.draggable = false;
             options.editable = true;
             options.object = {
                 item: "New",
@@ -510,41 +511,14 @@ function addPolyline() {
                 color: "#009ACA",
             };
             options.style = inlogMaps.PolylineType.Arrow;
+
             currentMap.drawPolyline("polyline", options, onClickPolyline);
 
-            currentMap.addPolylineEvent(
-                "polyline",
-                inlogMaps.PolylineEventType.SetAt,
-                () => {
-                    debugger;
-                }
-            );
-            currentMap.addPolylineEvent(
-                "polyline",
-                inlogMaps.PolylineEventType.InsertAt,
-                () => {
-                    debugger;
-                }
-            );
-            currentMap.addPolylineEvent(
-                "polyline",
-                inlogMaps.PolylineEventType.RemoveAt,
-                () => {
-                    debugger;
-                }
-            );
-            currentMap.addPolylineEvent(
-                "polyline",
-                inlogMaps.PolylineEventType.DragPolyline,
-                () => {
-                    debugger;
-                }
-            );
-            currentMap.addPolylineEvent(
-                "polyline",
-                inlogMaps.PolylineEventType.RightClick,
-                () => onRightClick
-            );
+            currentMap.addPolylineEvent("polyline", inlogMaps.PolylineEventType.SetAt, () => { debugger; });
+            currentMap.addPolylineEvent("polyline", inlogMaps.PolylineEventType.InsertAt, () => { debugger; });
+            currentMap.addPolylineEvent("polyline", inlogMaps.PolylineEventType.RemoveAt, () => { debugger; });
+            currentMap.addPolylineEvent("polyline", inlogMaps.PolylineEventType.DragPolyline, () => { debugger; });
+            currentMap.addPolylineEvent("polyline", inlogMaps.PolylineEventType.RightClick, () => onRightClick);
         });
 
         polylineShow = true;
