@@ -141,25 +141,22 @@ export default class LeafletPolylines {
 
         if (options.addToMap) {
             polyline.addTo(self.map);
+
             if (polyline.decorator) {
                 polyline.decorator.addTo(self.map);
             }
+
             if (options.editable) {
-                polyline.enableEdit();
+                polyline.disableEdit();
+                setTimeout(() => polyline.enableEdit(), 400);
                 const self = this;
+
                 polyline.on("editable:vertex:dragstart", function (e: any) {
                     self.setEditModeBlockingMapClick(true);
                 });
                 polyline.on("editable:vertex:dragend", function (e: any) {
-                    callBackEdit
-                        ? callBackEdit({
-                              ...e,
-                              origin: options.path,
-                          })
-                        : null;
-                    setTimeout(() => {
-                        self.setEditModeBlockingMapClick(false);
-                    }, 500);
+                    callBackEdit ? callBackEdit({ ...e, origin: options.path, }) : null;
+                    setTimeout(() => self.setEditModeBlockingMapClick(false), 500);
                 });
             }
         }
@@ -337,7 +334,7 @@ export default class LeafletPolylines {
     }
 
     public addPolylinePath(polylines: any, position: number[]) {
-        if (!this.getEditModeBlockingMapClick) {
+        if (!this.getEditModeBlockingMapClick()) {
             polylines.forEach((polyline: any) => {
                 const path = polyline.getLatLngs();
 
@@ -794,7 +791,7 @@ export default class LeafletPolylines {
             e.asin(
                 e.sqrt(
                     e.pow(e.sin(d / 2), 2) +
-                        e.cos(b) * e.cos(c) * e.pow(e.sin(g / 2), 2)
+                    e.cos(b) * e.cos(c) * e.pow(e.sin(g / 2), 2)
                 )
             );
 
@@ -848,9 +845,9 @@ export default class LeafletPolylines {
             const latlngs = eventNew.vertex.latlngs;
             const previous =
                 latlngs[
-                    latlngs.findIndex(
-                        (x: any) => x === eventNew.vertex.latlng
-                    ) - 1
+                latlngs.findIndex(
+                    (x: any) => x === eventNew.vertex.latlng
+                ) - 1
                 ];
             const previousPoint = new EventReturn([previous.lat, previous.lng]);
 
