@@ -33,6 +33,19 @@ export default class LeafletMap {
                     }
                 });
                 break;
+            case MapEventType.RightClick:
+                self.map.on("contextmenu", (event: any) => {
+                    const param = new EventReturn([
+                        event.latlng.lat,
+                        event.latlng.lng,
+                    ]);
+                    const isEdit =
+                        self.leafletPolyline?.getEditModeBlockingMapClick();
+                    if (!isEdit) {
+                        eventFunction(param);
+                    }
+                });
+                break;
             case MapEventType.ZoomChanged:
                 self.map.on("zoomend", (event: any) => {
                     const param = new EventReturn([
@@ -52,6 +65,9 @@ export default class LeafletMap {
         switch (eventType) {
             case MapEventType.Click:
                 self.map.off("click");
+                break;
+            case MapEventType.RightClick:
+                self.map.off("contextmenu");
                 break;
             case MapEventType.ZoomChanged:
                 self.map.off("zoomend");

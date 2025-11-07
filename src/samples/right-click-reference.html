@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Demo - Right Click Reference</title>
+    <style type="text/css">
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            height: 50px;
+            font-family: 'Nunito Sans', sans-serif;
+            text-align: center;
+            display: grid;
+            padding: 20px;
+        }
+
+        .header .title {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .header .description {
+            font-size: 12px;
+        }
+
+        .map {
+            height: calc(100% - 90px);
+            width: 100%
+        }
+
+        /* Contexto menu styling */
+        .context-menu {
+            position: fixed;
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            z-index: 10000;
+            display: none;
+            min-width: 180px;
+            font-family: 'Nunito Sans', sans-serif;
+        }
+
+        .context-menu-item {
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            color: #333;
+            border-bottom: 1px solid #eee;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .context-menu-item .pin-icon {
+            width: 14px;
+            height: 14px;
+            color: red;
+        }
+
+        .context-menu-item:last-child {
+            border-bottom: none;
+        }
+
+        .context-menu-item:hover {
+            background-color: #e8f4fd;
+            color: #0066cc;
+        }
+
+        .context-menu-item:hover .pin-icon {
+            color: #0066cc;
+        }
+
+        .reference-info {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            font-family: 'Nunito Sans', sans-serif;
+            font-size: 13px;
+            min-width: 350px;
+            max-width: 400px;
+            z-index: 999;
+            display: none;
+        }
+
+        .address-field {
+            margin: 8px 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .address-field label {
+            font-weight: 600;
+            color: #333;
+            min-width: 80px;
+            margin-right: 10px;
+        }
+
+        .address-field span {
+            color: #666;
+            font-style: italic;
+        }
+
+        .coordinates-section {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            border-left: 4px solid #007bff;
+        }
+
+        .reference-info h4 {
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+
+        .reference-info p {
+            margin: 5px 0;
+            color: #666;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            color: #999;
+        }
+
+        .close-btn:hover {
+            color: #333;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <span class="title">Sample: Right Click Reference</span>
+        <span class="description">Clique com o botão direito no mapa para posicionar uma referência e obter o endereço</span>
+        <div style="margin-top: 10px; font-size: 11px; color: #28a745;">
+            ✅ <strong>Ferramenta pronta para integração em outros sistemas</strong>
+        </div>
+    </div>
+    <div class="map" id="inlog-map"></div>
+    
+    <!-- Context Menu -->
+    <div id="context-menu" class="context-menu">
+        <div class="context-menu-item" id="position-reference">
+            <svg class="pin-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+            </svg>
+            POSICIONAR REFERÊNCIA
+        </div>
+    </div>
+
+    <!-- Reference Info Panel -->
+    <div id="reference-info" class="reference-info">
+        <span class="close-btn" id="close-reference">&times;</span>
+        <h4>📍 Referência Posicionada</h4>
+        
+        <div class="coordinates-section">
+            <div class="address-field">
+                <label>Coordenadas:</label>
+                <span id="coordinates"></span>
+            </div>
+        </div>
+
+        <div class="address-field">
+            <label>CEP:</label>
+            <span id="cep">Carregando...</span>
+        </div>
+
+        <div class="address-field">
+            <label>Endereço:</label>
+            <span id="endereco">Carregando...</span>
+        </div>
+
+        <div class="address-field">
+            <label>Nº:</label>
+            <span id="numero">Carregando...</span>
+        </div>
+
+        <div class="address-field">
+            <label>Complemento:</label>
+            <span id="complemento">-</span>
+        </div>
+
+        <div class="address-field">
+            <label>Bairro:</label>
+            <span id="bairro">Carregando...</span>
+        </div>
+
+        <div class="address-field">
+            <label>Cidade:</label>
+            <span id="cidade">Carregando...</span>
+        </div>
+
+        <div class="address-field">
+            <label>UF:</label>
+            <span id="uf">Carregando...</span>
+        </div>
+    </div>
+
+    <script src="../../_bundles/inlog-maps.js"></script>
+    <script type="text/javascript">
+        const leafletLibParams = {
+            scriptsDependencies: [
+                '../../node_modules/leaflet-editable/src/Leaflet.Editable.js',
+                '../../node_modules/leaflet.path.drag/src/Path.Drag.js',
+                '../../node_modules/leaflet-gesture-handling/dist/leaflet-gesture-handling.js',
+                '../../node_modules/leaflet.markercluster/dist/leaflet.markercluster.js'
+            ],
+            cssDependencies: [
+                '../../node_modules/leaflet-gesture-handling/dist/leaflet-gesture-handling.css',
+                '../../node_modules/leaflet.markercluster/dist/MarkerCluster.Default.css'
+            ],
+            gestureHandling: false, 
+            wikimedia: false
+        };
+
+        const inlogMaps = window.InlogMaps;
+        const currentMap = new inlogMaps.Map();
+        
+        let contextMenu = document.getElementById('context-menu');
+        let referenceInfo = document.getElementById('reference-info');
+        let lastRightClickPosition = null;
+
+        currentMap.initialize(inlogMaps.MapType.Leaflet, leafletLibParams)
+            .then((mapInstance) => {
+                setupRightClickHandler(mapInstance);
+                setupContextMenuHandlers();
+            })
+            .catch((error) => {
+                console.error('Error initializing map:', error);
+            });
+
+        function setupRightClickHandler(mapInstance) {
+            try {
+                currentMap.addEventMap(inlogMaps.MapEventType.RightClick, (event) => {
+                    lastRightClickPosition = event.latlng;
+                    const fakeEvent = {
+                        clientX: event.originalEvent?.clientX || 200,
+                        clientY: event.originalEvent?.clientY || 200,
+                        preventDefault: () => {}
+                    };
+                    
+                    showContextMenu(fakeEvent);
+                });
+            } catch (error) {
+                console.error('Failed to set custom RightClick event:', error);
+            }
+
+            try {
+                currentMap.addEventMap(inlogMaps.MapEventType.Click, () => {
+                    setTimeout(() => {
+                        if (contextMenu.style.display === 'block') {
+                            hideContextMenu();
+                        }
+                    }, 20);
+                });
+            } catch (error) {
+                console.error('Failed to set Click event:', error);
+            }
+
+            document.addEventListener('click', (e) => {
+                if (!contextMenu.contains(e.target) && !e.target.closest('#inlog-map')) {
+                    hideContextMenu();
+                }
+            });
+
+            setTimeout(() => {
+                const leafletMapElement = document.getElementById('inlog-map');
+                
+                leafletMapElement.addEventListener('contextmenu', (e) => {
+                    e.preventDefault();
+                    
+                    if (!lastRightClickPosition) {
+                        lastRightClickPosition = currentMap.getCenter();
+                    }
+                    
+                    showContextMenu(e);
+                });
+            }, 1000);
+        }
+
+        function setupContextMenuHandlers() {
+            document.getElementById('position-reference').addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (lastRightClickPosition) {
+                    positionReference(lastRightClickPosition);
+                } else {
+                    const center = currentMap.getCenter();
+                    lastRightClickPosition = center;
+                    positionReference(center);
+                }
+                hideContextMenu();
+            });
+
+            document.getElementById('close-reference').addEventListener('click', () => {
+                referenceInfo.style.display = 'none';
+            });
+        }
+
+        function showContextMenu(event) {
+            if (event.preventDefault) {
+                event.preventDefault();
+            }
+
+            const x = event.clientX || event.pageX || 100;
+            const y = event.clientY || event.pageY || 100;
+            
+            contextMenu.style.left = x + 'px';
+            contextMenu.style.top = y + 'px';
+            contextMenu.style.display = 'block';
+            contextMenu.style.zIndex = '10000';
+
+            setTimeout(() => {
+                const rect = contextMenu.getBoundingClientRect();
+                if (rect.right > window.innerWidth) {
+                    contextMenu.style.left = (x - rect.width) + 'px';
+                }
+                if (rect.bottom > window.innerHeight) {
+                    contextMenu.style.top = (y - rect.height) + 'px';
+                }
+            }, 10);
+        }
+
+        function hideContextMenu() {
+            contextMenu.style.display = 'none';
+        }
+
+        function positionReference(position) {
+            console.log('Coordenadas: ', position);
+            
+            currentMap.removeMarkers('reference');
+
+            const markerOptions = new inlogMaps.MarkerOptions(
+                position,
+                true, 
+                false, 
+                new inlogMaps.MarkerIcon(
+                    'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
+                    [25, 41],
+                    [25, 41]
+                ),
+                false, 
+                { id: 'reference-marker', type: 'reference' }
+            );
+
+            currentMap.drawMarker('reference', markerOptions);
+
+            showReferenceInfo(position);
+
+            reverseGeocode(position);
+        }
+
+        function showReferenceInfo(position) {
+            document.getElementById('coordinates').textContent = 
+                `${position[0].toFixed(6)}, ${position[1].toFixed(6)}`;
+            
+            document.getElementById('cep').textContent = 'Carregando...';
+            document.getElementById('endereco').textContent = 'Carregando...';
+            document.getElementById('numero').textContent = 'Carregando...';
+            document.getElementById('complemento').textContent = '-';
+            document.getElementById('bairro').textContent = 'Carregando...';
+            document.getElementById('cidade').textContent = 'Carregando...';
+            document.getElementById('uf').textContent = 'Carregando...';
+            
+            referenceInfo.style.display = 'block';
+        }
+
+        async function reverseGeocode(position) {
+            try {
+                let addressData = await tryNominatim(position);
+                
+                if (addressData) {
+                    populateAddressFields(addressData);
+                } else {
+                    setErrorInFields();
+                }
+                
+            } catch (error) {
+                console.error('Error getting address:', error);
+                setErrorInFields();
+            }
+        }
+
+        async function tryNominatim(position) {
+            try {
+                const response = await fetch(
+                    `https://nominatim.openstreetmap.org/reverse?format=json&lat=${position[0]}&lon=${position[1]}&zoom=18&addressdetails=1&accept-language=pt-BR,pt,en`
+                );
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    return data;
+                } else {
+                    throw new Error('Nominatim request failed');
+                }
+            } catch (error) {
+                console.error('Error with Nominatim:', error);
+                return null;
+            }
+        }
+
+        function populateAddressFields(data) {
+            if (!data || !data.address) {
+                setErrorInFields();
+                return;
+            }
+
+            const addr = data.address;
+
+            // CEP
+            document.getElementById('cep').textContent = addr.postcode || 'Não informado';
+
+            // Endereço (Rua)
+            const street = addr.road || addr.highway || addr.street || addr.pedestrian || 'Não informado';
+            document.getElementById('endereco').textContent = street;
+
+            // Número
+            const houseNumber = addr.house_number || addr.number || addr.addr_housenumber || 'S/N';
+            document.getElementById('numero').textContent = houseNumber;
+
+            // Complemento (geralmente não vem da API)
+            document.getElementById('complemento').textContent = '-';
+
+            // Bairro
+            const neighborhood = addr.neighbourhood || addr.suburb || addr.quarter || addr.district || 'Não informado';
+            document.getElementById('bairro').textContent = neighborhood;
+
+            // Cidade
+            const city = addr.city || addr.town || addr.village || addr.municipality || 'Não informado';
+            document.getElementById('cidade').textContent = city;
+
+            // UF (Estado)
+            document.getElementById('uf').textContent = getStateAbbreviation(addr.state) || 'Não informado';
+        }
+
+        function setErrorInFields() {
+            document.getElementById('cep').textContent = 'Erro ao obter';
+            document.getElementById('endereco').textContent = 'Erro ao obter';
+            document.getElementById('numero').textContent = 'Erro ao obter';
+            document.getElementById('complemento').textContent = '-';
+            document.getElementById('bairro').textContent = 'Erro ao obter';
+            document.getElementById('cidade').textContent = 'Erro ao obter';
+            document.getElementById('uf').textContent = 'Erro ao obter';
+        }
+
+        function getStateAbbreviation(stateName) {
+            if (!stateName) return null;
+            
+            const states = {
+                'Acre': 'AC', 'Alagoas': 'AL', 'Amapá': 'AP', 'Amazonas': 'AM',
+                'Bahia': 'BA', 'Ceará': 'CE', 'Distrito Federal': 'DF', 'Espírito Santo': 'ES',
+                'Goiás': 'GO', 'Maranhão': 'MA', 'Mato Grosso': 'MT', 'Mato Grosso do Sul': 'MS',
+                'Minas Gerais': 'MG', 'Pará': 'PA', 'Paraíba': 'PB', 'Paraná': 'PR',
+                'Pernambuco': 'PE', 'Piauí': 'PI', 'Rio de Janeiro': 'RJ', 'Rio Grande do Norte': 'RN',
+                'Rio Grande do Sul': 'RS', 'Rondônia': 'RO', 'Roraima': 'RR', 'Santa Catarina': 'SC',
+                'São Paulo': 'SP', 'Sergipe': 'SE', 'Tocantins': 'TO'
+            };
+            
+            return states[stateName] || stateName;
+        }
+
+
+
+        document.getElementById('inlog-map').addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+        });
+    </script>
+</body>
+
+</html>

@@ -32,6 +32,19 @@ export default class GoogleMap {
                     }
                 );
                 break;
+            case MapEventType.RightClick:
+                this.google.maps.event.addListener(
+                    self.map,
+                    "rightclick",
+                    (event: any) => {
+                        const param = new EventReturn([
+                            event.latLng.lat(),
+                            event.latLng.lng(),
+                        ]);
+                        eventFunction(param);
+                    }
+                );
+                break;
             case MapEventType.ZoomChanged:
                 self.map.addListener("zoom_changed", () => {
                     const param = new EventReturn([
@@ -51,6 +64,9 @@ export default class GoogleMap {
         switch (eventType) {
             case MapEventType.Click:
                 this.google.maps.event.clearListeners(self.map, "click");
+                break;
+            case MapEventType.RightClick:
+                this.google.maps.event.clearListeners(self.map, "rightclick");
                 break;
             case MapEventType.ZoomChanged:
                 this.google.maps.event.clearListeners(self.map, "zoom_changed");

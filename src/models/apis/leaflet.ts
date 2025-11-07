@@ -1,3 +1,4 @@
+import * as L from "leaflet";
 import { SimpleMapScreenshoter } from "leaflet-simple-map-screenshoter";
 import { OverlayOptions } from "../..";
 import { MapsApiLoaderService } from "../../utils/maps-api-loader.service";
