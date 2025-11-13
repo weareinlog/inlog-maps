@@ -89,7 +89,7 @@ export default class GooglePolygons {
                     : polygon.strokeWeight,
                 draggable:
                     options.draggable !== null &&
-                    options.draggable !== undefined
+                        options.draggable !== undefined
                         ? options.draggable
                         : polygon.draggable,
             };
@@ -123,17 +123,8 @@ export default class GooglePolygons {
     }
 
     public getPolygonPath(polygon: any): number[][] {
-        return polygon
-            .getPaths()
-            .getArray()
-            .map((x: any) =>
-                x
-                    .getArray()
-                    .map(
-                        (y: { lat: () => number; lng: () => number }) =>
-                            new EventReturn([y.lat(), y.lng()])
-                    )
-            );
+        return polygon.getPaths().getArray().map((x: any) => x.getArray()
+            .map((y: { lat: () => number; lng: () => number }) => new EventReturn([y.lat(), y.lng()])));
     }
 
     public addPolygonEvent(
@@ -225,9 +216,9 @@ export default class GooglePolygons {
         polygon: {
             getPaths: () => {
                 (): any;
-                new (): any;
-                getLength: { (): any; new (): any };
-                getAt: { (arg0: number): any; new (): any };
+                new(): any;
+                getLength: { (): any; new(): any };
+                getAt: { (arg0: number): any; new(): any };
             };
         },
         eventFunction: any
@@ -294,9 +285,9 @@ export default class GooglePolygons {
         polygon: {
             getPaths: () => {
                 (): any;
-                new (): any;
-                getLength: { (): any; new (): any };
-                getAt: { (arg0: number): any; new (): any };
+                new(): any;
+                getLength: { (): any; new(): any };
+                getAt: { (arg0: number): any; new(): any };
             };
         },
         eventFunction: any
@@ -364,9 +355,9 @@ export default class GooglePolygons {
         polygon: {
             getPaths: () => {
                 (): any;
-                new (): any;
-                getLength: { (): any; new (): any };
-                getAt: { (arg0: number): any; new (): any };
+                new(): any;
+                getLength: { (): any; new(): any };
+                getAt: { (arg0: number): any; new(): any };
             };
         },
         eventFunction: any
@@ -387,9 +378,9 @@ export default class GooglePolygons {
         innerPolygon: {
             getAt: (arg0: any) => {
                 (): any;
-                new (): any;
-                lat: { (): number; new (): any };
-                lng: { (): number; new (): any };
+                new(): any;
+                lat: { (): number; new(): any };
+                lng: { (): number; new(): any };
             };
         },
         eventFunction: (arg0: EventReturn, arg1: any, arg2: any) => void
@@ -428,8 +419,8 @@ export default class GooglePolygons {
             dragging: boolean;
             getPaths: () => {
                 (): any;
-                new (): any;
-                getArray: { (): any[]; new (): any };
+                new(): any;
+                getArray: { (): any[]; new(): any };
             };
             object: any;
         },

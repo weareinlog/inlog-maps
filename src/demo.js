@@ -28,11 +28,11 @@ const leafletLibParams = {
 const inlogMaps = window.InlogMaps;
 const currentMap = new inlogMaps.Map();
 
-const mapType = inlogMaps.MapType.Leaflet;
-const mapParams = leafletLibParams;
+// const mapType = inlogMaps.MapType.Leaflet;
+// const mapParams = leafletLibParams;
 
-//const mapType = inlogMaps.MapType.Google;
-//const mapParams = googleMapsLibParams;
+const mapType = inlogMaps.MapType.Google;
+const mapParams = googleMapsLibParams;
 
 currentMap.initialize(mapType, mapParams)
     .then(() => console.log("map initialized!"));
@@ -171,6 +171,10 @@ function geojsonPolygon() {
         },
         onClick
     );
+}
+
+function getPolygonPath(){
+    console.log(currentMap.getPolygonPath("polygon"));
 }
 
 function geojsonHeatmap() {
@@ -1379,7 +1383,7 @@ function addPolygon() {
             ],
         ];
         let options = new inlogMaps.PolygonOptions(
-            path2,
+            path,
             1,
             true,
             "#000000",
