@@ -100,7 +100,20 @@ export default class LeafletPolygons {
     }
 
     public getPolygonPath(polygon: any): number[][] {
-        return polygon.getLatLngs()[0].map((x: any) => [x.lat, x.lng]);
+        let array = polygon.getLatLngs()[0];
+        if (!array.map((x: any) => Array.isArray(x))[0]) {
+            array = polygon.getLatLngs();
+        }
+
+        let coords = array.map((x: any) => x.map((y: any) => new EventReturn([y.lat, y.lng])));
+
+        for (let item in coords) {
+            // Ensure the polygon is closed
+            if (coords[item][0].latlng[0] != coords[item][coords[item].length - 1].latlng[0] &&
+                coords[item][0].latlng[1] != coords[item][coords[item].length - 1].latlng[1])
+                coords[item].push(coords[item][0]);
+        }
+        return coords;
     }
 
     public addPolygonEvent(polygons: any, eventType: PolygonEventType, eventFunction: any): void {
