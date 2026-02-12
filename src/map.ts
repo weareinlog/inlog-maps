@@ -1332,7 +1332,9 @@ export default class Map {
     public removeRuler(): void {
         this.removePolylines("inlogmaps-ruler", null);
         this.rulerPolylines = [];
+        this.rulerClicks = [];
         this.rulerLatLongs = [];
+        this.rulerPolylineCount = 0;
 
         this.removeEventMap(MapEventType.Click);
         this.removeOverlays("inlogmaps-ruler");
