@@ -91,7 +91,7 @@ export default class Leaflet implements IMapFunctions {
             const satelliteURL =
                 "https://server.arcgisonline.com/ArcGIS/rest/services/" +
                 "World_Imagery/MapServer/tile/{z}/{y}/{x}";
-            const satellite = L.tileLayer(satelliteURL, {
+            const satellite = leaflet.tileLayer(satelliteURL, {
                 attribution:
                     "Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye," +
                     " Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community",

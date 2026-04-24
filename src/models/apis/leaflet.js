@@ -93,7 +93,7 @@ var Leaflet = /** @class */ (function () {
                         });
                         satelliteURL = "https://server.arcgisonline.com/ArcGIS/rest/services/" +
                             "World_Imagery/MapServer/tile/{z}/{y}/{x}";
-                        satellite = L.tileLayer(satelliteURL, {
+                        satellite = leaflet_1.tileLayer(satelliteURL, {
                             attribution: "Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye," +
                                 " Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community",
                             maxZoom: 18,
