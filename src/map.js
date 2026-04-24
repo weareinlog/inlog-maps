@@ -635,9 +635,9 @@ var Map = /** @class */ (function () {
      * @param {string} type
      * @param {InlogMaps.PolylineOptions} options
      */
-    Map.prototype.drawPolylineWithNavigation = function (type, options, eventClick) {
+    Map.prototype.drawPolylineWithNavigation = function (type, options, eventClick, onNavigationPopupClose) {
         var _a;
-        var polyline = (_a = this.map) === null || _a === void 0 ? void 0 : _a.drawPolylineWithNavigation(options, eventClick);
+        var polyline = (_a = this.map) === null || _a === void 0 ? void 0 : _a.drawPolylineWithNavigation(options, eventClick, onNavigationPopupClose);
         if (!this.polylinesList[type]) {
             this.polylinesList[type] = [];
         }
@@ -762,6 +762,10 @@ var Map = /** @class */ (function () {
     Map.prototype.removePolylineHighlight = function () {
         var _a;
         (_a = this.map) === null || _a === void 0 ? void 0 : _a.removePolylineHighlight();
+    };
+    Map.prototype.setSuppressNavigationPopup = function (suppress) {
+        var _a;
+        (_a = this.map) === null || _a === void 0 ? void 0 : _a.setSuppressNavigationPopup(suppress);
     };
     /**
      * Use this function to add listeners on polyline

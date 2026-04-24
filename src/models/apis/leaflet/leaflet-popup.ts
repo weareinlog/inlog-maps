@@ -26,6 +26,13 @@ export default class LeafletPopup {
         if (options.object) {
             popup.object = options.object;
         }
+        if (options.onClose) {
+            self.map.once('popupclose', (e: any) => {
+                if (e.popup === popup) {
+                    options.onClose!();
+                }
+            });
+        }
         return popup;
     }
 

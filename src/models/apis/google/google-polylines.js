@@ -14,6 +14,7 @@ var GooglePolylines = /** @class */ (function () {
         this.multiSelection = false;
         this.navigateByPoint = false;
         this.navigationOptions = {};
+        this.suppressNavigationPopup = false;
         this.map = map;
         this.google = google;
         this.googlePopups = googlePopups;
@@ -108,13 +109,14 @@ var GooglePolylines = /** @class */ (function () {
         }
         return polyline;
     };
-    GooglePolylines.prototype.drawPolylineWithNavigation = function (options, eventClick) {
+    GooglePolylines.prototype.drawPolylineWithNavigation = function (options, eventClick, onNavigationPopupClose) {
         var polyline = this.drawPolyline(options, null);
         polyline.navigationHandlerClick = eventClick;
         this.navigationOptions = options.navigateOptions;
         this.navigateByPoint = this.navigationOptions
             ? this.navigationOptions.navigateByPoint
             : true;
+        this.navigationPopupCloseHandler = onNavigationPopupClose || null;
         this.addNavigation(polyline);
         return polyline;
     };
@@ -232,6 +234,13 @@ var GooglePolylines = /** @class */ (function () {
         }
         if (this.navigateInfoWindow) {
             this.navigateInfoWindow.close();
+        }
+    };
+    GooglePolylines.prototype.setSuppressNavigationPopup = function (suppress) {
+        this.suppressNavigationPopup = suppress;
+        if (suppress && this.navigateInfoWindow) {
+            this.navigateInfoWindow.close();
+            this.navigateInfoWindow = null;
         }
     };
     GooglePolylines.prototype.addPolylineEvent = function (polylines, eventType, eventFunction) {
@@ -399,9 +408,7 @@ var GooglePolylines = /** @class */ (function () {
         }
         else {
             self.multiSelection = true;
-            if (self.multiSelectionForward) {
-                polyline.finalIdx++;
-            }
+            polyline.finalIdx++;
             self.multiSelectionForward = true;
         }
     };
@@ -426,9 +433,7 @@ var GooglePolylines = /** @class */ (function () {
         }
         else {
             self.multiSelection = true;
-            if (!self.multiSelectionForward) {
-                polyline.initialIdx--;
-            }
+            polyline.initialIdx--;
             self.multiSelectionForward = false;
         }
     };
@@ -498,7 +503,9 @@ var GooglePolylines = /** @class */ (function () {
         }
         this.selectedPath.initialIdx = polyline.initialIdx;
         this.selectedPath.finalIdx = polyline.finalIdx;
-        this.drawPopupNavigation(polyline);
+        if (!this.suppressNavigationPopup) {
+            this.drawPopupNavigation(polyline);
+        }
     };
     GooglePolylines.prototype.addPolylineEventMove = function (polyline, eventFunction) {
         polyline.moveListener = function (newEvent, lastEvent) {
@@ -633,6 +640,12 @@ var GooglePolylines = /** @class */ (function () {
                     content: infowindow,
                     latlng: [point.lat(), point.lng()],
                 });
+                if (self.navigationPopupCloseHandler && self.navigateInfoWindow) {
+                    self.google.maps.event.addListenerOnce(self.navigateInfoWindow, 'closeclick', function () {
+                        self.navigateInfoWindow = null;
+                        self.navigationPopupCloseHandler();
+                    });
+                }
             }
         }
     };

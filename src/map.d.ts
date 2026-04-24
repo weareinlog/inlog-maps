@@ -117,7 +117,7 @@ export default class Map {
      * @param {inlogMaps.PolylineOptions} options
      * @param {any} eventClick
      */
-    drawPolylineWithNavigation(type: string, options: PolylineOptions, eventClick?: any): void;
+    drawPolylineWithNavigation(type: string, options: PolylineOptions, eventClick?: any, onNavigationPopupClose?: () => void): void;
     /**
      * Use this function to add more paths to a polyline
      * @param {string} type
@@ -128,6 +128,7 @@ export default class Map {
      * Use this function to clear polyline selected from the currentMap
      */
     removePolylineHighlight(): void;
+    setSuppressNavigationPopup(suppress: boolean): void;
     /**
      * Use this function to toggle polylines
      * @param {boolean} show

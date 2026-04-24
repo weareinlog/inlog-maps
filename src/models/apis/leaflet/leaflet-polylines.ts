@@ -20,6 +20,8 @@ export default class LeafletPolylines {
     private navigateByPoint: boolean = false;
     private navigationOptions: NavigationOptions | any = {};
     private editModeBlockingMapClick: boolean;
+    private suppressNavigationPopup: boolean = false;
+    private navigationPopupCloseHandler: (() => void) | null = null;
 
     constructor(map: any, leaflet: any, leafletPopup: LeafletPopup) {
         this.map = map;
@@ -174,7 +176,8 @@ export default class LeafletPolylines {
 
     public drawPolylineWithNavigation(
         options: PolylineOptions,
-        eventClick?: any
+        eventClick?: any,
+        onNavigationPopupClose?: () => void
     ) {
         const polyline = this.drawPolyline(options, null);
 
@@ -183,6 +186,7 @@ export default class LeafletPolylines {
         this.navigateByPoint = this.navigationOptions
             ? this.navigationOptions.navigateByPoint
             : true;
+        this.navigationPopupCloseHandler = onNavigationPopupClose || null;
         this.addNavigation(polyline);
         return polyline;
     }
@@ -373,6 +377,14 @@ export default class LeafletPolylines {
         document.onkeydown = null;
     }
 
+    public setSuppressNavigationPopup(suppress: boolean) {
+        this.suppressNavigationPopup = suppress;
+        if (suppress && this.navigateInfoWindow) {
+            this.navigateInfoWindow.remove();
+            this.navigateInfoWindow = null;
+        }
+    }
+
     public addPolylineEvent(
         polylines: any,
         eventType: PolylineEventType,
@@ -560,9 +572,7 @@ export default class LeafletPolylines {
             this.multiSelection = false;
         } else {
             this.multiSelection = true;
-            if (this.multiSelectionForward) {
-                polyline.finalIdx++;
-            }
+            polyline.finalIdx++;
             this.multiSelectionForward = true;
         }
     }
@@ -590,9 +600,7 @@ export default class LeafletPolylines {
             self.multiSelection = false;
         } else {
             self.multiSelection = true;
-            if (!self.multiSelectionForward) {
-                polyline.initialIdx--;
-            }
+            polyline.initialIdx--;
             self.multiSelectionForward = false;
         }
     }
@@ -641,7 +649,7 @@ export default class LeafletPolylines {
         const infowindow = polyline.options.infowindows
             ? polyline.options.infowindows[idx]
             : null;
-        if (infowindow) {
+        if (infowindow && !this.suppressNavigationPopup) {
             const point = polyline.getLatLngs()[idx];
 
             if (self.navigateInfoWindow) {
@@ -654,6 +662,14 @@ export default class LeafletPolylines {
                     content: infowindow,
                     latlng: [point.lat, point.lng],
                 });
+                if (self.navigationPopupCloseHandler) {
+                    self.map.once('popupclose', (e: any) => {
+                        if (e.popup === self.navigateInfoWindow) {
+                            self.navigateInfoWindow = null;
+                            self.navigationPopupCloseHandler!();
+                        }
+                    });
+                }
             }
         }
     }

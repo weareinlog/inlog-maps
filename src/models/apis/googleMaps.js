@@ -306,9 +306,9 @@ var GoogleMaps = /** @class */ (function () {
         var _a;
         return (_a = this.googlePolylines) === null || _a === void 0 ? void 0 : _a.drawPolyline(options, eventClick);
     };
-    GoogleMaps.prototype.drawPolylineWithNavigation = function (options, eventClick) {
+    GoogleMaps.prototype.drawPolylineWithNavigation = function (options, eventClick, onNavigationPopupClose) {
         var _a;
-        return (_a = this.googlePolylines) === null || _a === void 0 ? void 0 : _a.drawPolylineWithNavigation(options, eventClick);
+        return (_a = this.googlePolylines) === null || _a === void 0 ? void 0 : _a.drawPolylineWithNavigation(options, eventClick, onNavigationPopupClose);
     };
     GoogleMaps.prototype.togglePolylines = function (polylines, show) {
         var _a;
@@ -337,6 +337,10 @@ var GoogleMaps = /** @class */ (function () {
     GoogleMaps.prototype.removePolylineHighlight = function () {
         var _a;
         (_a = this.googlePolylines) === null || _a === void 0 ? void 0 : _a.removePolylineHighlight();
+    };
+    GoogleMaps.prototype.setSuppressNavigationPopup = function (suppress) {
+        var _a;
+        (_a = this.googlePolylines) === null || _a === void 0 ? void 0 : _a.setSuppressNavigationPopup(suppress);
     };
     GoogleMaps.prototype.addPolylineEvent = function (polylines, eventType, eventFunction) {
         var _a;

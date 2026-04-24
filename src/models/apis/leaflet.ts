@@ -91,7 +91,7 @@ export default class Leaflet implements IMapFunctions {
             const satelliteURL =
                 "https://server.arcgisonline.com/ArcGIS/rest/services/" +
                 "World_Imagery/MapServer/tile/{z}/{y}/{x}";
-            const satellite = L.tileLayer(satelliteURL, {
+            const satellite = leaflet.tileLayer(satelliteURL, {
                 attribution:
                     "Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye," +
                     " Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community",
@@ -372,11 +372,13 @@ export default class Leaflet implements IMapFunctions {
 
     public drawPolylineWithNavigation(
         options: PolylineOptions,
-        eventClick?: any
+        eventClick?: any,
+        onNavigationPopupClose?: () => void
     ): any {
         return this.leafletPolylines?.drawPolylineWithNavigation(
             options,
-            eventClick
+            eventClick,
+            onNavigationPopupClose
         );
     }
 
@@ -409,6 +411,10 @@ export default class Leaflet implements IMapFunctions {
 
     public removePolylineHighlight(): void {
         this.leafletPolylines?.removePolylineHighlight();
+    }
+
+    public setSuppressNavigationPopup(suppress: boolean): void {
+        this.leafletPolylines?.setSuppressNavigationPopup(suppress);
     }
 
     public addPolylineEvent(

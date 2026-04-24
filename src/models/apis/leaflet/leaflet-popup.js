@@ -20,6 +20,13 @@ var LeafletPopup = /** @class */ (function () {
         if (options.object) {
             popup.object = options.object;
         }
+        if (options.onClose) {
+            self.map.once('popupclose', function (e) {
+                if (e.popup === popup) {
+                    options.onClose();
+                }
+            });
+        }
         return popup;
     };
     LeafletPopup.prototype.alterPopup = function (popup, options, marker) {

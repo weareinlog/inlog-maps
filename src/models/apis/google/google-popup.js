@@ -20,6 +20,11 @@ var GooglePopups = /** @class */ (function () {
         if (options.object) {
             infowindow.object = options.object;
         }
+        if (options.onClose) {
+            self.google.maps.event.addListenerOnce(infowindow, 'closeclick', function () {
+                options.onClose();
+            });
+        }
         return infowindow;
     };
     GooglePopups.prototype.alterPopup = function (popup, options, marker) {

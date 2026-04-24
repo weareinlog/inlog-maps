@@ -369,11 +369,13 @@ export default class GoogleMaps implements IMapFunctions {
 
     public drawPolylineWithNavigation(
         options: PolylineOptions,
-        eventClick?: any
+        eventClick?: any,
+        onNavigationPopupClose?: () => void
     ): any {
         return this.googlePolylines?.drawPolylineWithNavigation(
             options,
-            eventClick
+            eventClick,
+            onNavigationPopupClose
         );
     }
 
@@ -406,6 +408,10 @@ export default class GoogleMaps implements IMapFunctions {
 
     public removePolylineHighlight(): void {
         this.googlePolylines?.removePolylineHighlight();
+    }
+
+    public setSuppressNavigationPopup(suppress: boolean): void {
+        this.googlePolylines?.setSuppressNavigationPopup(suppress);
     }
 
     public addPolylineEvent(

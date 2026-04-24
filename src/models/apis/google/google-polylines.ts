@@ -19,6 +19,8 @@ export default class GooglePolylines {
     private navigateByPoint: boolean | null = false;
     private navigationOptions: NavigationOptions | any = {};
     private editModeBlockingMapClick: boolean;
+    private suppressNavigationPopup: boolean = false;
+    private navigationPopupCloseHandler: (() => void) | null = null;
 
     constructor(map: any, google: any, googlePopups: GooglePopups) {
         this.map = map;
@@ -189,7 +191,8 @@ export default class GooglePolylines {
 
     public drawPolylineWithNavigation(
         options: PolylineOptions,
-        eventClick?: any
+        eventClick?: any,
+        onNavigationPopupClose?: () => void
     ) {
         const polyline = this.drawPolyline(options, null);
 
@@ -198,6 +201,7 @@ export default class GooglePolylines {
         this.navigateByPoint = this.navigationOptions
             ? this.navigationOptions.navigateByPoint
             : true;
+        this.navigationPopupCloseHandler = onNavigationPopupClose || null;
         this.addNavigation(polyline);
 
         return polyline;
@@ -329,6 +333,14 @@ export default class GooglePolylines {
         }
         if (this.navigateInfoWindow) {
             this.navigateInfoWindow.close();
+        }
+    }
+
+    public setSuppressNavigationPopup(suppress: boolean) {
+        this.suppressNavigationPopup = suppress;
+        if (suppress && this.navigateInfoWindow) {
+            this.navigateInfoWindow.close();
+            this.navigateInfoWindow = null;
         }
     }
 
@@ -566,9 +578,7 @@ export default class GooglePolylines {
             self.multiSelection = false;
         } else {
             self.multiSelection = true;
-            if (self.multiSelectionForward) {
-                polyline.finalIdx++;
-            }
+            polyline.finalIdx++;
             self.multiSelectionForward = true;
         }
     }
@@ -600,9 +610,7 @@ export default class GooglePolylines {
             self.multiSelection = false;
         } else {
             self.multiSelection = true;
-            if (!self.multiSelectionForward) {
-                polyline.initialIdx--;
-            }
+            polyline.initialIdx--;
             self.multiSelectionForward = false;
         }
     }
@@ -680,7 +688,9 @@ export default class GooglePolylines {
         this.selectedPath.initialIdx = polyline.initialIdx;
         this.selectedPath.finalIdx = polyline.finalIdx;
 
-        this.drawPopupNavigation(polyline);
+        if (!this.suppressNavigationPopup) {
+            this.drawPopupNavigation(polyline);
+        }
     }
 
     private addPolylineEventMove(polyline: any, eventFunction: any) {
@@ -902,6 +912,12 @@ export default class GooglePolylines {
                     content: infowindow,
                     latlng: [point.lat(), point.lng()],
                 });
+                if (self.navigationPopupCloseHandler && self.navigateInfoWindow) {
+                    self.google.maps.event.addListenerOnce(self.navigateInfoWindow, 'closeclick', () => {
+                        self.navigateInfoWindow = null;
+                        self.navigationPopupCloseHandler!();
+                    });
+                }
             }
         }
     }

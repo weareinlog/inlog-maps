@@ -93,7 +93,7 @@ var Leaflet = /** @class */ (function () {
                         });
                         satelliteURL = "https://server.arcgisonline.com/ArcGIS/rest/services/" +
                             "World_Imagery/MapServer/tile/{z}/{y}/{x}";
-                        satellite = L.tileLayer(satelliteURL, {
+                        satellite = leaflet_1.tileLayer(satelliteURL, {
                             attribution: "Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye," +
                                 " Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community",
                             maxZoom: 18,
@@ -296,9 +296,9 @@ var Leaflet = /** @class */ (function () {
         var _a;
         return (_a = this.leafletPolylines) === null || _a === void 0 ? void 0 : _a.drawPolyline(options, eventClick);
     };
-    Leaflet.prototype.drawPolylineWithNavigation = function (options, eventClick) {
+    Leaflet.prototype.drawPolylineWithNavigation = function (options, eventClick, onNavigationPopupClose) {
         var _a;
-        return (_a = this.leafletPolylines) === null || _a === void 0 ? void 0 : _a.drawPolylineWithNavigation(options, eventClick);
+        return (_a = this.leafletPolylines) === null || _a === void 0 ? void 0 : _a.drawPolylineWithNavigation(options, eventClick, onNavigationPopupClose);
     };
     Leaflet.prototype.togglePolylines = function (polylines, show) {
         var _a;
@@ -327,6 +327,10 @@ var Leaflet = /** @class */ (function () {
     Leaflet.prototype.removePolylineHighlight = function () {
         var _a;
         (_a = this.leafletPolylines) === null || _a === void 0 ? void 0 : _a.removePolylineHighlight();
+    };
+    Leaflet.prototype.setSuppressNavigationPopup = function (suppress) {
+        var _a;
+        (_a = this.leafletPolylines) === null || _a === void 0 ? void 0 : _a.setSuppressNavigationPopup(suppress);
     };
     Leaflet.prototype.addPolylineEvent = function (polylines, eventType, eventFunction) {
         var _a;
