@@ -14,6 +14,7 @@ var LeafletPolylines = /** @class */ (function () {
         this.multiSelection = false;
         this.navigateByPoint = false;
         this.navigationOptions = {};
+        this.suppressNavigationPopup = false;
         this.map = map;
         this.leaflet = leaflet;
         this.leafletPopup = leafletPopup;
@@ -115,13 +116,14 @@ var LeafletPolylines = /** @class */ (function () {
         }
         return polyline;
     };
-    LeafletPolylines.prototype.drawPolylineWithNavigation = function (options, eventClick) {
+    LeafletPolylines.prototype.drawPolylineWithNavigation = function (options, eventClick, onNavigationPopupClose) {
         var polyline = this.drawPolyline(options, null);
         polyline.navigationHandlerClick = eventClick;
         this.navigationOptions = options.navigateOptions;
         this.navigateByPoint = this.navigationOptions
             ? this.navigationOptions.navigateByPoint
             : true;
+        this.navigationPopupCloseHandler = onNavigationPopupClose || null;
         this.addNavigation(polyline);
         return polyline;
     };
@@ -268,6 +270,13 @@ var LeafletPolylines = /** @class */ (function () {
         }
         document.onkeyup = null;
         document.onkeydown = null;
+    };
+    LeafletPolylines.prototype.setSuppressNavigationPopup = function (suppress) {
+        this.suppressNavigationPopup = suppress;
+        if (suppress && this.navigateInfoWindow) {
+            this.navigateInfoWindow.remove();
+            this.navigateInfoWindow = null;
+        }
     };
     LeafletPolylines.prototype.addPolylineEvent = function (polylines, eventType, eventFunction) {
         var _this = this;
@@ -423,9 +432,7 @@ var LeafletPolylines = /** @class */ (function () {
         }
         else {
             this.multiSelection = true;
-            if (this.multiSelectionForward) {
-                polyline.finalIdx++;
-            }
+            polyline.finalIdx++;
             this.multiSelectionForward = true;
         }
     };
@@ -449,9 +456,7 @@ var LeafletPolylines = /** @class */ (function () {
         }
         else {
             self.multiSelection = true;
-            if (!self.multiSelectionForward) {
-                polyline.initialIdx--;
-            }
+            polyline.initialIdx--;
             self.multiSelectionForward = false;
         }
     };
@@ -492,7 +497,7 @@ var LeafletPolylines = /** @class */ (function () {
         var infowindow = polyline.options.infowindows
             ? polyline.options.infowindows[idx]
             : null;
-        if (infowindow) {
+        if (infowindow && !self.suppressNavigationPopup) {
             var point = polyline.getLatLngs()[idx];
             if (self.navigateInfoWindow) {
                 self.leafletPopup.alterPopup(self.navigateInfoWindow, {
@@ -505,6 +510,14 @@ var LeafletPolylines = /** @class */ (function () {
                     content: infowindow,
                     latlng: [point.lat, point.lng],
                 });
+                if (self.navigationPopupCloseHandler) {
+                    self.map.once('popupclose', function (e) {
+                        if (e.popup === self.navigateInfoWindow) {
+                            self.navigateInfoWindow = null;
+                            self.navigationPopupCloseHandler();
+                        }
+                    });
+                }
             }
         }
     };

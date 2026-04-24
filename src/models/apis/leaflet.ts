@@ -372,11 +372,13 @@ export default class Leaflet implements IMapFunctions {
 
     public drawPolylineWithNavigation(
         options: PolylineOptions,
-        eventClick?: any
+        eventClick?: any,
+        onNavigationPopupClose?: () => void
     ): any {
         return this.leafletPolylines?.drawPolylineWithNavigation(
             options,
-            eventClick
+            eventClick,
+            onNavigationPopupClose
         );
     }
 
@@ -409,6 +411,10 @@ export default class Leaflet implements IMapFunctions {
 
     public removePolylineHighlight(): void {
         this.leafletPolylines?.removePolylineHighlight();
+    }
+
+    public setSuppressNavigationPopup(suppress: boolean): void {
+        this.leafletPolylines?.setSuppressNavigationPopup(suppress);
     }
 
     public addPolylineEvent(

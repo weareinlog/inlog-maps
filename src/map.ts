@@ -788,11 +788,13 @@ export default class Map {
     public drawPolylineWithNavigation(
         type: string,
         options: PolylineOptions,
-        eventClick?: any
+        eventClick?: any,
+        onNavigationPopupClose?: () => void
     ): void {
         const polyline = this.map?.drawPolylineWithNavigation(
             options,
-            eventClick
+            eventClick,
+            onNavigationPopupClose
         );
 
         if (!this.polylinesList[type]) {
@@ -956,6 +958,10 @@ export default class Map {
      */
     public removePolylineHighlight(): void {
         this.map?.removePolylineHighlight();
+    }
+
+    public setSuppressNavigationPopup(suppress: boolean): void {
+        this.map?.setSuppressNavigationPopup(suppress);
     }
 
     /**

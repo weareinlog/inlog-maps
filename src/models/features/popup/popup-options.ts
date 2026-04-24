@@ -5,14 +5,16 @@ export default class PopupOptions {
     public conditionMarker?: any;
     public notCalledByMap?: boolean; /* Property to set if open is called from map event or not, only used on leaflet */
     public object?: object;
+    public onClose?: () => void;
 
     constructor(latlng: number[], content: string, marker?: string, conditionMarker?: any,
-        notCalledByMap?: boolean, object?: object) {
+        notCalledByMap?: boolean, object?: object, onClose?: () => void) {
         this.latlng = latlng;
         this.content = content;
         this.marker = marker;
         this.conditionMarker = conditionMarker;
         this.notCalledByMap = notCalledByMap;
         this.object = object;
+        this.onClose = onClose;
     }
 }

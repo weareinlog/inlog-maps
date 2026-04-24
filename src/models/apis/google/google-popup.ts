@@ -27,6 +27,11 @@ export default class GooglePopups {
         if (options.object) {
             infowindow.object = options.object;
         }
+        if (options.onClose) {
+            self.google.maps.event.addListenerOnce(infowindow, 'closeclick', () => {
+                options.onClose!();
+            });
+        }
         return infowindow;
     }
 

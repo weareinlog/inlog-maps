@@ -102,6 +102,7 @@ export default interface IMapFunctions {
     addPolylinePath(polylines: any, position: number[]): void;
     getPolylinePath(polyline: any): number[][];
     removePolylineHighlight(): void;
+    setSuppressNavigationPopup(suppress: boolean): void;
     addPolylineEvent(
         polyline: any,
         event: PolylineEventType,

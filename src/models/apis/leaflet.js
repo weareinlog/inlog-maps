@@ -296,9 +296,9 @@ var Leaflet = /** @class */ (function () {
         var _a;
         return (_a = this.leafletPolylines) === null || _a === void 0 ? void 0 : _a.drawPolyline(options, eventClick);
     };
-    Leaflet.prototype.drawPolylineWithNavigation = function (options, eventClick) {
+    Leaflet.prototype.drawPolylineWithNavigation = function (options, eventClick, onNavigationPopupClose) {
         var _a;
-        return (_a = this.leafletPolylines) === null || _a === void 0 ? void 0 : _a.drawPolylineWithNavigation(options, eventClick);
+        return (_a = this.leafletPolylines) === null || _a === void 0 ? void 0 : _a.drawPolylineWithNavigation(options, eventClick, onNavigationPopupClose);
     };
     Leaflet.prototype.togglePolylines = function (polylines, show) {
         var _a;
@@ -327,6 +327,10 @@ var Leaflet = /** @class */ (function () {
     Leaflet.prototype.removePolylineHighlight = function () {
         var _a;
         (_a = this.leafletPolylines) === null || _a === void 0 ? void 0 : _a.removePolylineHighlight();
+    };
+    Leaflet.prototype.setSuppressNavigationPopup = function (suppress) {
+        var _a;
+        (_a = this.leafletPolylines) === null || _a === void 0 ? void 0 : _a.setSuppressNavigationPopup(suppress);
     };
     Leaflet.prototype.addPolylineEvent = function (polylines, eventType, eventFunction) {
         var _a;
