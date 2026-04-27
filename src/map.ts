@@ -1384,6 +1384,30 @@ export default class Map {
     }
 
     /**
+     * Returns the current viewport bounds as [[swLat, swLng], [neLat, neLng]]
+     * @returns {number[][]}
+     */
+    public getBounds(): number[][] {
+        return this.map?.getBounds?.() ?? [];
+    }
+
+    /**
+     * Fits the map to an arbitrary bounding box defined by SW and NE corners.
+     * Only zooms out — never zooms in beyond maxZoom.
+     * @param {number[]} sw [lat, lng] of the south-west corner
+     * @param {number[]} ne [lat, lng] of the north-east corner
+     * @param {number} [maxZoom] maximum zoom level (prevents zooming in)
+     */
+    public fitBoundsCoordinates(sw: number[], ne: number[], maxZoom?: number): void {
+        this.map?.fitBoundsCoordinates?.(sw, ne, maxZoom);
+    }
+
+    public bringPolygonToFront(type: string, condition?: any): void {
+        const polygons = this.getPolygons(type, condition);
+        this.map?.bringPolygonToFront?.(polygons);
+    }
+
+    /**
      * Use this functions to fit bounds on elements with same type and condition
      * @param {string} type
      * @param {any} condition [nullable]

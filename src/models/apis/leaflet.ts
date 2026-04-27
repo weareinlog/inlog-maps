@@ -285,6 +285,10 @@ export default class Leaflet implements IMapFunctions {
         this.leafletPolygons?.fitBoundsPolygons(polygons);
     }
 
+    public bringPolygonToFront(polygons: any[]): void {
+        this.leafletPolygons?.bringPolygonToFront(polygons);
+    }
+
     public setCenterPolygons(polygons: any): void {
         this.leafletPolygons?.setCenterPolygons(polygons);
     }
@@ -526,6 +530,14 @@ export default class Leaflet implements IMapFunctions {
 
     public pixelsToLatLng(offsetx: number, offsety: number): number[] {
         return this.leafletMap?.pixelsToLatLng(offsetx, offsety)!;
+    }
+
+    public getBounds(): number[][] {
+        return this.leafletMap?.getBounds() ?? [];
+    }
+
+    public fitBoundsCoordinates(sw: number[], ne: number[], maxZoom?: number): void {
+        this.leafletMap?.fitBoundsCoordinates(sw, ne, maxZoom);
     }
 
     public fitBoundsElements(

@@ -466,6 +466,10 @@ export default class GooglePolygons {
         });
     }
 
+    public bringPolygonToFront(polygons: any[]): void {
+        polygons.forEach((polygon) => polygon.setOptions({ zIndex: 1000 }));
+    }
+
     private getPathRecursiveArray(path: any): any {
         if (Array.isArray(path) && typeof path[0] !== "number") {
             return path.map((x) => this.getPathRecursiveArray(x));

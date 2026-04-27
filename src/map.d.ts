@@ -191,6 +191,9 @@ export default class Map {
      * Use this function to remove event clicks from the currentMap
      */
     removeClickMap(): void;
+    getBounds(): number[][];
+    fitBoundsCoordinates(sw: number[], ne: number[], maxZoom?: number): void;
+    bringPolygonToFront(type: string, condition?: any): void;
     private getMarkers;
     private getPolygons;
     private getCircles;

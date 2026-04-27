@@ -996,6 +996,19 @@ var Map = /** @class */ (function () {
         var _a;
         return (_a = this.map) === null || _a === void 0 ? void 0 : _a.pixelsToLatLng(offsetx, offsety);
     };
+    Map.prototype.getBounds = function () {
+        var _a, _b;
+        return (_b = (_a = this.map) === null || _a === void 0 ? void 0 : _a.getBounds()) !== null && _b !== void 0 ? _b : [];
+    };
+    Map.prototype.fitBoundsCoordinates = function (sw, ne, maxZoom) {
+        var _a;
+        (_a = this.map) === null || _a === void 0 ? void 0 : _a.fitBoundsCoordinates(sw, ne, maxZoom);
+    };
+    Map.prototype.bringPolygonToFront = function (type, condition) {
+        var _a;
+        var polygons = this.getPolygons(type, condition);
+        (_a = this.map) === null || _a === void 0 ? void 0 : _a.bringPolygonToFront(polygons);
+    };
     /**
      * Use this functions to fit bounds on elements with same type and condition
      * @param {string} type

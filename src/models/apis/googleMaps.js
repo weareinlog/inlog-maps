@@ -244,6 +244,10 @@ var GoogleMaps = /** @class */ (function () {
         var _a;
         (_a = this.googlePolygons) === null || _a === void 0 ? void 0 : _a.fitBoundsPolygons(polygons);
     };
+    GoogleMaps.prototype.bringPolygonToFront = function (polygons) {
+        var _a;
+        (_a = this.googlePolygons) === null || _a === void 0 ? void 0 : _a.bringPolygonToFront(polygons);
+    };
     GoogleMaps.prototype.setCenterPolygons = function (polygons) {
         var _a;
         (_a = this.googlePolygons) === null || _a === void 0 ? void 0 : _a.setCenterPolygons(polygons);
@@ -433,6 +437,14 @@ var GoogleMaps = /** @class */ (function () {
     GoogleMaps.prototype.pixelsToLatLng = function (offsetx, offsety) {
         var _a;
         return (_a = this.googleMap) === null || _a === void 0 ? void 0 : _a.pixelsToLatLng(offsetx, offsety);
+    };
+    GoogleMaps.prototype.getBounds = function () {
+        var _a, _b;
+        return (_b = (_a = this.googleMap) === null || _a === void 0 ? void 0 : _a.getBounds()) !== null && _b !== void 0 ? _b : [];
+    };
+    GoogleMaps.prototype.fitBoundsCoordinates = function (sw, ne, maxZoom) {
+        var _a;
+        (_a = this.googleMap) === null || _a === void 0 ? void 0 : _a.fitBoundsCoordinates(sw, ne, maxZoom);
     };
     GoogleMaps.prototype.fitBoundsElements = function (markers, circles, polygons, polylines) {
         var _a;

@@ -282,6 +282,10 @@ export default class GoogleMaps implements IMapFunctions {
         this.googlePolygons?.fitBoundsPolygons(polygons);
     }
 
+    public bringPolygonToFront(polygons: any[]): void {
+        this.googlePolygons?.bringPolygonToFront(polygons);
+    }
+
     public setCenterPolygons(polygons: any): void {
         this.googlePolygons?.setCenterPolygons(polygons);
     }
@@ -529,6 +533,14 @@ export default class GoogleMaps implements IMapFunctions {
 
     public pixelsToLatLng(offsetx: number, offsety: number): number[] {
         return this.googleMap?.pixelsToLatLng(offsetx, offsety)!;
+    }
+
+    public getBounds(): number[][] {
+        return this.googleMap?.getBounds() ?? [];
+    }
+
+    public fitBoundsCoordinates(sw: number[], ne: number[], maxZoom?: number): void {
+        this.googleMap?.fitBoundsCoordinates(sw, ne, maxZoom);
     }
 
     public fitBoundsElements(

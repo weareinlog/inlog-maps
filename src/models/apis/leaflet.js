@@ -234,6 +234,10 @@ var Leaflet = /** @class */ (function () {
         var _a;
         (_a = this.leafletPolygons) === null || _a === void 0 ? void 0 : _a.fitBoundsPolygons(polygons);
     };
+    Leaflet.prototype.bringPolygonToFront = function (polygons) {
+        var _a;
+        (_a = this.leafletPolygons) === null || _a === void 0 ? void 0 : _a.bringPolygonToFront(polygons);
+    };
     Leaflet.prototype.setCenterPolygons = function (polygons) {
         var _a;
         (_a = this.leafletPolygons) === null || _a === void 0 ? void 0 : _a.setCenterPolygons(polygons);
@@ -422,6 +426,14 @@ var Leaflet = /** @class */ (function () {
     Leaflet.prototype.pixelsToLatLng = function (offsetx, offsety) {
         var _a;
         return (_a = this.leafletMap) === null || _a === void 0 ? void 0 : _a.pixelsToLatLng(offsetx, offsety);
+    };
+    Leaflet.prototype.getBounds = function () {
+        var _a, _b;
+        return (_b = (_a = this.leafletMap) === null || _a === void 0 ? void 0 : _a.getBounds()) !== null && _b !== void 0 ? _b : [];
+    };
+    Leaflet.prototype.fitBoundsCoordinates = function (sw, ne, maxZoom) {
+        var _a;
+        (_a = this.leafletMap) === null || _a === void 0 ? void 0 : _a.fitBoundsCoordinates(sw, ne, maxZoom);
     };
     Leaflet.prototype.fitBoundsElements = function (markers, circles, polygons, polylines) {
         var _a;

@@ -198,6 +198,9 @@ var LeafletPolygons = /** @class */ (function () {
             eventFunction(path[0], event.target.object);
         });
     };
+    LeafletPolygons.prototype.bringPolygonToFront = function (polygons) {
+        polygons.forEach(function (polygon) { return polygon.bringToFront(); });
+    };
     LeafletPolygons.prototype.addPolygonEventClick = function (polygon, eventFunction, self) {
         polygon.on('click', function (event) {
             self.leaflet.DomEvent.stopPropagation(event);
