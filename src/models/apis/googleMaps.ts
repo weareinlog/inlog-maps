@@ -543,6 +543,14 @@ export default class GoogleMaps implements IMapFunctions {
         this.googleMap?.fitBoundsCoordinates(sw, ne, maxZoom);
     }
 
+    public panInsidePoint(lat: number, lng: number): void {
+        this.googleMap?.panInsidePoint(lat, lng);
+    }
+
+    public panInsideBounds(sw: number[], ne: number[]): void {
+        this.googleMap?.panInsideBounds(sw, ne);
+    }
+
     public fitBoundsElements(
         markers: any,
         circles: any,

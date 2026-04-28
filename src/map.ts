@@ -1407,6 +1407,14 @@ export default class Map {
         this.map?.bringPolygonToFront?.(polygons);
     }
 
+    public panInsidePoint(lat: number, lng: number): void {
+        this.map?.panInsidePoint?.(lat, lng);
+    }
+
+    public panInsideBounds(sw: number[], ne: number[]): void {
+        this.map?.panInsideBounds?.(sw, ne);
+    }
+
     /**
      * Use this functions to fit bounds on elements with same type and condition
      * @param {string} type

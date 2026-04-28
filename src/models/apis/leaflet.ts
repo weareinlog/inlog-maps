@@ -540,6 +540,14 @@ export default class Leaflet implements IMapFunctions {
         this.leafletMap?.fitBoundsCoordinates(sw, ne, maxZoom);
     }
 
+    public panInsidePoint(lat: number, lng: number): void {
+        this.leafletMap?.panInsidePoint(lat, lng);
+    }
+
+    public panInsideBounds(sw: number[], ne: number[]): void {
+        this.leafletMap?.panInsideBounds(sw, ne);
+    }
+
     public fitBoundsElements(
         markers: any,
         circles: any,

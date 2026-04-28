@@ -128,6 +128,13 @@ var LeafletMap = /** @class */ (function () {
         if (maxZoom !== undefined) options.maxZoom = maxZoom;
         this.map.fitBounds(bounds, options);
     };
+    LeafletMap.prototype.panInsidePoint = function (lat, lng) {
+        this.map.panInside([lat, lng], { padding: [60, 60] });
+    };
+    LeafletMap.prototype.panInsideBounds = function (sw, ne) {
+        var bounds = [[sw[0], sw[1]], [ne[0], ne[1]]];
+        this.map.panInsideBounds(bounds, { animate: true });
+    };
     LeafletMap.prototype.fitBoundsElements = function (markers, circles, polygons, polylines) {
         var group = [];
         if (markers && markers.length) {

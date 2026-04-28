@@ -117,6 +117,15 @@ export default class LeafletMap {
         this.map.fitBounds(bounds, options);
     }
 
+    public panInsidePoint(lat: number, lng: number): void {
+        this.map.panInside([lat, lng], { padding: [60, 60] });
+    }
+
+    public panInsideBounds(sw: number[], ne: number[]): void {
+        const bounds: [[number, number], [number, number]] = [[sw[0], sw[1]], [ne[0], ne[1]]];
+        this.map.panInsideBounds(bounds, { animate: true });
+    }
+
     public fitBoundsElements(
         markers: any,
         circles: any,

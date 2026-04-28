@@ -1009,6 +1009,14 @@ var Map = /** @class */ (function () {
         var polygons = this.getPolygons(type, condition);
         (_a = this.map) === null || _a === void 0 ? void 0 : _a.bringPolygonToFront(polygons);
     };
+    Map.prototype.panInsidePoint = function (lat, lng) {
+        var _a;
+        (_a = this.map) === null || _a === void 0 ? void 0 : _a.panInsidePoint(lat, lng);
+    };
+    Map.prototype.panInsideBounds = function (sw, ne) {
+        var _a;
+        (_a = this.map) === null || _a === void 0 ? void 0 : _a.panInsideBounds(sw, ne);
+    };
     /**
      * Use this functions to fit bounds on elements with same type and condition
      * @param {string} type

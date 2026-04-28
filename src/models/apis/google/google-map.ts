@@ -132,6 +132,20 @@ export default class GoogleMap {
         }
     }
 
+    public panInsidePoint(lat: number, lng: number): void {
+        const pt = new this.google.maps.LatLng(lat, lng);
+        const bounds = new this.google.maps.LatLngBounds(pt, pt);
+        this.map.panToBounds(bounds);
+    }
+
+    public panInsideBounds(sw: number[], ne: number[]): void {
+        const bounds = new this.google.maps.LatLngBounds(
+            new this.google.maps.LatLng(sw[0], sw[1]),
+            new this.google.maps.LatLng(ne[0], ne[1])
+        );
+        this.map.panToBounds(bounds);
+    }
+
     public fitBoundsElements(
         markers: any,
         circles: any,

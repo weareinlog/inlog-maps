@@ -194,6 +194,8 @@ export default class Map {
     getBounds(): number[][];
     fitBoundsCoordinates(sw: number[], ne: number[], maxZoom?: number): void;
     bringPolygonToFront(type: string, condition?: any): void;
+    panInsidePoint(lat: number, lng: number): void;
+    panInsideBounds(sw: number[], ne: number[]): void;
     private getMarkers;
     private getPolygons;
     private getCircles;

@@ -446,6 +446,14 @@ var GoogleMaps = /** @class */ (function () {
         var _a;
         (_a = this.googleMap) === null || _a === void 0 ? void 0 : _a.fitBoundsCoordinates(sw, ne, maxZoom);
     };
+    GoogleMaps.prototype.panInsidePoint = function (lat, lng) {
+        var _a;
+        (_a = this.googleMap) === null || _a === void 0 ? void 0 : _a.panInsidePoint(lat, lng);
+    };
+    GoogleMaps.prototype.panInsideBounds = function (sw, ne) {
+        var _a;
+        (_a = this.googleMap) === null || _a === void 0 ? void 0 : _a.panInsideBounds(sw, ne);
+    };
     GoogleMaps.prototype.fitBoundsElements = function (markers, circles, polygons, polylines) {
         var _a;
         (_a = this.googleMap) === null || _a === void 0 ? void 0 : _a.fitBoundsElements(markers, circles, polygons, polylines);
