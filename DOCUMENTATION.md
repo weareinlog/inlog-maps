@@ -1,4 +1,4 @@
-# [@inlog/inlog-maps](https://github.com/weareinlog/inlog-maps#readme) *6.5.4*
+# [@inlog/inlog-maps](https://github.com/weareinlog/inlog-maps#readme) *6.8.0*
 
 > A library for using generic layer maps 
 
@@ -1888,6 +1888,125 @@ Returns the coordinates from pixels
 
 
 - `Array.&lt;number&gt;`  
+
+
+
+#### Map.getBounds() 
+
+Returns the current viewport bounds as [[swLat, swLng], [neLat, neLng]]
+
+
+
+
+
+
+##### Returns
+
+
+- `Array.&lt;Array.&lt;number&gt;&gt;`  
+
+
+
+#### Map.fitBoundsCoordinates(sw, ne[, maxZoom]) 
+
+Fits the map to an arbitrary bounding box defined by SW and NE corners.
+Only zooms out — never zooms in beyond maxZoom.
+
+
+
+
+##### Parameters
+
+| Name | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| sw | `Array.<number>`  | [lat, lng] of the south-west corner | &nbsp; |
+| ne | `Array.<number>`  | [lat, lng] of the north-east corner | &nbsp; |
+| maxZoom | `number`  | maximum zoom level (prevents zooming in) | *Optional* |
+
+
+
+
+##### Returns
+
+
+- `Void`
+
+
+
+#### Map.bringPolygonToFront(type, condition) 
+
+Brings the polygons matching the type/condition to the top of the rendering stack,
+so they are drawn above other polygons of the same layer.
+On Leaflet uses native bringToFront(); on Google Maps sets a high zIndex.
+
+
+
+
+##### Parameters
+
+| Name | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| type | `string`  |  | &nbsp; |
+| condition | `any`  | filter polygons by this predicate against polygon.object [nullable] | &nbsp; |
+
+
+
+
+##### Returns
+
+
+- `Void`
+
+
+
+#### Map.panInsidePoint(lat, lng) 
+
+Pans the map by the minimum amount necessary to make the given point visible,
+without changing the current zoom level.
+
+
+
+
+##### Parameters
+
+| Name | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| lat | `number`  | latitude of the point | &nbsp; |
+| lng | `number`  | longitude of the point | &nbsp; |
+
+
+
+
+##### Returns
+
+
+- `Void`
+
+
+
+#### Map.panInsideBounds(sw, ne) 
+
+Pans the map by the minimum amount necessary to contain the given bounding box,
+without changing the current zoom level. Use this when the bbox already fits in the
+current viewport size and you only need to shift the view to reveal it.
+
+
+
+
+##### Parameters
+
+| Name | Type | Description |  |
+| ---- | ---- | ----------- | -------- |
+| sw | `Array.<number>`  | [lat, lng] of the south-west corner | &nbsp; |
+| ne | `Array.<number>`  | [lat, lng] of the north-east corner | &nbsp; |
+
+
+
+
+##### Returns
+
+
+- `Void`
 
 
 
