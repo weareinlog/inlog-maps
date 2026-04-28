@@ -276,6 +276,9 @@ var GooglePolygons = /** @class */ (function () {
             eventFunction(param, polygon.object);
         });
     };
+    GooglePolygons.prototype.bringPolygonToFront = function (polygons) {
+        polygons.forEach(function (polygon) { return polygon.setOptions({ zIndex: 1000 }); });
+    };
     GooglePolygons.prototype.getPathRecursiveArray = function (path) {
         var _this = this;
         if (Array.isArray(path) && typeof path[0] !== "number") {

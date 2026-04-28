@@ -1384,6 +1384,58 @@ export default class Map {
     }
 
     /**
+     * Returns the current viewport bounds as [[swLat, swLng], [neLat, neLng]]
+     * @returns {number[][]}
+     */
+    public getBounds(): number[][] {
+        return this.map?.getBounds?.() ?? [];
+    }
+
+    /**
+     * Fits the map to an arbitrary bounding box defined by SW and NE corners.
+     * Only zooms out — never zooms in beyond maxZoom.
+     * @param {number[]} sw [lat, lng] of the south-west corner
+     * @param {number[]} ne [lat, lng] of the north-east corner
+     * @param {number} [maxZoom] maximum zoom level (prevents zooming in)
+     */
+    public fitBoundsCoordinates(sw: number[], ne: number[], maxZoom?: number): void {
+        this.map?.fitBoundsCoordinates?.(sw, ne, maxZoom);
+    }
+
+    /**
+     * Brings the polygons matching the type/condition to the top of the rendering stack,
+     * so they are drawn above other polygons of the same layer.
+     * On Leaflet uses native bringToFront(); on Google Maps sets a high zIndex.
+     * @param {string} type
+     * @param {any} condition filter polygons by this predicate against polygon.object [nullable]
+     */
+    public bringPolygonToFront(type: string, condition?: any): void {
+        const polygons = this.getPolygons(type, condition);
+        this.map?.bringPolygonToFront?.(polygons);
+    }
+
+    /**
+     * Pans the map by the minimum amount necessary to make the given point visible,
+     * without changing the current zoom level.
+     * @param {number} lat latitude of the point
+     * @param {number} lng longitude of the point
+     */
+    public panInsidePoint(lat: number, lng: number): void {
+        this.map?.panInsidePoint?.(lat, lng);
+    }
+
+    /**
+     * Pans the map by the minimum amount necessary to contain the given bounding box,
+     * without changing the current zoom level. Use this when the bbox already fits in the
+     * current viewport size and you only need to shift the view to reveal it.
+     * @param {number[]} sw [lat, lng] of the south-west corner
+     * @param {number[]} ne [lat, lng] of the north-east corner
+     */
+    public panInsideBounds(sw: number[], ne: number[]): void {
+        this.map?.panInsideBounds?.(sw, ne);
+    }
+
+    /**
      * Use this functions to fit bounds on elements with same type and condition
      * @param {string} type
      * @param {any} condition [nullable]

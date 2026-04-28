@@ -244,6 +244,10 @@ export default class LeafletPolygons {
         });
     }
 
+    public bringPolygonToFront(polygons: any[]): void {
+        polygons.forEach((polygon) => polygon.bringToFront());
+    }
+
     private addPolygonEventClick(polygon: any, eventFunction: any, self: any) {
         polygon.on('click', (event: any) => {
             self.leaflet.DomEvent.stopPropagation(event);

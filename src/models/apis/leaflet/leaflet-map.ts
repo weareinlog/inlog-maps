@@ -102,6 +102,30 @@ export default class LeafletMap {
         return [latlng.lat, latlng.lng];
     }
 
+    public getBounds(): number[][] {
+        const bounds = this.map.getBounds();
+        return [
+            [bounds.getSouth(), bounds.getWest()],
+            [bounds.getNorth(), bounds.getEast()],
+        ];
+    }
+
+    public fitBoundsCoordinates(sw: number[], ne: number[], maxZoom?: number): void {
+        const bounds: [[number, number], [number, number]] = [[sw[0], sw[1]], [ne[0], ne[1]]];
+        const options: any = { animate: true, padding: [20, 20] };
+        if (maxZoom !== undefined) options.maxZoom = maxZoom;
+        this.map.fitBounds(bounds, options);
+    }
+
+    public panInsidePoint(lat: number, lng: number): void {
+        this.map.panInside([lat, lng], { padding: [60, 60] });
+    }
+
+    public panInsideBounds(sw: number[], ne: number[]): void {
+        const bounds: [[number, number], [number, number]] = [[sw[0], sw[1]], [ne[0], ne[1]]];
+        this.map.panInsideBounds(bounds, { animate: true });
+    }
+
     public fitBoundsElements(
         markers: any,
         circles: any,

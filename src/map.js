@@ -996,6 +996,47 @@ var Map = /** @class */ (function () {
         var _a;
         return (_a = this.map) === null || _a === void 0 ? void 0 : _a.pixelsToLatLng(offsetx, offsety);
     };
+    Map.prototype.getBounds = function () {
+        var _a, _b;
+        return (_b = (_a = this.map) === null || _a === void 0 ? void 0 : _a.getBounds()) !== null && _b !== void 0 ? _b : [];
+    };
+    Map.prototype.fitBoundsCoordinates = function (sw, ne, maxZoom) {
+        var _a;
+        (_a = this.map) === null || _a === void 0 ? void 0 : _a.fitBoundsCoordinates(sw, ne, maxZoom);
+    };
+    /**
+     * Brings the polygons matching the type/condition to the top of the rendering stack,
+     * so they are drawn above other polygons of the same layer.
+     * On Leaflet uses native bringToFront(); on Google Maps sets a high zIndex.
+     * @param {string} type
+     * @param {any} condition filter polygons by this predicate against polygon.object [nullable]
+     */
+    Map.prototype.bringPolygonToFront = function (type, condition) {
+        var _a;
+        var polygons = this.getPolygons(type, condition);
+        (_a = this.map) === null || _a === void 0 ? void 0 : _a.bringPolygonToFront(polygons);
+    };
+    /**
+     * Pans the map by the minimum amount necessary to make the given point visible,
+     * without changing the current zoom level.
+     * @param {number} lat latitude of the point
+     * @param {number} lng longitude of the point
+     */
+    Map.prototype.panInsidePoint = function (lat, lng) {
+        var _a;
+        (_a = this.map) === null || _a === void 0 ? void 0 : _a.panInsidePoint(lat, lng);
+    };
+    /**
+     * Pans the map by the minimum amount necessary to contain the given bounding box,
+     * without changing the current zoom level. Use this when the bbox already fits in the
+     * current viewport size and you only need to shift the view to reveal it.
+     * @param {number[]} sw [lat, lng] of the south-west corner
+     * @param {number[]} ne [lat, lng] of the north-east corner
+     */
+    Map.prototype.panInsideBounds = function (sw, ne) {
+        var _a;
+        (_a = this.map) === null || _a === void 0 ? void 0 : _a.panInsideBounds(sw, ne);
+    };
     /**
      * Use this functions to fit bounds on elements with same type and condition
      * @param {string} type

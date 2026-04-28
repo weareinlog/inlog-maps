@@ -133,6 +133,36 @@ var GoogleMap = /** @class */ (function () {
             .fromPointToLatLng(worldCoordinateNewCenter);
         return [latlng.lat(), latlng.lng()];
     };
+    GoogleMap.prototype.getBounds = function () {
+        var bounds = this.map.getBounds();
+        if (!bounds) return [];
+        return [
+            [bounds.getSouthWest().lat(), bounds.getSouthWest().lng()],
+            [bounds.getNorthEast().lat(), bounds.getNorthEast().lng()],
+        ];
+    };
+    GoogleMap.prototype.fitBoundsCoordinates = function (sw, ne, maxZoom) {
+        var bounds = new google.maps.LatLngBounds(
+            new google.maps.LatLng(sw[0], sw[1]),
+            new google.maps.LatLng(ne[0], ne[1])
+        );
+        this.map.fitBounds(bounds);
+        if (maxZoom !== undefined && this.map.getZoom() > maxZoom) {
+            this.map.setZoom(maxZoom);
+        }
+    };
+    GoogleMap.prototype.panInsidePoint = function (lat, lng) {
+        var pt = new this.google.maps.LatLng(lat, lng);
+        var bounds = new this.google.maps.LatLngBounds(pt, pt);
+        this.map.panToBounds(bounds);
+    };
+    GoogleMap.prototype.panInsideBounds = function (sw, ne) {
+        var bounds = new this.google.maps.LatLngBounds(
+            new this.google.maps.LatLng(sw[0], sw[1]),
+            new this.google.maps.LatLng(ne[0], ne[1])
+        );
+        this.map.panToBounds(bounds);
+    };
     GoogleMap.prototype.fitBoundsElements = function (markers, circles, polygons, polylines) {
         var bounds = new google.maps.LatLngBounds();
         if (markers && markers.length) {

@@ -115,6 +115,26 @@ var LeafletMap = /** @class */ (function () {
         var latlng = this.leaflet.CRS.Simple.unproject(worldCoordinateNewCenter);
         return [latlng.lat, latlng.lng];
     };
+    LeafletMap.prototype.getBounds = function () {
+        var bounds = this.map.getBounds();
+        return [
+            [bounds.getSouth(), bounds.getWest()],
+            [bounds.getNorth(), bounds.getEast()],
+        ];
+    };
+    LeafletMap.prototype.fitBoundsCoordinates = function (sw, ne, maxZoom) {
+        var bounds = [[sw[0], sw[1]], [ne[0], ne[1]]];
+        var options = { animate: true, padding: [20, 20] };
+        if (maxZoom !== undefined) options.maxZoom = maxZoom;
+        this.map.fitBounds(bounds, options);
+    };
+    LeafletMap.prototype.panInsidePoint = function (lat, lng) {
+        this.map.panInside([lat, lng], { padding: [60, 60] });
+    };
+    LeafletMap.prototype.panInsideBounds = function (sw, ne) {
+        var bounds = [[sw[0], sw[1]], [ne[0], ne[1]]];
+        this.map.panInsideBounds(bounds, { animate: true });
+    };
     LeafletMap.prototype.fitBoundsElements = function (markers, circles, polygons, polylines) {
         var group = [];
         if (markers && markers.length) {

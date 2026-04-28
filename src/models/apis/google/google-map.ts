@@ -112,6 +112,40 @@ export default class GoogleMap {
         return [latlng.lat(), latlng.lng()];
     }
 
+    public getBounds(): number[][] {
+        const bounds = this.map.getBounds();
+        if (!bounds) return [];
+        return [
+            [bounds.getSouthWest().lat(), bounds.getSouthWest().lng()],
+            [bounds.getNorthEast().lat(), bounds.getNorthEast().lng()],
+        ];
+    }
+
+    public fitBoundsCoordinates(sw: number[], ne: number[], maxZoom?: number): void {
+        const bounds = new google.maps.LatLngBounds(
+            new google.maps.LatLng(sw[0], sw[1]),
+            new google.maps.LatLng(ne[0], ne[1])
+        );
+        this.map.fitBounds(bounds);
+        if (maxZoom !== undefined && this.map.getZoom() > maxZoom) {
+            this.map.setZoom(maxZoom);
+        }
+    }
+
+    public panInsidePoint(lat: number, lng: number): void {
+        const pt = new this.google.maps.LatLng(lat, lng);
+        const bounds = new this.google.maps.LatLngBounds(pt, pt);
+        this.map.panToBounds(bounds);
+    }
+
+    public panInsideBounds(sw: number[], ne: number[]): void {
+        const bounds = new this.google.maps.LatLngBounds(
+            new this.google.maps.LatLng(sw[0], sw[1]),
+            new this.google.maps.LatLng(ne[0], ne[1])
+        );
+        this.map.panToBounds(bounds);
+    }
+
     public fitBoundsElements(
         markers: any,
         circles: any,
